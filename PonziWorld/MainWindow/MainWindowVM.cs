@@ -1,5 +1,5 @@
 ﻿namespace PonziWorld.MainWindow;
 
-internal class MainWindowVM : IMainWindowVM
+internal class MainWindowViewModel
 {
 }

@@ -5,9 +5,19 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:local="clr-namespace:PonziWorld.MainWindow"
+                      xmlns:investors="clr-namespace:PonziWorld.ExistingInvestors"
+                      xmlns:prism="http://prismlibrary.com/"
+                      prism:ViewModelLocator.AutoWireViewModel="True"
                       mc:Ignorable="d"
-                      Title="Ponzi World" Height="450" Width="800">
+                      Title="Ponzi World"
+                      Height="450" Width="800">
     <Grid>
-        <TextBlock Text="test"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MaxWidth="300" MinWidth="200" />
+            <ColumnDefinition Width="4*" />
+        </Grid.ColumnDefinitions>
+
+        <investors:ExistingInvestorsView Grid.Column="0" />
+        <ContentControl Grid.Column="1" prism:RegionManager.RegionName="RightRegion" />
     </Grid>
 </Controls:MetroWindow>
