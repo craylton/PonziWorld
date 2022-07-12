@@ -5,8 +5,8 @@ namespace PonziWorld.ExistingInvestors;
 
 internal class ExistingInvestorsViewModel : BindableBase
 {
-    public ObservableCollection<ExistingInvestor.ExistingInvestor> _existingInvestors = new();
-    public ObservableCollection<ExistingInvestor.ExistingInvestor> Investors
+    public ObservableCollection<ExistingInvestor> _existingInvestors = new();
+    public ObservableCollection<ExistingInvestor> Investors
     {
         get => _existingInvestors;
         set => SetProperty(ref _existingInvestors, value);

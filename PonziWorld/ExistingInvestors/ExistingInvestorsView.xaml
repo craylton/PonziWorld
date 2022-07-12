@@ -18,30 +18,41 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Investors" Margin="10" />
+        <TextBlock Grid.Row="0"
+                   Text="Investors"
+                   Margin="10"
+                   FontSize="18"
+                   FontWeight="Bold"
+                   />
 
         <ScrollViewer Grid.Row="1">
-            <WrapPanel Orientation="Vertical">
-                <ItemsControl x:Name="existingInvestors" ItemsSource="{Binding Investors}">
+            <UniformGrid>
+                <ItemsControl ItemsSource="{Binding Investors}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <Border BorderThickness="2">
                                 <Border BorderThickness="2" BorderBrush="#111">
-                                    <Grid Background="DarkGreen">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
+                                    <Grid Background="#CC60A917">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition />
+                                            <RowDefinition />
+                                        </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Text="{Binding Path=Name, StringFormat='Name: {0}'}" />
-                                    <TextBlock Grid.Row="1" Text="{Binding Amount}" />
+                                        <TextBlock Grid.Row="0"
+                                                   Text="{Binding Path=Name, StringFormat='Name: {0}'}"
+                                                   FontSize="16"
+                                                   />
+                                        <TextBlock Grid.Row="1"
+                                                   Text="{Binding Path=Amount, StringFormat='Investment: £{0}'}"
+                                                   FontSize="14"
+                                                   />
                                     </Grid>
                                 </Border>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
-            </WrapPanel>
+            </UniformGrid>
         </ScrollViewer>
     </Grid>
 </UserControl>
