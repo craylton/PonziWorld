@@ -37,7 +37,7 @@
                    />
         <TextBlock Grid.Column="1" Grid.Row="1"
                    Style="{StaticResource CompanyInfoValue}"
-                   Text="{Binding Path=ClaimedFunds, StringFormat='£{0}'}"
+                   Text="{Binding Path=CompanyInformation.ClaimedFunds, StringFormat='£{0}'}"
                    />
         <TextBlock Grid.Column="2" Grid.Row="0"
                    Style="{StaticResource CompanyInfoLabel}"
@@ -45,7 +45,7 @@
                    />
         <TextBlock Grid.Column="2" Grid.Row="1"
                    Style="{StaticResource CompanyInfoValue}"
-                   Text="{Binding Path=Attractiveness, StringFormat=' {0}%'}"
+                   Text="{Binding Path=CompanyInformation.Attractiveness, StringFormat=' {0}%'}"
                    />
         <TextBlock Grid.Column="3" Grid.Row="0"
                    Style="{StaticResource CompanyInfoLabel}"
@@ -53,7 +53,7 @@
                    />
         <TextBlock Grid.Column="3" Grid.Row="1"
                    Style="{StaticResource CompanyInfoValue}"
-                   Text="{Binding Path=Fame, StringFormat=' {0}%'}"
+                   Text="{Binding Path=CompanyInformation.Fame, StringFormat=' {0}%'}"
                    />
         <TextBlock Grid.Column="4" Grid.Row="0"
                    Style="{StaticResource CompanyInfoLabel}"
@@ -61,7 +61,7 @@
                    />
         <TextBlock Grid.Column="4" Grid.Row="1"
                    Style="{StaticResource CompanyInfoValue}"
-                   Text="{Binding Path=Suspicion, StringFormat=' {0}%'}"
+                   Text="{Binding Path=CompanyInformation.Suspicion, StringFormat=' {0}%'}"
                    />
         <TextBlock Grid.Column="5" Grid.Row="0"
                    Style="{StaticResource CompanyInfoLabel}"
@@ -69,7 +69,7 @@
                    />
         <TextBlock Grid.Column="5" Grid.Row="1"
                    Style="{StaticResource CompanyInfoValue}"
-                   Text="{Binding Path=ActualFunds, StringFormat='£{0}'}"
+                   Text="{Binding Path=CompanyInformation.ActualFunds, StringFormat='£{0}'}"
                    />
     </Grid>
 </UserControl>

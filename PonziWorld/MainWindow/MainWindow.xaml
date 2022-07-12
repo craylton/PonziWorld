@@ -7,12 +7,14 @@
                       xmlns:local="clr-namespace:PonziWorld.MainWindow"
                       xmlns:investors="clr-namespace:PonziWorld.ExistingInvestors"
                       xmlns:companyInformation="clr-namespace:PonziWorld.CompanyInformation"
+                      xmlns:dataRegion="clr-namespace:PonziWorld.DataRegion"
                       xmlns:prism="http://prismlibrary.com/"
                       prism:ViewModelLocator.AutoWireViewModel="True"
                       mc:Ignorable="d"
                       Title="Ponzi World"
                       Height="480" Width="900"
                       MinWidth="640" MinHeight="320">
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" MinWidth="200" MaxWidth="300" />
@@ -32,6 +34,6 @@
         </Border>
 
         <investors:ExistingInvestorsView Grid.Column="0" Grid.Row="1" />
-        <ContentControl Grid.Column="1" Grid.Row="1" prism:RegionManager.RegionName="RightRegion" />
+        <dataRegion:AdvancingView Grid.Column="1" Grid.Row="1" />
     </Grid>
 </Controls:MetroWindow>
