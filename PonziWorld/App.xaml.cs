@@ -1,5 +1,7 @@
-﻿using PonziWorld.Bootstrapping;
-using PonziWorld.ExistingInvestors;
+﻿using MahApps.Metro.Controls.Dialogs;
+using PonziWorld.Company;
+using PonziWorld.Events;
+using PonziWorld.Investors;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
@@ -12,7 +14,9 @@ public partial class App : PrismApplication
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
         containerRegistry.Register<Window, MainWindow.MainWindow>();
-        containerRegistry.Register<IInvestorsRepository, InvestorsRepository>();
+        containerRegistry.Register<IInvestorsRepository, MongoDbInvestorsRepository>();
+        containerRegistry.Register<ICompanyRepository, MongoDbCompanyRepository>();
+        containerRegistry.Register<IDialogCoordinator, DialogCoordinator>();
     }
 
     protected override void OnInitialized()

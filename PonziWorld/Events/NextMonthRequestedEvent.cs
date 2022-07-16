@@ -1,6 +1,6 @@
 ﻿using Prism.Events;
 
-namespace PonziWorld.DataRegion;
+namespace PonziWorld.Events;
 
 internal class NextMonthRequestedEvent : PubSubEvent
 {

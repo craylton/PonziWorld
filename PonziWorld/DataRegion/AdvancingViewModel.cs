@@ -1,4 +1,5 @@
-﻿using Prism.Commands;
+﻿using PonziWorld.Events;
+using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
 

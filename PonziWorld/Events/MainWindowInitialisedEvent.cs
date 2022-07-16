@@ -1,6 +1,6 @@
 ﻿using Prism.Events;
 
-namespace PonziWorld.Bootstrapping;
+namespace PonziWorld.Events;
 
 internal class MainWindowInitialisedEvent : PubSubEvent
 {

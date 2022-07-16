@@ -1,5 +1,4 @@
-﻿using PonziWorld.Bootstrapping;
-using PonziWorld.DataRegion;
+﻿using PonziWorld.Events;
 using Prism.Events;
 using Prism.Mvvm;
 using System;
@@ -7,37 +6,37 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PonziWorld.ExistingInvestors;
+namespace PonziWorld.Investors;
 
-internal class ExistingInvestorsViewModel : BindableBase
+internal class InvestorsViewModel : BindableBase
 {
-    private Random random = new();
+    private readonly Random random = new();
     private readonly IInvestorsRepository repository;
-    private ObservableCollection<ExistingInvestor> _existingInvestors = new();
+    private ObservableCollection<Investor> _existingInvestors = new();
 
-    public ObservableCollection<ExistingInvestor> Investors
+    public ObservableCollection<Investor> Investors
     {
         get => _existingInvestors;
         set => SetProperty(ref _existingInvestors, value);
     }
 
-    public ExistingInvestorsViewModel(
+    public InvestorsViewModel(
         IInvestorsRepository repository,
         IEventAggregator eventAggregator)
     {
         this.repository = repository;
-        eventAggregator.GetEvent<MainWindowInitialisedEvent>().Subscribe(Initialise);
-        eventAggregator.GetEvent<NextMonthRequestedEvent>().Subscribe(AddToInvestorPool);
+        eventAggregator.GetEvent<LoadGameRequestedEvent>().Subscribe(() => UpdateInvestorList().Await());
+        eventAggregator.GetEvent<NewGameInitiatedEvent>().Subscribe(companyName => DeleteAllInvestorsAsync(companyName).Await());
+        eventAggregator.GetEvent<NextMonthRequestedEvent>().Subscribe(() => AddToInvestorPoolAsync().Await());
     }
 
-    private async void Initialise()
-    {
-        await UpdateInvestorList();
-    }
+    private async Task DeleteAllInvestorsAsync(string _) =>
+        await repository.DeleteAllInvestors();
 
-    private async void AddToInvestorPool()
+    private async Task AddToInvestorPoolAsync()
     {
-        await repository.AddInvestorAsync(new(GenerateRandomName(), random.Next(0, 100)));
+        var newInvestor = new Investor(GenerateRandomName(), random.Next(0, 100));
+        await repository.AddInvestorAsync(newInvestor);
         await UpdateInvestorList();
     }
 
