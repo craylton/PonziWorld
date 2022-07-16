@@ -13,5 +13,5 @@ internal record Company(
     int Suspicion)
 {
     public static Company Default =>
-        new("Loading!", 0, 0, 0, 10, 0, 5);
+        new("Not Loaded", 0, 0, 0, 0, 0, 0);
 }

@@ -1,42 +1,32 @@
 ﻿using MongoDB.Driver;
+using PonziWorld.Bootstrapping;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Investors;
 
-internal class MongoDbInvestorsRepository : IInvestorsRepository
+internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IInvestorsRepository
 {
-    private readonly ConnectionStringSettings settings;
-
-    public MongoDbInvestorsRepository() =>
-        settings = ConfigurationManager.ConnectionStrings["MainDatabase"];
+    public MongoDbInvestorsRepository() : base("investors")
+    {
+    }
 
     public async Task AddInvestorAsync(Investor investor)
     {
-        IMongoCollection<Investor> investorsCollection = GetDatabaseInvestorsCollection();
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
         await investorsCollection.InsertOneAsync(investor);
     }
 
     public async Task<IEnumerable<Investor>> GetAllInvestorsAsync()
     {
-        IMongoCollection<Investor> investorsCollection = GetDatabaseInvestorsCollection();
-        var filter = FilterDefinition<Investor>.Empty;
-        var investorsCursor = await investorsCollection.FindAsync(filter);
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
+        var investorsCursor = await investorsCollection.FindAsync(EmptyFilter);
         return await investorsCursor.ToListAsync();
     }
 
     public async Task DeleteAllInvestors()
     {
-        IMongoCollection<Investor> investorsCollection = GetDatabaseInvestorsCollection();
-        var filter = FilterDefinition<Investor>.Empty;
-        await investorsCollection.DeleteManyAsync(filter);
-    }
-
-    private IMongoCollection<Investor> GetDatabaseInvestorsCollection()
-    {
-        var client = new MongoClient(settings.ConnectionString);
-        var database = client.GetDatabase("ponziworld");
-        return database.GetCollection<Investor>("investors");
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
+        await investorsCollection.DeleteManyAsync(EmptyFilter);
     }
 }

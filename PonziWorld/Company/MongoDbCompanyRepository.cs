@@ -1,43 +1,32 @@
 ﻿using MongoDB.Driver;
-using System.Configuration;
+using PonziWorld.Bootstrapping;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Company;
 
-internal class MongoDbCompanyRepository : ICompanyRepository
+internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompanyRepository
 {
-    private readonly ConnectionStringSettings settings;
-
-    public MongoDbCompanyRepository() =>
-        settings = ConfigurationManager.ConnectionStrings["MainDatabase"];
+    public MongoDbCompanyRepository() : base("company")
+    {
+    }
 
     public async Task CreateNewCompanyAsync(Company company)
     {
-        IMongoCollection<Company> companyCollection = GetDatabaseCompanyCollection();
-        var filter = FilterDefinition<Company>.Empty;
-        await companyCollection.DeleteManyAsync(filter);
+        IMongoCollection<Company> companyCollection = GetDatabaseCollection();
+        await companyCollection.DeleteManyAsync(EmptyFilter);
         await companyCollection.InsertOneAsync(company);
     }
 
     public async Task<Company> GetCompanyAsync()
     {
-        IMongoCollection<Company> companyCollection = GetDatabaseCompanyCollection();
-        var filter = FilterDefinition<Company>.Empty;
-        var companyCursor = await companyCollection.FindAsync(filter);
+        IMongoCollection<Company> companyCollection = GetDatabaseCollection();
+        var companyCursor = await companyCollection.FindAsync(EmptyFilter);
         return await companyCursor.SingleAsync();
     }
 
     public async Task<bool> GetCompanyExistsAsync()
     {
-        IMongoCollection<Company> companyCollection = GetDatabaseCompanyCollection();
-        var filter = FilterDefinition<Company>.Empty;
-        return await companyCollection.CountDocumentsAsync(filter) > 0;
-    }
-
-    private IMongoCollection<Company> GetDatabaseCompanyCollection()
-    {
-        var client = new MongoClient(settings.ConnectionString);
-        var database = client.GetDatabase("ponziworld");
-        return database.GetCollection<Company>("company");
+        IMongoCollection<Company> companyCollection = GetDatabaseCollection();
+        return await companyCollection.CountDocumentsAsync(EmptyFilter) > 0;
     }
 }

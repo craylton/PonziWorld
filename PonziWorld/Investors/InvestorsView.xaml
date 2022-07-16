@@ -10,6 +10,30 @@
              d:DesignHeight="450" d:DesignWidth="800"
              Padding="25">
 
+    <UserControl.Resources>
+        <DataTemplate x:Key="investorTemplate">
+            <Border BorderThickness="2">
+                <Border BorderThickness="2" BorderBrush="#111">
+                    <Grid Background="#CC60A917">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                                   Text="{Binding Path=Name, StringFormat='Name: {0}'}"
+                                   FontSize="16"
+                                   />
+                        <TextBlock Grid.Row="1"
+                                   Text="{Binding Path=Amount, StringFormat='Investment: £{0}'}"
+                                   FontSize="14"
+                                   />
+                    </Grid>
+                </Border>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -28,31 +52,9 @@
 
         <ScrollViewer Grid.Row="1">
             <UniformGrid>
-                <ItemsControl ItemsSource="{Binding Investors}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderThickness="2">
-                                <Border BorderThickness="2" BorderBrush="#111">
-                                    <Grid Background="#CC60A917">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                        </Grid.RowDefinitions>
-
-                                        <TextBlock Grid.Row="0"
-                                                   Text="{Binding Path=Name, StringFormat='Name: {0}'}"
-                                                   FontSize="16"
-                                                   />
-                                        <TextBlock Grid.Row="1"
-                                                   Text="{Binding Path=Amount, StringFormat='Investment: £{0}'}"
-                                                   FontSize="14"
-                                                   />
-                                    </Grid>
-                                </Border>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Investors}"
+                              ItemTemplate="{StaticResource investorTemplate}"
+                              />
             </UniformGrid>
         </ScrollViewer>
     </Grid>
