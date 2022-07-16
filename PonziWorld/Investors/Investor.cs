@@ -3,6 +3,10 @@
 namespace PonziWorld.Investors;
 
 [BsonIgnoreExtraElements]
-internal record Investor(string Name, int Amount)
+internal record Investor(
+    string Name,
+    int TotalFunds,
+    int Investment,
+    int Satisfaction)
 {
 }

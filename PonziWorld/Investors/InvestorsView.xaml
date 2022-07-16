@@ -25,7 +25,7 @@
                                    FontSize="16"
                                    />
                         <TextBlock Grid.Row="1"
-                                   Text="{Binding Path=Amount, StringFormat='Investment: £{0}'}"
+                                   Text="{Binding Path=Investment, StringFormat='Investment: £{0}'}"
                                    FontSize="14"
                                    />
                     </Grid>

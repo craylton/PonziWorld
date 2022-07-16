@@ -7,5 +7,6 @@ internal interface IInvestorsRepository
 {
     Task AddInvestorAsync(Investor investor);
     Task<IEnumerable<Investor>> GetAllInvestorsAsync();
+    Task<IEnumerable<Investor>> GetAllActiveInvestorsAsync();
     Task DeleteAllInvestors();
 }

@@ -12,6 +12,7 @@ internal class InvestorsViewModel : BindableBase
 {
     private readonly Random random = new();
     private readonly IInvestorsRepository repository;
+    private readonly IInvestorPool investorPool;
     private ObservableCollection<Investor> _investors = new();
 
     public ObservableCollection<Investor> Investors
@@ -22,9 +23,11 @@ internal class InvestorsViewModel : BindableBase
 
     public InvestorsViewModel(
         IInvestorsRepository repository,
+        IInvestorPool investorPool,
         IEventAggregator eventAggregator)
     {
         this.repository = repository;
+        this.investorPool = investorPool;
         eventAggregator.GetEvent<LoadGameRequestedEvent>().Subscribe(() => UpdateInvestorList().Await());
         eventAggregator.GetEvent<NewGameInitiatedEvent>().Subscribe(companyName => DeleteAllInvestorsAsync(companyName).Await());
         eventAggregator.GetEvent<NextMonthRequestedEvent>().Subscribe(() => AddToInvestorPoolAsync().Await());
@@ -35,14 +38,13 @@ internal class InvestorsViewModel : BindableBase
 
     private async Task AddToInvestorPoolAsync()
     {
-        var newInvestor = new Investor(Generator.GenerateRandomFullName(), random.Next(0, 100));
-        await repository.AddInvestorAsync(newInvestor);
+        await investorPool.AddInvestorsToPool();
         await UpdateInvestorList();
     }
 
     private async Task UpdateInvestorList()
     {
-        var investors = await repository.GetAllInvestorsAsync();
+        var investors = await repository.GetAllActiveInvestorsAsync();
         Investors.Clear();
         Investors.AddRange(investors);
     }

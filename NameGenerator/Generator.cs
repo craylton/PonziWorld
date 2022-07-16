@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace NameGenerator;
+﻿namespace NameGenerator;
 
 public static class Generator
 {

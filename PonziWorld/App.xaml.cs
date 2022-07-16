@@ -17,6 +17,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<IInvestorsRepository, MongoDbInvestorsRepository>();
         containerRegistry.Register<ICompanyRepository, MongoDbCompanyRepository>();
         containerRegistry.Register<IDialogCoordinator, DialogCoordinator>();
+        containerRegistry.Register<IInvestorPool, InvestorPool>();
     }
 
     protected override void OnInitialized()

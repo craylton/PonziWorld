@@ -30,7 +30,7 @@ internal class CompanyViewModel : BindableBase
 
     private async Task CreateCompanyAsync(string companyName)
     {
-        var newCompany = new Company(companyName, 0, 0, 0, 10, 0, 5);
+        var newCompany = new Company(companyName, 0, 0, 0, 10, 1, 5);
         await repository.CreateNewCompanyAsync(newCompany);
         Company = newCompany;
     }
