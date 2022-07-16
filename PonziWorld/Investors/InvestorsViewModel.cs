@@ -1,9 +1,9 @@
-﻿using PonziWorld.Events;
+﻿using NameGenerator;
+using PonziWorld.Events;
 using Prism.Events;
 using Prism.Mvvm;
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Investors;
@@ -12,12 +12,12 @@ internal class InvestorsViewModel : BindableBase
 {
     private readonly Random random = new();
     private readonly IInvestorsRepository repository;
-    private ObservableCollection<Investor> _existingInvestors = new();
+    private ObservableCollection<Investor> _investors = new();
 
     public ObservableCollection<Investor> Investors
     {
-        get => _existingInvestors;
-        set => SetProperty(ref _existingInvestors, value);
+        get => _investors;
+        set => SetProperty(ref _investors, value);
     }
 
     public InvestorsViewModel(
@@ -35,7 +35,7 @@ internal class InvestorsViewModel : BindableBase
 
     private async Task AddToInvestorPoolAsync()
     {
-        var newInvestor = new Investor(GenerateRandomName(), random.Next(0, 100));
+        var newInvestor = new Investor(Generator.GenerateRandomFullName(), random.Next(0, 100));
         await repository.AddInvestorAsync(newInvestor);
         await UpdateInvestorList();
     }
@@ -46,10 +46,4 @@ internal class InvestorsViewModel : BindableBase
         Investors.Clear();
         Investors.AddRange(investors);
     }
-
-    // https://stackoverflow.com/questions/1344221/how-can-i-generate-random-alphanumeric-strings
-    private string GenerateRandomName() =>
-        new(Enumerable.Repeat("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8)
-            .Select(s => s[random.Next(s.Length)])
-            .ToArray());
 }

@@ -21,7 +21,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0"
-                                   Text="{Binding Path=Name, StringFormat='Name: {0}'}"
+                                   Text="{Binding Name}"
                                    FontSize="16"
                                    />
                         <TextBlock Grid.Row="1"

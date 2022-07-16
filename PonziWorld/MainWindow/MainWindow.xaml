@@ -31,8 +31,8 @@
 
         <Grid Visibility="{Binding Path=IsGameLoaded, Converter={StaticResource BoolToVisibility}}" >
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="200" MaxWidth="300" />
-                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="*" MinWidth="300" MaxWidth="450" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
