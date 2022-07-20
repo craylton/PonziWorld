@@ -3,7 +3,7 @@ using PonziWorld.Bootstrapping;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace PonziWorld.Investors;
+namespace PonziWorld.Investments.Investors;
 
 internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IInvestorsRepository
 {
@@ -33,6 +33,31 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
 
         var investorsCursor = await investorsCollection.FindAsync(filter, findOptions);
         return await investorsCursor.ToListAsync();
+    }
+
+    public async Task<IEnumerable<Investor>> GetAllProspectiveInvestorsAsync()
+    {
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
+        var sortOrder = Builders<Investor>.Sort.Descending(investor => investor.Investment);
+        var filter = Builders<Investor>.Filter.Eq(investor => investor.Investment, 0);
+
+        var investorsCursor = await investorsCollection.FindAsync(filter);
+        return await investorsCursor.ToListAsync();
+    }
+
+    public async Task<bool> GetInvestorExistsAsync(Investor newInvestor)
+    {
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
+        var filter = Builders<Investor>.Filter.Eq(investor => investor.Id, newInvestor.Id);
+        return await investorsCollection.CountDocumentsAsync(filter) > 0;
+    }
+
+    public async Task ApplyInvestmentAsync(Investment investment)
+    {
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
+        var filter = Builders<Investor>.Filter.Eq(investor => investor.Id, investment.InvestorId);
+        var update = Builders<Investor>.Update.Inc(investor => investor.Investment, investment.Amount);
+        await investorsCollection.UpdateOneAsync(filter, update);
     }
 
     public async Task DeleteAllInvestors()

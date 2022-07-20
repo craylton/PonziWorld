@@ -1,7 +1,8 @@
-﻿using Prism.Events;
+﻿using PonziWorld.Investments;
+using Prism.Events;
 
 namespace PonziWorld.Events;
 
-internal class NextMonthRequestedEvent : PubSubEvent
+internal class NextMonthRequestedEvent : PubSubEvent<NewInvestmentsSummary>
 {
 }

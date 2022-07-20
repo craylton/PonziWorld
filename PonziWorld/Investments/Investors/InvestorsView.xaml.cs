@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PonziWorld.Investors;
+namespace PonziWorld.Investments.Investors;
 
 public partial class InvestorsView : UserControl
 {

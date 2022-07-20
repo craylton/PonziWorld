@@ -1,7 +1,8 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using PonziWorld.Company;
+using PonziWorld.DataRegion.TimeAdvancement;
 using PonziWorld.Events;
-using PonziWorld.Investors;
+using PonziWorld.Investments.Investors;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
@@ -17,7 +18,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<IInvestorsRepository, MongoDbInvestorsRepository>();
         containerRegistry.Register<ICompanyRepository, MongoDbCompanyRepository>();
         containerRegistry.Register<IDialogCoordinator, DialogCoordinator>();
-        containerRegistry.Register<IInvestorPool, InvestorPool>();
+        containerRegistry.Register<ITimeAdvancementCoordinator, TimeAdvancementCoordinator>();
     }
 
     protected override void OnInitialized()
