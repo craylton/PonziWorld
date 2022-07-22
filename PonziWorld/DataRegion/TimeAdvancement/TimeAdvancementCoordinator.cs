@@ -96,7 +96,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
             .Where(prospectiveInvestor => prospectiveInvestor.WantsToInvest(company))
             .Select(prospective => prospective.AsActiveInvestor(company));
 
-    private async Task<IEnumerable<Investor>> GetNewInvestorsFromPool(Company.Company company)
+    private async Task<List<Investor>> GetNewInvestorsFromPool(Company.Company company)
     {
         IEnumerable<Investor> prospectiveInvestors = await investorsRepository.GetAllProspectiveInvestorsAsync();
 
@@ -105,22 +105,22 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
             .Select(prospective => prospective with
             {
                 Investment = prospective.DetermineInvestmentSize(company)
-            });
+            }).ToList();
     }
 
-    private IEnumerable<Investment> GetReinvestments(
+    private List<Investment> GetReinvestments(
         IEnumerable<Investor> existingInvestors,
         Company.Company company) =>
         existingInvestors
             .Where(investor => investor.WantsToInvest(company))
-            .Select(prospective => prospective.DetermineInvestment(company));
+            .Select(prospective => prospective.DetermineInvestment(company)).ToList();
 
-    private IEnumerable<Investment> GetWithdrawals(
+    private List<Investment> GetWithdrawals(
         IEnumerable<Investor> existingInvestors,
         Company.Company company) =>
         existingInvestors
             .Where(investor => investor.WantsToWithdraw())
-            .Select(withdrawer => withdrawer.DetermineWithdrawal(company));
+            .Select(withdrawer => withdrawer.DetermineWithdrawal(company)).ToList();
 
     private int GetNumberOfNewInvestors(int companyFame) =>
         random.Next((int)Math.Ceiling(Math.Pow(companyFame, 3) / 1100 + companyFame));

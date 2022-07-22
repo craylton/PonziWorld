@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using PonziWorld.Bootstrapping;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -50,6 +51,14 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
         var filter = Builders<Investor>.Filter.Eq(investor => investor.Id, newInvestor.Id);
         return await investorsCollection.CountDocumentsAsync(filter) > 0;
+    }
+
+    public async Task<Investor> GetInvestorByIdAsync(Guid investorId)
+    {
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
+        var filter = Builders<Investor>.Filter.Eq(investor => investor.Id, investorId);
+        var investorsCursor = await investorsCollection.FindAsync(filter);
+        return await investorsCursor.SingleAsync();
     }
 
     public async Task ApplyInvestmentAsync(Investment investment)
