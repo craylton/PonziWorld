@@ -7,4 +7,5 @@ internal interface ICompanyRepository
     Task CreateNewCompanyAsync(Company company);
     Task<Company> GetCompanyAsync();
     Task<bool> GetCompanyExistsAsync();
+    Task UpdateFundsAsync(int companyFunds);
 }

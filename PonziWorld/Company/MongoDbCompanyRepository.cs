@@ -29,4 +29,11 @@ internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompa
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();
         return await companyCollection.CountDocumentsAsync(EmptyFilter) > 0;
     }
+
+    public async Task UpdateFundsAsync(int companyFunds)
+    {
+        IMongoCollection<Company> companyCollection = GetDatabaseCollection();
+        var update = Builders<Company>.Update.Set(company => company.ActualFunds, companyFunds);
+        await companyCollection.UpdateOneAsync(EmptyFilter, update);
+    }
 }
