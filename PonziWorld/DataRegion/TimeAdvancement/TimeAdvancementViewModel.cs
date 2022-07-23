@@ -10,8 +10,7 @@ internal class TimeAdvancementViewModel : BindableBase
 {
     private readonly ITimeAdvancementCoordinator timeAdvancementCoordinator;
     private readonly IEventAggregator eventAggregator;
-
-    private bool _canAdvance;
+    private bool _canAdvance = true;
 
     public bool CanAdvance
     {
@@ -23,7 +22,7 @@ internal class TimeAdvancementViewModel : BindableBase
         }
     }
 
-    public DelegateCommand NextMonthCommand { get; private set; }
+    public DelegateCommand NextMonthCommand { get; }
 
     public TimeAdvancementViewModel(
         ITimeAdvancementCoordinator timeAdvancementCoordinator,
@@ -31,16 +30,18 @@ internal class TimeAdvancementViewModel : BindableBase
     {
         this.timeAdvancementCoordinator = timeAdvancementCoordinator;
         this.eventAggregator = eventAggregator;
+
         NextMonthCommand = new(() => GoToNextMonth().Await(), CanGoToNextMonth);
-        CanAdvance = true;
     }
 
     private async Task GoToNextMonth()
     {
         CanAdvance = false;
+
         var newInvestmentsSummary = await timeAdvancementCoordinator.GetNextMonthInvestmentsAsync();
         await timeAdvancementCoordinator.ApplyAsync(newInvestmentsSummary);
         eventAggregator.GetEvent<NextMonthRequestedEvent>().Publish(newInvestmentsSummary);
+
         CanAdvance = true;
     }
 

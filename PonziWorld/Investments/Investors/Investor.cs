@@ -10,22 +10,22 @@ internal record Investor(
     int TotalFunds,
     int Investment,
     int Satisfaction)
-    : ProspectiveInvestor(Id, Name, TotalFunds)
+    : InvestorBase(Id, Name, TotalFunds)
 {
     public bool IsActiveInvestor => Investment > 0;
 
     internal static Investor FromProspective(ProspectiveInvestor investor, int investmentSize) =>
         new(investor.Id, investor.Name, investor.TotalFunds, investmentSize, 50);
 
-    public override bool WantsToInvest(Company.Company company) =>
+    public bool WantsToInvest(Company.Company company) =>
         IsActiveInvestor
             ? ExistingInvestorWantsToReinvest()
-            : ProspectiveInvestorWantsToReinvest(company);
+            : ProspectiveInvestorWantsToInvest(company);
 
     private bool ExistingInvestorWantsToReinvest() =>
         Random.Shared.Next(400) < Satisfaction;
 
-    private static bool ProspectiveInvestorWantsToReinvest(Company.Company company) =>
+    private static bool ProspectiveInvestorWantsToInvest(Company.Company company) =>
         Random.Shared.Next(400) < company.Attractiveness;
 
     public Investment DetermineInvestment(Company.Company company)
@@ -34,7 +34,7 @@ internal record Investor(
         return new Investment(Id, investmentSize);
     }
 
-    public override int DetermineInvestmentSize(Company.Company company)
+    public int DetermineInvestmentSize(Company.Company company)
     {
         var availableFunds = TotalFunds - Investment;
         double multiplier = (100 - company.Suspicion) / (double)100;

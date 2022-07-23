@@ -10,7 +10,7 @@ internal class MainWindowViewModel : BindableBase
 {
     private readonly IEventAggregator eventAggregator;
     private readonly IDialogCoordinator dialogCoordinator;
-    private bool _isGameLoaded;
+    private bool _isGameLoaded = false;
 
     public bool IsGameLoaded
     {
@@ -24,8 +24,12 @@ internal class MainWindowViewModel : BindableBase
     {
         this.eventAggregator = eventAggregator;
         this.dialogCoordinator = dialogCoordinator;
-        eventAggregator.GetEvent<NewGameRequestedEvent>().Subscribe(() => StartNewGameAsync().Await());
-        eventAggregator.GetEvent<LoadGameRequestedEvent>().Subscribe(OnGameLoaded);
+
+        eventAggregator.GetEvent<NewGameRequestedEvent>()
+            .Subscribe(() => StartNewGameAsync().Await());
+
+        eventAggregator.GetEvent<LoadGameRequestedEvent>()
+            .Subscribe(OnGameLoaded);
     }
 
     private void OnGameLoaded() => IsGameLoaded = true;

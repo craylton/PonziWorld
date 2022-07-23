@@ -12,7 +12,6 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly ICompanyRepository companyRepository;
-    private readonly Random random = new();
 
     public TimeAdvancementCoordinator(
         IInvestorsRepository investorsRepository,
@@ -36,11 +35,11 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
         // 2.1. People who didn't invest in previous months can still invest
         newInvestors.AddRange(await GetNewInvestorsFromPool(company));
 
-        // 3. Investors might want to invest even more
-        IEnumerable<Investment> reinvestments = GetReinvestments(existingInvestors, company);
+        // 3. Existing investors might want to invest even more
+        List<Investment> reinvestments = GetReinvestments(existingInvestors, company).ToList();
 
-        // 4. Investors might want to withdraw some funds
-        IEnumerable<Investment> withdrawals = GetWithdrawals(existingInvestors, company);
+        // 4. Existing investors might want to withdraw some funds
+        List<Investment> withdrawals = GetWithdrawals(existingInvestors, company).ToList();
 
         var investmentsSummary = new NewInvestmentsSummary(
             newInvestors,
@@ -78,25 +77,25 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
 
         foreach (ProspectiveInvestor investor in newInvestmentsSummary.NewProspectiveInvestors)
         {
-            await investorsRepository.AddInvestorAsync(investor.AsInvestor());
+            await investorsRepository.AddInvestorAsync(investor.AsInactiveInvestor());
         }
     }
 
-    private IEnumerable<ProspectiveInvestor> GenerateNewProspectiveInvestors(int companyFame)
+    private static IEnumerable<ProspectiveInvestor> GenerateNewProspectiveInvestors(int companyFame)
     {
         int numberOfNewInvestors = GetNumberOfNewInvestors(companyFame);
         return Enumerable.Range(0, numberOfNewInvestors)
-            .Select(_ => ProspectiveInvestor.GetRandom());
+            .Select(_ => ProspectiveInvestor.GenerateRandom());
     }
 
-    private IEnumerable<Investor> GetNewInvestors(
+    private static IEnumerable<Investor> GetNewInvestors(
         IEnumerable<ProspectiveInvestor> prospectiveInvestors,
         Company.Company company) =>
         prospectiveInvestors
             .Where(prospectiveInvestor => prospectiveInvestor.WantsToInvest(company))
             .Select(prospective => prospective.AsActiveInvestor(company));
 
-    private async Task<List<Investor>> GetNewInvestorsFromPool(Company.Company company)
+    private async Task<IEnumerable<Investor>> GetNewInvestorsFromPool(Company.Company company)
     {
         IEnumerable<Investor> prospectiveInvestors = await investorsRepository.GetAllProspectiveInvestorsAsync();
 
@@ -105,23 +104,23 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
             .Select(prospective => prospective with
             {
                 Investment = prospective.DetermineInvestmentSize(company)
-            }).ToList();
+            });
     }
 
-    private List<Investment> GetReinvestments(
+    private static IEnumerable<Investment> GetReinvestments(
         IEnumerable<Investor> existingInvestors,
         Company.Company company) =>
         existingInvestors
             .Where(investor => investor.WantsToInvest(company))
-            .Select(prospective => prospective.DetermineInvestment(company)).ToList();
+            .Select(prospective => prospective.DetermineInvestment(company));
 
-    private List<Investment> GetWithdrawals(
+    private static IEnumerable<Investment> GetWithdrawals(
         IEnumerable<Investor> existingInvestors,
         Company.Company company) =>
         existingInvestors
             .Where(investor => investor.WantsToWithdraw())
-            .Select(withdrawer => withdrawer.DetermineWithdrawal(company)).ToList();
+            .Select(withdrawer => withdrawer.DetermineWithdrawal(company));
 
-    private int GetNumberOfNewInvestors(int companyFame) =>
-        random.Next((int)Math.Ceiling(Math.Pow(companyFame, 3) / 1100 + companyFame));
+    private static int GetNumberOfNewInvestors(int companyFame) =>
+        Random.Shared.Next((int)Math.Ceiling(Math.Pow(companyFame, 3) / 1100 + companyFame));
 }

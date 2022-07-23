@@ -3,6 +3,7 @@ using PonziWorld.Events;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
+using System;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Splash;
@@ -11,20 +12,31 @@ internal class SplashViewModel : BindableBase
 {
     private readonly ICompanyRepository repository;
     private readonly IEventAggregator eventAggregator;
-    private bool savedGameExists;
+    private bool _savedGameExists = false;
+    private bool _canAccessDatabase = false;
 
     public bool SavedGameExists
     {
-        get => savedGameExists;
+        get => _savedGameExists;
         set
         {
-            SetProperty(ref savedGameExists, value);
+            SetProperty(ref _savedGameExists, value);
             LoadCommand.RaiseCanExecuteChanged();
         }
     }
 
-    public DelegateCommand LoadCommand { get; private set; }
-    public DelegateCommand NewGameCommand { get; private set; }
+    public bool CanAccessDatabase
+    {
+        get => _canAccessDatabase;
+        set
+        {
+            SetProperty(ref _canAccessDatabase, value);
+            NewGameCommand.RaiseCanExecuteChanged();
+        }
+    }
+
+    public DelegateCommand LoadCommand { get; }
+    public DelegateCommand NewGameCommand { get; }
 
     public SplashViewModel(
         ICompanyRepository repository,
@@ -32,13 +44,19 @@ internal class SplashViewModel : BindableBase
     {
         this.repository = repository;
         this.eventAggregator = eventAggregator;
+
         LoadCommand = new(LoadGame, CanLoadGame);
-        NewGameCommand = new(StartNewGame);
-        eventAggregator.GetEvent<MainWindowInitialisedEvent>().Subscribe(() => InitialiseAsync().Await());
+        NewGameCommand = new(StartNewGame, CanStartNewGame);
+
+        eventAggregator.GetEvent<MainWindowInitialisedEvent>()
+            .Subscribe(() => InitialiseAsync().Await());
     }
 
-    private async Task InitialiseAsync() =>
+    private async Task InitialiseAsync()
+    {
         SavedGameExists = await repository.GetCompanyExistsAsync();
+        CanAccessDatabase = true;
+    }
 
     private void LoadGame() =>
         eventAggregator.GetEvent<LoadGameRequestedEvent>().Publish();
@@ -47,4 +65,6 @@ internal class SplashViewModel : BindableBase
         eventAggregator.GetEvent<NewGameRequestedEvent>().Publish();
 
     private bool CanLoadGame() => SavedGameExists;
+
+    private bool CanStartNewGame() => CanAccessDatabase;
 }

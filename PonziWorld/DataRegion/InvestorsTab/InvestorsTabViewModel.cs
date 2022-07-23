@@ -12,8 +12,8 @@ namespace PonziWorld.DataRegion.InvestorsTab;
 
 internal class InvestorsTabViewModel : BindableBase
 {
+    private readonly IInvestorsRepository repository;
     private ObservableCollection<Investor> _investors = new();
-    private readonly IInvestorsRepository investorRepository;
 
     public ObservableCollection<Investor> Investors
     {
@@ -22,10 +22,11 @@ internal class InvestorsTabViewModel : BindableBase
     }
 
     public InvestorsTabViewModel(
-        IInvestorsRepository investorRepository,
+        IInvestorsRepository repository,
         IEventAggregator eventAggregator)
     {
-        this.investorRepository = investorRepository;
+        this.repository = repository;
+
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
             .Subscribe(investmentsSummary => CompileInvestorList(investmentsSummary).Await());
     }
@@ -43,7 +44,7 @@ internal class InvestorsTabViewModel : BindableBase
 
         foreach (var investment in investmentsSummary.Reinvestments)
         {
-            var investor = await investorRepository.GetInvestorByIdAsync(investment.InvestorId);
+            var investor = await repository.GetInvestorByIdAsync(investment.InvestorId);
             investors.Add(investor);
         }
 

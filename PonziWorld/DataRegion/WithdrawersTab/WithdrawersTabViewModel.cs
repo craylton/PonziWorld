@@ -12,8 +12,8 @@ namespace PonziWorld.DataRegion.WithdrawersTab;
 
 internal class WithdrawersTabViewModel : BindableBase
 {
-    private ObservableCollection<Investor> _withdrawers = new();
     private readonly IInvestorsRepository investorRepository;
+    private ObservableCollection<Investor> _withdrawers = new();
 
     public ObservableCollection<Investor> Withdrawers
     {
@@ -26,6 +26,7 @@ internal class WithdrawersTabViewModel : BindableBase
         IEventAggregator eventAggregator)
     {
         this.investorRepository = investorRepository;
+
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
             .Subscribe(investmentsSummary => CompileWithdrawerList(investmentsSummary).Await());
     }

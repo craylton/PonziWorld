@@ -22,9 +22,13 @@ internal class CompanyViewModel : BindableBase
         IEventAggregator eventAggregator)
     {
         this.repository = repository;
-        eventAggregator.GetEvent<LoadGameRequestedEvent>().Subscribe(() => LoadCompanyAsync().Await());
+
+        eventAggregator.GetEvent<LoadGameRequestedEvent>()
+            .Subscribe(() => LoadCompanyAsync().Await());
+
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
             .Subscribe(companyName => CreateCompanyAsync(companyName).Await());
+
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
             .Subscribe(investmentsSummary => UpdateFundsAsync(investmentsSummary).Await());
     }

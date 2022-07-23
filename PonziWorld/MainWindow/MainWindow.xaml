@@ -7,7 +7,6 @@
                       xmlns:local="clr-namespace:PonziWorld.MainWindow"
                       xmlns:investors="clr-namespace:PonziWorld.Investments.Investors"
                       xmlns:company="clr-namespace:PonziWorld.Company"
-                      xmlns:timeAdvancement="clr-namespace:PonziWorld.DataRegion.TimeAdvancement"
                       xmlns:dataRegion="clr-namespace:PonziWorld.DataRegion"
                       xmlns:splash="clr-namespace:PonziWorld.Splash"
                       xmlns:resources="clr-namespace:PonziWorld.Resources"

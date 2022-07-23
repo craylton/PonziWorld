@@ -22,9 +22,15 @@ internal class InvestorsViewModel : BindableBase
         IEventAggregator eventAggregator)
     {
         this.repository = repository;
-        eventAggregator.GetEvent<LoadGameRequestedEvent>().Subscribe(() => UpdateInvestorList().Await());
-        eventAggregator.GetEvent<NewGameInitiatedEvent>().Subscribe(companyName => DeleteAllInvestorsAsync(companyName).Await());
-        eventAggregator.GetEvent<NextMonthRequestedEvent>().Subscribe(_ => UpdateInvestorList().Await());
+
+        eventAggregator.GetEvent<LoadGameRequestedEvent>()
+            .Subscribe(() => UpdateInvestorList().Await());
+
+        eventAggregator.GetEvent<NewGameInitiatedEvent>()
+            .Subscribe(companyName => DeleteAllInvestorsAsync(companyName).Await());
+
+        eventAggregator.GetEvent<NextMonthRequestedEvent>()
+            .Subscribe(_ => UpdateInvestorList().Await());
     }
 
     private async Task DeleteAllInvestorsAsync(string _) =>

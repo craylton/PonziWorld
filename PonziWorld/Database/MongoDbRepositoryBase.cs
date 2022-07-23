@@ -3,7 +3,7 @@ using System.Configuration;
 
 namespace PonziWorld.Bootstrapping;
 
-internal class MongoDbRepositoryBase<TEntity>
+internal abstract class MongoDbRepositoryBase<TEntity>
 {
     private readonly ConnectionStringSettings settings;
 
@@ -23,7 +23,7 @@ internal class MongoDbRepositoryBase<TEntity>
     protected IMongoCollection<TEntity> GetDatabaseCollection()
     {
         var client = new MongoClient(settings.ConnectionString);
-        var database = client.GetDatabase(DatabaseName);
+        IMongoDatabase database = client.GetDatabase(DatabaseName);
         return database.GetCollection<TEntity>(CollectionName);
     }
 }

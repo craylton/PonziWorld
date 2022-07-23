@@ -20,7 +20,7 @@ internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompa
     public async Task<Company> GetCompanyAsync()
     {
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();
-        var companyCursor = await companyCollection.FindAsync(EmptyFilter);
+        IAsyncCursor<Company> companyCursor = await companyCollection.FindAsync(EmptyFilter);
         return await companyCursor.SingleAsync();
     }
 
@@ -33,7 +33,7 @@ internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompa
     public async Task UpdateFundsAsync(int companyFunds)
     {
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();
-        var update = Builders<Company>.Update.Set(company => company.ActualFunds, companyFunds);
+        UpdateDefinition<Company> update = Builders<Company>.Update.Set(company => company.ActualFunds, companyFunds);
         await companyCollection.UpdateOneAsync(EmptyFilter, update);
     }
 }
