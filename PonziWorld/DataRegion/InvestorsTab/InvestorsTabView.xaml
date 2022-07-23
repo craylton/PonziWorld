@@ -8,7 +8,48 @@
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <local:NotZeroToVisibilityConverter x:Key="NotZeroToVisibility" />
+
+        <DataTemplate x:Key="investorTemplate">
+            <Border BorderThickness="2">
+                <Border BorderThickness="2" BorderBrush="#111">
+                    <StackPanel Background="#9d5" Width="250">
+                        <TextBlock Text="{Binding InvestorName}"
+                                   FontSize="16"
+                                   Margin="5,2"
+                                   />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Investment:"
+                                   FontSize="14"
+                                   Margin="5,2"
+                                   />
+                            <TextBlock Visibility="{Binding Path=AmountPreviouslyInvested, Converter={StaticResource NotZeroToVisibility}}"
+                                   Text="{Binding Path=AmountPreviouslyInvested, StringFormat='£{0} + '}"
+                                   FontSize="14"
+                                   Margin="0,2"
+                                   />
+                        <TextBlock Text="{Binding Path=InvestmentSize, StringFormat='£{0}'}"
+                                   FontSize="14"
+                                   FontWeight="Bold"
+                                   Margin="0,2"
+                                   />
+                    </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
     <Grid>
-        <ListBox ItemsSource="{Binding Investors}" DisplayMemberPath="Name" />
+        <ItemsControl ItemsSource="{Binding Investors}"
+                      ItemTemplate="{StaticResource investorTemplate}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel IsItemsHost="True" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
     </Grid>
 </UserControl>

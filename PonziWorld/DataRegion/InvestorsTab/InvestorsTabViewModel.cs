@@ -13,9 +13,9 @@ namespace PonziWorld.DataRegion.InvestorsTab;
 internal class InvestorsTabViewModel : BindableBase
 {
     private readonly IInvestorsRepository repository;
-    private ObservableCollection<Investor> _investors = new();
+    private ObservableCollection<DetailedInvestment> _investors = new();
 
-    public ObservableCollection<Investor> Investors
+    public ObservableCollection<DetailedInvestment> Investors
     {
         get => _investors;
         set => SetProperty(ref _investors, value);
@@ -33,21 +33,23 @@ internal class InvestorsTabViewModel : BindableBase
 
     private async Task CompileInvestorList(NewInvestmentsSummary investmentsSummary)
     {
-        List<Investor> investors = await GetAllNewInvestors(investmentsSummary);
+        List<DetailedInvestment> investments = await GetAllNewInvestments(investmentsSummary);
         Investors.Clear();
-        Investors.AddRange(investors.OrderByDescending(investor => investor.Investment));
+        Investors.AddRange(investments.OrderByDescending(investor => investor.InvestmentSize));
     }
 
-    private async Task<List<Investor>> GetAllNewInvestors(NewInvestmentsSummary investmentsSummary)
+    private async Task<List<DetailedInvestment>> GetAllNewInvestments(NewInvestmentsSummary investmentsSummary)
     {
-        List<Investor> investors = investmentsSummary.NewInvestors.ToList();
+        List<DetailedInvestment> investments = investmentsSummary.NewInvestors
+            .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0))
+            .ToList();
 
-        foreach (var investment in investmentsSummary.Reinvestments)
+        foreach (var reinvestment in investmentsSummary.Reinvestments)
         {
-            var investor = await repository.GetInvestorByIdAsync(investment.InvestorId);
-            investors.Add(investor);
+            var investor = await repository.GetInvestorByIdAsync(reinvestment.InvestorId);
+            investments.Add(new DetailedInvestment(investor.Name, reinvestment.Amount, investor.Investment - reinvestment.Amount));
         }
 
-        return investors;
+        return investments;
     }
 }
