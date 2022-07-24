@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace PonziWorld.DataRegion.InvestorsTab;
+namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorsTab;
 
 public partial class InvestorsTabView : UserControl
 {

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace PonziWorld.DataRegion.InvestorsTab;
+namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorsTab;
 
 internal class NotZeroToVisibilityConverter : IValueConverter
 {
@@ -14,5 +14,10 @@ internal class NotZeroToVisibilityConverter : IValueConverter
         CultureInfo culture) =>
         value is int i && i != 0 ? Visibility.Visible : Visibility.Collapsed;
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
+    public object ConvertBack(
+        object value,
+        Type targetType,
+        object parameter,
+        CultureInfo culture) =>
+        throw new NotImplementedException();
 }

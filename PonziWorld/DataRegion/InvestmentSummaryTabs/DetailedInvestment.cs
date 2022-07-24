@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PonziWorld.Investments;
+﻿namespace PonziWorld.DataRegion.InvestmentSummaryTabs;
 
 internal record DetailedInvestment(
     string InvestorName,

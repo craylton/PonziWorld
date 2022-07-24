@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PonziWorld.DataRegion.InvestorsTab;
+namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorsTab;
 
 internal class InvestorsTabViewModel : BindableBase
 {
@@ -44,10 +44,13 @@ internal class InvestorsTabViewModel : BindableBase
             .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0))
             .ToList();
 
-        foreach (var reinvestment in investmentsSummary.Reinvestments)
+        foreach (Investment reinvestment in investmentsSummary.Reinvestments)
         {
             var investor = await repository.GetInvestorByIdAsync(reinvestment.InvestorId);
-            investments.Add(new DetailedInvestment(investor.Name, reinvestment.Amount, investor.Investment - reinvestment.Amount));
+            investments.Add(new DetailedInvestment(
+                investor.Name,
+                reinvestment.Amount,
+                investor.Investment - reinvestment.Amount));
         }
 
         return investments;

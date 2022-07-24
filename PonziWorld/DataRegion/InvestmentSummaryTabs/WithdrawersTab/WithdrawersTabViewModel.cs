@@ -3,19 +3,20 @@ using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
 using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PonziWorld.DataRegion.WithdrawersTab;
+namespace PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
 
 internal class WithdrawersTabViewModel : BindableBase
 {
     private readonly IInvestorsRepository investorRepository;
-    private ObservableCollection<Investor> _withdrawers = new();
+    private ObservableCollection<DetailedInvestment> _withdrawers = new();
 
-    public ObservableCollection<Investor> Withdrawers
+    public ObservableCollection<DetailedInvestment> Withdrawers
     {
         get => _withdrawers;
         set => SetProperty(ref _withdrawers, value);
@@ -33,21 +34,24 @@ internal class WithdrawersTabViewModel : BindableBase
 
     private async Task CompileWithdrawerList(NewInvestmentsSummary investmentsSummary)
     {
-        List<Investor> withdrawers = await GetAllNewWithdrawers(investmentsSummary);
+        List<DetailedInvestment> withdrawals = await GetAllNewWithdrawers(investmentsSummary);
         Withdrawers.Clear();
-        Withdrawers.AddRange(withdrawers.OrderBy(withdrawer => withdrawer.Investment));
+        Withdrawers.AddRange(withdrawals.OrderByDescending(withdrawer => withdrawer.InvestmentSize));
     }
 
-    private async Task<List<Investor>> GetAllNewWithdrawers(NewInvestmentsSummary investmentsSummary)
+    private async Task<List<DetailedInvestment>> GetAllNewWithdrawers(NewInvestmentsSummary investmentsSummary)
     {
-        var withdrawers = new List<Investor>();
+        var withdrawals = new List<DetailedInvestment>();
 
-        foreach (var withdrawal in investmentsSummary.Withdrawals)
+        foreach (Investment withdrawal in investmentsSummary.Withdrawals)
         {
             var withdrawer = await investorRepository.GetInvestorByIdAsync(withdrawal.InvestorId);
-            withdrawers.Add(withdrawer);
+            withdrawals.Add(new DetailedInvestment(
+                withdrawer.Name,
+                Math.Abs(withdrawal.Amount),
+                withdrawer.Investment + withdrawal.Amount));
         }
 
-        return withdrawers;
+        return withdrawals;
     }
 }
