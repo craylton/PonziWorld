@@ -39,7 +39,7 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <ItemsControl ItemsSource="{Binding Withdrawers}"
+    <ItemsControl ItemsSource="{Binding Withdrawals}"
                     ItemTemplate="{StaticResource investorTemplate}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>

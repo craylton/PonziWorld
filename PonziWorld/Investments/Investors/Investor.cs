@@ -31,7 +31,7 @@ internal record Investor(
     public Investment DetermineInvestment(Company.Company company)
     {
         int investmentSize = DetermineInvestmentSize(company);
-        return new Investment(Id, investmentSize);
+        return new Investment(Guid.NewGuid(), Id, investmentSize, company.Month);
     }
 
     public int DetermineInvestmentSize(Company.Company company)
@@ -47,7 +47,7 @@ internal record Investor(
     public Investment DetermineWithdrawal(Company.Company company)
     {
         int investmentSize = DetermineWithdrawalSize(company);
-        return new Investment(Id, -investmentSize);
+        return new Investment(Guid.NewGuid(), Id, -investmentSize, company.Month);
     }
 
     private int DetermineWithdrawalSize(Company.Company company)

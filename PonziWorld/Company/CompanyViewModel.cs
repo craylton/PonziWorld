@@ -61,7 +61,7 @@ internal class CompanyViewModel : BindableBase
             companyFunds += withdrawal.Amount;
         }
 
-        await repository.UpdateFundsAsync(companyFunds);
-        Company = await repository.GetCompanyAsync();
+        await repository.MoveToNextMonthAsync(companyFunds);
+        await LoadCompanyAsync();
     }
 }

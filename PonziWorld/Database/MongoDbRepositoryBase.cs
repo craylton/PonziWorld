@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using System.Configuration;
 
-namespace PonziWorld.Bootstrapping;
+namespace PonziWorld.Database;
 
 internal abstract class MongoDbRepositoryBase<TEntity>
 {

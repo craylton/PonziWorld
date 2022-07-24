@@ -35,9 +35,21 @@ internal record NewInvestmentsSummary(
     {
         IEnumerable<Investment> allInvestments = Withdrawals.ToList().Concat(Reinvestments);
 
-        return (from investment in allInvestments
-                let allInvestmentsByInvestor = allInvestments.Where(inv => inv.InvestorId == investment.InvestorId)
-                let totalAmountInvestedByInvestor = allInvestmentsByInvestor.Sum(inv => inv.Amount)
-                select investment with { Amount = totalAmountInvestedByInvestor }).Distinct();
+        List<Investment> combinedInvestments = new();
+
+        foreach (var investment in allInvestments)
+        {
+            var allInvestmentsByInvestor = allInvestments.Where(inv => inv.InvestorId == investment.InvestorId);
+            var totalAmountInvestedByInvestor = allInvestmentsByInvestor.Sum(inv => inv.Amount);
+            combinedInvestments.Add(investment with { Amount = totalAmountInvestedByInvestor });
+        }
+
+        // select a distinct investment for each investor
+        combinedInvestments = combinedInvestments
+            .GroupBy(p => p.InvestorId)
+            .Select(g => g.First())
+            .ToList();
+
+        return combinedInvestments;
     }
 }

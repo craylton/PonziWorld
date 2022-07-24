@@ -2,6 +2,7 @@
 using PonziWorld.Company;
 using PonziWorld.DataRegion.TimeAdvancement;
 using PonziWorld.Events;
+using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
 using Prism.Ioc;
@@ -17,6 +18,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<Window, MainWindow.MainWindow>();
         containerRegistry.Register<IInvestorsRepository, MongoDbInvestorsRepository>();
         containerRegistry.Register<ICompanyRepository, MongoDbCompanyRepository>();
+        containerRegistry.Register<IInvestmentsRepository, MongoDbInvestmentsRepository>();
         containerRegistry.Register<IDialogCoordinator, DialogCoordinator>();
         containerRegistry.Register<ITimeAdvancementCoordinator, TimeAdvancementCoordinator>();
     }

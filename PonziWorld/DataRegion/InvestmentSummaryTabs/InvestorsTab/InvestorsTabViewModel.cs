@@ -1,4 +1,5 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Company;
+using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
@@ -12,7 +13,9 @@ namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorsTab;
 
 internal class InvestorsTabViewModel : BindableBase
 {
-    private readonly IInvestorsRepository repository;
+    private readonly IInvestorsRepository investorsRepository;
+    private readonly ICompanyRepository companyRepository;
+    private readonly IInvestmentsRepository investmentsRepository;
     private ObservableCollection<DetailedInvestment> _investments = new();
 
     public ObservableCollection<DetailedInvestment> Investments
@@ -22,18 +25,42 @@ internal class InvestorsTabViewModel : BindableBase
     }
 
     public InvestorsTabViewModel(
-        IInvestorsRepository repository,
+        IInvestorsRepository investorsRepository,
+        ICompanyRepository companyRepository,
+        IInvestmentsRepository investmentsRepository,
         IEventAggregator eventAggregator)
     {
-        this.repository = repository;
+        this.investorsRepository = investorsRepository;
+        this.companyRepository = companyRepository;
+
+        eventAggregator.GetEvent<LoadGameRequestedEvent>()
+            .Subscribe(() => LoadLastMonthInvestments().Await());
 
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
             .Subscribe(investmentsSummary => CompileInvestmentList(investmentsSummary).Await());
+        this.investmentsRepository = investmentsRepository;
+    }
+
+    private async Task LoadLastMonthInvestments()
+    {
+        Company.Company company = await companyRepository.GetCompanyAsync();
+
+        IEnumerable<Investment> lastMonthInvestments = (await investmentsRepository
+            .GetInvestmentsByMonthAsync(company.Month - 1))
+            .Where(investment => investment.Amount > 0);
+
+        List<DetailedInvestment> investments = await GetDetailedInvestments(lastMonthInvestments);
+        SetInvestmentsList(investments);
     }
 
     private async Task CompileInvestmentList(NewInvestmentsSummary investmentsSummary)
     {
         List<DetailedInvestment> investments = await GetAllNewInvestments(investmentsSummary);
+        SetInvestmentsList(investments);
+    }
+
+    private void SetInvestmentsList(List<DetailedInvestment> investments)
+    {
         Investments.Clear();
         Investments.AddRange(investments.OrderByDescending(investment => investment.InvestmentSize));
     }
@@ -44,15 +71,24 @@ internal class InvestorsTabViewModel : BindableBase
             .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0))
             .ToList();
 
-        foreach (Investment reinvestment in investmentsSummary.Reinvestments)
+        List<DetailedInvestment> reinvestments = await GetDetailedInvestments(investmentsSummary.Reinvestments);
+        investments.AddRange(reinvestments);
+        return investments;
+    }
+
+    private async Task<List<DetailedInvestment>> GetDetailedInvestments(IEnumerable<Investment> investments)
+    {
+        List<DetailedInvestment> detailedInvestments = new();
+
+        foreach (Investment investment in investments)
         {
-            Investor investor = await repository.GetInvestorByIdAsync(reinvestment.InvestorId);
-            investments.Add(new DetailedInvestment(
+            Investor investor = await investorsRepository.GetInvestorByIdAsync(investment.InvestorId);
+            detailedInvestments.Add(new DetailedInvestment(
                 investor.Name,
-                reinvestment.Amount,
-                investor.Investment - reinvestment.Amount));
+                investment.Amount,
+                investor.Investment - investment.Amount));
         }
 
-        return investments;
+        return detailedInvestments;
     }
 }

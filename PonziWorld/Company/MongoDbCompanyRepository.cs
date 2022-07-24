@@ -1,5 +1,5 @@
 ﻿using MongoDB.Driver;
-using PonziWorld.Bootstrapping;
+using PonziWorld.Database;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Company;
@@ -30,12 +30,13 @@ internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompa
         return await companyCollection.CountDocumentsAsync(EmptyFilter) > 0;
     }
 
-    public async Task UpdateFundsAsync(int companyFunds)
+    public async Task MoveToNextMonthAsync(int newFunds)
     {
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();
 
         UpdateDefinition<Company> update = Builders<Company>.Update
-            .Set(company => company.ActualFunds, companyFunds);
+            .Set(company => company.ActualFunds, newFunds)
+            .Inc(company => company.Month, 1);
 
         await companyCollection.UpdateOneAsync(EmptyFilter, update);
     }

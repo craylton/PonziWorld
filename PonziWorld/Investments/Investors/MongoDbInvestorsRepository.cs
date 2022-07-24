@@ -1,5 +1,5 @@
 ﻿using MongoDB.Driver;
-using PonziWorld.Bootstrapping;
+using PonziWorld.Database;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,8 +21,8 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
     public async Task<IEnumerable<Investor>> GetAllInvestorsAsync()
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(EmptyFilter);
-        return await investorsCursor.ToListAsync();
+        IAsyncCursor<Investor> cursor = await investorsCollection.FindAsync(EmptyFilter);
+        return await cursor.ToListAsync();
     }
 
     public async Task<IEnumerable<Investor>> GetAllActiveInvestorsAsync()
@@ -37,8 +37,8 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
 
         FindOptions<Investor, Investor> findOptions = new() { Sort = sortOrder };
 
-        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(filter, findOptions);
-        return await investorsCursor.ToListAsync();
+        IAsyncCursor<Investor> cursor = await investorsCollection.FindAsync(filter, findOptions);
+        return  await cursor.ToListAsync();
     }
 
     public async Task<IEnumerable<Investor>> GetAllProspectiveInvestorsAsync()
@@ -51,8 +51,8 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
         FilterDefinition<Investor> filter = Builders<Investor>.Filter
             .Eq(investor => investor.Investment, 0);
 
-        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(filter);
-        return await investorsCursor.ToListAsync();
+        IAsyncCursor<Investor> cursor = await investorsCollection.FindAsync(filter);
+        return await cursor.ToListAsync();
     }
 
     public async Task<bool> GetInvestorExistsAsync(Investor newInvestor)
@@ -72,8 +72,8 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
         FilterDefinition<Investor> filter = Builders<Investor>.Filter
             .Eq(investor => investor.Id, investorId);
 
-        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(filter);
-        return await investorsCursor.SingleAsync();
+        IAsyncCursor<Investor> cursor = await investorsCollection.FindAsync(filter);
+        return await cursor.SingleAsync();
     }
 
     public async Task ApplyInvestmentAsync(Investment investment)

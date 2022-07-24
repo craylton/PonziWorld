@@ -12,13 +12,16 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly ICompanyRepository companyRepository;
+    private readonly IInvestmentsRepository investmentsRepository;
 
     public TimeAdvancementCoordinator(
         IInvestorsRepository investorsRepository,
-        ICompanyRepository companyRepository)
+        ICompanyRepository companyRepository,
+        IInvestmentsRepository investmentsRepository)
     {
         this.investorsRepository = investorsRepository;
         this.companyRepository = companyRepository;
+        this.investmentsRepository = investmentsRepository;
     }
 
     public async Task<NewInvestmentsSummary> GetNextMonthInvestmentsAsync()
@@ -52,27 +55,29 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
 
     public async Task ApplyAsync(NewInvestmentsSummary newInvestmentsSummary)
     {
+        Company.Company company = await companyRepository.GetCompanyAsync();
+
         foreach (Investor newInvestor in newInvestmentsSummary.NewInvestors)
         {
+            Investment investment = Investment.GetNew(newInvestor, company);
+            await investmentsRepository.AddInvestmentAsync(investment);
+
             if (await investorsRepository.GetInvestorExistsAsync(newInvestor))
-            {
-                Investment investment = new(newInvestor.Id, newInvestor.Investment);
                 await investorsRepository.ApplyInvestmentAsync(investment);
-            }
             else
-            {
                 await investorsRepository.AddInvestorAsync(newInvestor);
-            }
         }
 
         foreach (Investment investment in newInvestmentsSummary.Reinvestments)
         {
             await investorsRepository.ApplyInvestmentAsync(investment);
+            await investmentsRepository.AddInvestmentAsync(investment);
         }
 
         foreach (Investment withdrawal in newInvestmentsSummary.Withdrawals)
         {
             await investorsRepository.ApplyInvestmentAsync(withdrawal);
+            await investmentsRepository.AddInvestmentAsync(withdrawal);
         }
 
         foreach (ProspectiveInvestor investor in newInvestmentsSummary.NewProspectiveInvestors)
@@ -112,7 +117,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
         Company.Company company) =>
         existingInvestors
             .Where(investor => investor.WantsToInvest(company))
-            .Select(prospective => prospective.DetermineInvestment(company));
+            .Select(investor => investor.DetermineInvestment(company));
 
     private static IEnumerable<Investment> GetWithdrawals(
         IEnumerable<Investor> existingInvestors,
