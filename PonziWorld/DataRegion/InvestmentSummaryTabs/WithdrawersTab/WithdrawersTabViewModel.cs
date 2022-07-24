@@ -14,12 +14,12 @@ namespace PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
 internal class WithdrawersTabViewModel : BindableBase
 {
     private readonly IInvestorsRepository investorRepository;
-    private ObservableCollection<DetailedInvestment> _withdrawers = new();
+    private ObservableCollection<DetailedInvestment> _withdrawals = new();
 
-    public ObservableCollection<DetailedInvestment> Withdrawers
+    public ObservableCollection<DetailedInvestment> Withdrawals
     {
-        get => _withdrawers;
-        set => SetProperty(ref _withdrawers, value);
+        get => _withdrawals;
+        set => SetProperty(ref _withdrawals, value);
     }
 
     public WithdrawersTabViewModel(
@@ -29,17 +29,17 @@ internal class WithdrawersTabViewModel : BindableBase
         this.investorRepository = investorRepository;
 
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
-            .Subscribe(investmentsSummary => CompileWithdrawerList(investmentsSummary).Await());
+            .Subscribe(investmentsSummary => CompileWithdrawalList(investmentsSummary).Await());
     }
 
-    private async Task CompileWithdrawerList(NewInvestmentsSummary investmentsSummary)
+    private async Task CompileWithdrawalList(NewInvestmentsSummary investmentsSummary)
     {
-        List<DetailedInvestment> withdrawals = await GetAllNewWithdrawers(investmentsSummary);
-        Withdrawers.Clear();
-        Withdrawers.AddRange(withdrawals.OrderByDescending(withdrawer => withdrawer.InvestmentSize));
+        List<DetailedInvestment> withdrawals = await GetAllNewWithdrawals(investmentsSummary);
+        Withdrawals.Clear();
+        Withdrawals.AddRange(withdrawals.OrderByDescending(withdrawal => withdrawal.InvestmentSize));
     }
 
-    private async Task<List<DetailedInvestment>> GetAllNewWithdrawers(NewInvestmentsSummary investmentsSummary)
+    private async Task<List<DetailedInvestment>> GetAllNewWithdrawals(NewInvestmentsSummary investmentsSummary)
     {
         List<DetailedInvestment> withdrawals = new();
 

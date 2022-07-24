@@ -13,12 +13,12 @@ namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorsTab;
 internal class InvestorsTabViewModel : BindableBase
 {
     private readonly IInvestorsRepository repository;
-    private ObservableCollection<DetailedInvestment> _investors = new();
+    private ObservableCollection<DetailedInvestment> _investments = new();
 
-    public ObservableCollection<DetailedInvestment> Investors
+    public ObservableCollection<DetailedInvestment> Investments
     {
-        get => _investors;
-        set => SetProperty(ref _investors, value);
+        get => _investments;
+        set => SetProperty(ref _investments, value);
     }
 
     public InvestorsTabViewModel(
@@ -28,14 +28,14 @@ internal class InvestorsTabViewModel : BindableBase
         this.repository = repository;
 
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
-            .Subscribe(investmentsSummary => CompileInvestorList(investmentsSummary).Await());
+            .Subscribe(investmentsSummary => CompileInvestmentList(investmentsSummary).Await());
     }
 
-    private async Task CompileInvestorList(NewInvestmentsSummary investmentsSummary)
+    private async Task CompileInvestmentList(NewInvestmentsSummary investmentsSummary)
     {
         List<DetailedInvestment> investments = await GetAllNewInvestments(investmentsSummary);
-        Investors.Clear();
-        Investors.AddRange(investments.OrderByDescending(investor => investor.InvestmentSize));
+        Investments.Clear();
+        Investments.AddRange(investments.OrderByDescending(investment => investment.InvestmentSize));
     }
 
     private async Task<List<DetailedInvestment>> GetAllNewInvestments(NewInvestmentsSummary investmentsSummary)

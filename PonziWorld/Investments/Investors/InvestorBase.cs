@@ -2,7 +2,10 @@
 
 namespace PonziWorld.Investments.Investors;
 
-internal record InvestorBase(
+internal abstract record InvestorBase(
     Guid Id,
     string Name,
-    int TotalFunds);
+    int TotalFunds)
+{
+    public abstract bool WantsToInvest(Company.Company company);
+}

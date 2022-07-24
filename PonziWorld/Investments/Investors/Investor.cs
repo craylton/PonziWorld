@@ -17,7 +17,7 @@ internal record Investor(
     internal static Investor FromProspective(ProspectiveInvestor investor, int investmentSize) =>
         new(investor.Id, investor.Name, investor.TotalFunds, investmentSize, 50);
 
-    public bool WantsToInvest(Company.Company company) =>
+    public override bool WantsToInvest(Company.Company company) =>
         IsActiveInvestor
             ? ExistingInvestorWantsToReinvest()
             : ProspectiveInvestorWantsToInvest(company);
@@ -41,16 +41,16 @@ internal record Investor(
         return Random.Shared.Next((int)(availableFunds * multiplier));
     }
 
-    internal bool WantsToWithdraw() =>
+    public bool WantsToWithdraw() =>
         Random.Shared.Next(100) < Math.Pow(100 - Satisfaction, 2) / 100;
 
-    internal Investment DetermineWithdrawal(Company.Company company)
+    public Investment DetermineWithdrawal(Company.Company company)
     {
         int investmentSize = DetermineWithdrawalSize(company);
         return new Investment(Id, -investmentSize);
     }
 
-    internal int DetermineWithdrawalSize(Company.Company company)
+    private int DetermineWithdrawalSize(Company.Company company)
     {
         double multiplier = company.Suspicion / (double)100;
         return Random.Shared.Next((int)(Investment * multiplier));

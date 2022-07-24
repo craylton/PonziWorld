@@ -14,7 +14,7 @@ internal record ProspectiveInvestor(
             Generator.GenerateRandomFullName(),
             Random.Shared.Next(1000));
 
-    public bool WantsToInvest(Company.Company company) =>
+    public override bool WantsToInvest(Company.Company company) =>
         Random.Shared.Next(100) < company.Attractiveness;
 
     public Investor AsActiveInvestor(Company.Company company)
@@ -25,6 +25,6 @@ internal record ProspectiveInvestor(
 
     public Investor AsInactiveInvestor() => new(Id, Name, TotalFunds, 0, 50);
 
-    public int DetermineInvestmentSize(Company.Company company) =>
+    private int DetermineInvestmentSize(Company.Company company) =>
         Random.Shared.Next(TotalFunds * (100 - company.Suspicion) / 100);
 }
