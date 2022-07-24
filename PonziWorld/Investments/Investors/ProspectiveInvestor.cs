@@ -19,7 +19,7 @@ internal record ProspectiveInvestor(
 
     public Investor AsActiveInvestor(Company.Company company)
     {
-        var investmentSize = DetermineInvestmentSize(company);
+        int investmentSize = DetermineInvestmentSize(company);
         return new(Id, Name, TotalFunds, investmentSize, 50);
     }
 

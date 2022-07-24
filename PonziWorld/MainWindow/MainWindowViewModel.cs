@@ -36,7 +36,7 @@ internal class MainWindowViewModel : BindableBase
 
     private async Task StartNewGameAsync()
     {
-        var companyName = await dialogCoordinator
+        string? companyName = await dialogCoordinator
             .ShowInputAsync(this, "Create a new game", "Enter the name of your company");
 
         if (companyName is null)

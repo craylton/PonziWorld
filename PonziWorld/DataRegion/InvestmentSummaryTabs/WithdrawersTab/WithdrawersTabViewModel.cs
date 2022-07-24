@@ -41,11 +41,11 @@ internal class WithdrawersTabViewModel : BindableBase
 
     private async Task<List<DetailedInvestment>> GetAllNewWithdrawers(NewInvestmentsSummary investmentsSummary)
     {
-        var withdrawals = new List<DetailedInvestment>();
+        List<DetailedInvestment> withdrawals = new();
 
         foreach (Investment withdrawal in investmentsSummary.Withdrawals)
         {
-            var withdrawer = await investorRepository.GetInvestorByIdAsync(withdrawal.InvestorId);
+            Investor withdrawer = await investorRepository.GetInvestorByIdAsync(withdrawal.InvestorId);
             withdrawals.Add(new DetailedInvestment(
                 withdrawer.Name,
                 Math.Abs(withdrawal.Amount),

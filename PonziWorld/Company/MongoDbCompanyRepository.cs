@@ -33,7 +33,10 @@ internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompa
     public async Task UpdateFundsAsync(int companyFunds)
     {
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();
-        UpdateDefinition<Company> update = Builders<Company>.Update.Set(company => company.ActualFunds, companyFunds);
+
+        UpdateDefinition<Company> update = Builders<Company>.Update
+            .Set(company => company.ActualFunds, companyFunds);
+
         await companyCollection.UpdateOneAsync(EmptyFilter, update);
     }
 }

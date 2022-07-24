@@ -46,7 +46,7 @@ internal class InvestorsTabViewModel : BindableBase
 
         foreach (Investment reinvestment in investmentsSummary.Reinvestments)
         {
-            var investor = await repository.GetInvestorByIdAsync(reinvestment.InvestorId);
+            Investor investor = await repository.GetInvestorByIdAsync(reinvestment.InvestorId);
             investments.Add(new DetailedInvestment(
                 investor.Name,
                 reinvestment.Amount,

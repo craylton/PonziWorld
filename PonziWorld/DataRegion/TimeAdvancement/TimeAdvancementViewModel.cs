@@ -1,4 +1,5 @@
 ﻿using PonziWorld.Events;
+using PonziWorld.Investments;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -38,7 +39,7 @@ internal class TimeAdvancementViewModel : BindableBase
     {
         CanAdvance = false;
 
-        var newInvestmentsSummary = await timeAdvancementCoordinator.GetNextMonthInvestmentsAsync();
+        NewInvestmentsSummary newInvestmentsSummary = await timeAdvancementCoordinator.GetNextMonthInvestmentsAsync();
         await timeAdvancementCoordinator.ApplyAsync(newInvestmentsSummary);
         eventAggregator.GetEvent<NextMonthRequestedEvent>().Publish(newInvestmentsSummary);
 

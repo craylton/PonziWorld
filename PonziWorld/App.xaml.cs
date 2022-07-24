@@ -24,7 +24,7 @@ public partial class App : PrismApplication
     protected override void OnInitialized()
     {
         base.OnInitialized();
-        var eventAggregator = Container.Resolve<IEventAggregator>();
+        IEventAggregator eventAggregator = Container.Resolve<IEventAggregator>();
         eventAggregator.GetEvent<MainWindowInitialisedEvent>().Publish();
     }
 

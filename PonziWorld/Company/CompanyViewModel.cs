@@ -1,5 +1,6 @@
 ﻿using PonziWorld.Events;
 using PonziWorld.Investments;
+using PonziWorld.Investments.Investors;
 using Prism.Events;
 using Prism.Mvvm;
 using System.Threading.Tasks;
@@ -38,7 +39,7 @@ internal class CompanyViewModel : BindableBase
 
     private async Task CreateCompanyAsync(string companyName)
     {
-        var newCompany = new Company(companyName, 0, 0, 0, 10, 1, 5);
+        Company newCompany = new(companyName, 0, 0, 0, 10, 1, 5);
         await repository.CreateNewCompanyAsync(newCompany);
         Company = newCompany;
     }
@@ -47,15 +48,15 @@ internal class CompanyViewModel : BindableBase
     {
         int companyFunds = Company.ActualFunds;
 
-        foreach (var newInvestor in investmentsSummary.NewInvestors)
+        foreach (Investor newInvestor in investmentsSummary.NewInvestors)
         {
             companyFunds += newInvestor.Investment;
         }
-        foreach (var reinvestment in investmentsSummary.Reinvestments)
+        foreach (Investment reinvestment in investmentsSummary.Reinvestments)
         {
             companyFunds += reinvestment.Amount;
         }
-        foreach (var withdrawal in investmentsSummary.Withdrawals)
+        foreach (Investment withdrawal in investmentsSummary.Withdrawals)
         {
             companyFunds += withdrawal.Amount;
         }

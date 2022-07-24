@@ -1,6 +1,7 @@
 ﻿using PonziWorld.Events;
 using Prism.Events;
 using Prism.Mvvm;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -38,7 +39,7 @@ internal class InvestorsViewModel : BindableBase
 
     private async Task UpdateInvestorList()
     {
-        var investors = await repository.GetAllActiveInvestorsAsync();
+        IEnumerable<Investor> investors = await repository.GetAllActiveInvestorsAsync();
         Investors.Clear();
         Investors.AddRange(investors);
     }

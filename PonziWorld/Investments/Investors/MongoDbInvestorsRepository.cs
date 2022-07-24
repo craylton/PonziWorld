@@ -21,51 +21,71 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
     public async Task<IEnumerable<Investor>> GetAllInvestorsAsync()
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        var investorsCursor = await investorsCollection.FindAsync(EmptyFilter);
+        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(EmptyFilter);
         return await investorsCursor.ToListAsync();
     }
 
     public async Task<IEnumerable<Investor>> GetAllActiveInvestorsAsync()
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        var sortOrder = Builders<Investor>.Sort.Descending(investor => investor.Investment);
-        var filter = Builders<Investor>.Filter.Gt(investor => investor.Investment, 0);
-        var findOptions = new FindOptions<Investor, Investor> { Sort = sortOrder };
 
-        var investorsCursor = await investorsCollection.FindAsync(filter, findOptions);
+        SortDefinition<Investor> sortOrder = Builders<Investor>.Sort
+            .Descending(investor => investor.Investment);
+
+        FilterDefinition<Investor> filter = Builders<Investor>.Filter
+            .Gt(investor => investor.Investment, 0);
+
+        FindOptions<Investor, Investor> findOptions = new() { Sort = sortOrder };
+
+        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(filter, findOptions);
         return await investorsCursor.ToListAsync();
     }
 
     public async Task<IEnumerable<Investor>> GetAllProspectiveInvestorsAsync()
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        var sortOrder = Builders<Investor>.Sort.Descending(investor => investor.Investment);
-        var filter = Builders<Investor>.Filter.Eq(investor => investor.Investment, 0);
 
-        var investorsCursor = await investorsCollection.FindAsync(filter);
+        SortDefinition<Investor> sortOrder = Builders<Investor>.Sort
+            .Descending(investor => investor.Investment);
+
+        FilterDefinition<Investor> filter = Builders<Investor>.Filter
+            .Eq(investor => investor.Investment, 0);
+
+        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(filter);
         return await investorsCursor.ToListAsync();
     }
 
     public async Task<bool> GetInvestorExistsAsync(Investor newInvestor)
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        var filter = Builders<Investor>.Filter.Eq(investor => investor.Id, newInvestor.Id);
+
+        FilterDefinition<Investor> filter = Builders<Investor>.Filter
+            .Eq(investor => investor.Id, newInvestor.Id);
+
         return await investorsCollection.CountDocumentsAsync(filter) > 0;
     }
 
     public async Task<Investor> GetInvestorByIdAsync(Guid investorId)
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        var filter = Builders<Investor>.Filter.Eq(investor => investor.Id, investorId);
-        var investorsCursor = await investorsCollection.FindAsync(filter);
+
+        FilterDefinition<Investor> filter = Builders<Investor>.Filter
+            .Eq(investor => investor.Id, investorId);
+
+        IAsyncCursor<Investor> investorsCursor = await investorsCollection.FindAsync(filter);
         return await investorsCursor.SingleAsync();
     }
 
     public async Task ApplyInvestmentAsync(Investment investment)
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        var filter = Builders<Investor>.Filter.Eq(investor => investor.Id, investment.InvestorId);
-        var update = Builders<Investor>.Update.Inc(investor => investor.Investment, investment.Amount);
+
+        FilterDefinition<Investor> filter = Builders<Investor>.Filter
+            .Eq(investor => investor.Id, investment.InvestorId);
+
+        UpdateDefinition<Investor> update = Builders<Investor>.Update
+            .Inc(investor => investor.Investment, investment.Amount);
+
         await investorsCollection.UpdateOneAsync(filter, update);
     }
 

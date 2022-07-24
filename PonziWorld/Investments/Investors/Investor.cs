@@ -30,13 +30,13 @@ internal record Investor(
 
     public Investment DetermineInvestment(Company.Company company)
     {
-        var investmentSize = DetermineInvestmentSize(company);
+        int investmentSize = DetermineInvestmentSize(company);
         return new Investment(Id, investmentSize);
     }
 
     public int DetermineInvestmentSize(Company.Company company)
     {
-        var availableFunds = TotalFunds - Investment;
+        int availableFunds = TotalFunds - Investment;
         double multiplier = (100 - company.Suspicion) / (double)100;
         return Random.Shared.Next((int)(availableFunds * multiplier));
     }
@@ -46,7 +46,7 @@ internal record Investor(
 
     internal Investment DetermineWithdrawal(Company.Company company)
     {
-        var investmentSize = DetermineWithdrawalSize(company);
+        int investmentSize = DetermineWithdrawalSize(company);
         return new Investment(Id, -investmentSize);
     }
 

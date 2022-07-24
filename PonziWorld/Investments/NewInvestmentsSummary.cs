@@ -21,8 +21,8 @@ internal record NewInvestmentsSummary(
 
         // Combine the investments of those who had multiple investments/withdrawals in one month
         IEnumerable<Investment> combinedInvestments = GetCombinedInvestments();
-        var newWithdrawals = combinedInvestments.Where(investment => investment.Amount < 0);
-        var newReinvestments = combinedInvestments.Where(investment => investment.Amount > 0);
+        IEnumerable<Investment> newWithdrawals = combinedInvestments.Where(investment => investment.Amount < 0);
+        IEnumerable<Investment> newReinvestments = combinedInvestments.Where(investment => investment.Amount > 0);
 
         return new NewInvestmentsSummary(
             NewInvestors.Where(investor => investor.IsActiveInvestor),

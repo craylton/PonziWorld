@@ -22,7 +22,7 @@ internal abstract class MongoDbRepositoryBase<TEntity>
 
     protected IMongoCollection<TEntity> GetDatabaseCollection()
     {
-        var client = new MongoClient(settings.ConnectionString);
+        MongoClient client = new(settings.ConnectionString);
         IMongoDatabase database = client.GetDatabase(DatabaseName);
         return database.GetCollection<TEntity>(CollectionName);
     }

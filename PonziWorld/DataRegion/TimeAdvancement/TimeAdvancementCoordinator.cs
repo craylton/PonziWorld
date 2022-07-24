@@ -41,7 +41,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
         // 4. Existing investors might want to withdraw some funds
         List<Investment> withdrawals = GetWithdrawals(existingInvestors, company).ToList();
 
-        var investmentsSummary = new NewInvestmentsSummary(
+        NewInvestmentsSummary investmentsSummary = new(
             newInvestors,
             reinvestments,
             withdrawals,
@@ -56,7 +56,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
         {
             if (await investorsRepository.GetInvestorExistsAsync(newInvestor))
             {
-                var investment = new Investment(newInvestor.Id, newInvestor.Investment);
+                Investment investment = new(newInvestor.Id, newInvestor.Investment);
                 await investorsRepository.ApplyInvestmentAsync(investment);
             }
             else
