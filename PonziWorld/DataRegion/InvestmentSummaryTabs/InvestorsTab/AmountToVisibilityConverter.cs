@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorsTab;
 
-internal class NotZeroToVisibilityConverter : IValueConverter
+internal class AmountToVisibilityConverter : IValueConverter
 {
     public object Convert(
         object value,

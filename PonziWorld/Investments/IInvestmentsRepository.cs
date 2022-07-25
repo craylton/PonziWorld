@@ -6,6 +6,6 @@ namespace PonziWorld.Investments;
 internal interface IInvestmentsRepository
 {
     Task AddInvestmentAsync(Investment investment);
-    Task<List<Investment>> GetInvestmentsByMonthAsync(int month);
-    Task DeleteAllInvestments();
+    Task<IEnumerable<Investment>> GetInvestmentsByMonthAsync(int month);
+    Task DeleteAllInvestmentsAsync();
 }

@@ -10,7 +10,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-        <local:NotZeroToVisibilityConverter x:Key="NotZeroToVisibility" />
+        <local:AmountToVisibilityConverter x:Key="AmountToVisibility" />
 
         <DataTemplate x:Key="investorTemplate">
             <Border BorderThickness="2">
@@ -27,7 +27,7 @@
                                    />
                             <TextBlock Visibility="{Binding
                                 Path=AmountPreviouslyInvested,
-                                Converter={StaticResource NotZeroToVisibility}}"
+                                Converter={StaticResource AmountToVisibility}}"
                                    Text="{Binding
                                 Path=AmountPreviouslyInvested,
                                 StringFormat='£{0} + '}"

@@ -12,18 +12,9 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
     {
     }
 
-    public async Task AddInvestorAsync(Investor investor)
-    {
-        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        await investorsCollection.InsertOneAsync(investor);
-    }
+    public async Task AddInvestorAsync(Investor investor) => await AddOneAsync(investor);
 
-    public async Task<IEnumerable<Investor>> GetAllInvestorsAsync()
-    {
-        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        IAsyncCursor<Investor> cursor = await investorsCollection.FindAsync(EmptyFilter);
-        return await cursor.ToListAsync();
-    }
+    public async Task<IEnumerable<Investor>> GetAllInvestorsAsync() => await GetAllAsync();
 
     public async Task<IEnumerable<Investor>> GetAllActiveInvestorsAsync()
     {
@@ -89,9 +80,5 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
         await investorsCollection.UpdateOneAsync(filter, update);
     }
 
-    public async Task DeleteAllInvestors()
-    {
-        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
-        await investorsCollection.DeleteManyAsync(EmptyFilter);
-    }
+    public async Task DeleteAllInvestorsAsync() => await DeleteAllAsync();
 }

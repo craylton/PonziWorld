@@ -10,13 +10,9 @@ internal class MongoDbInvestmentsRepository : Database.MongoDbRepositoryBase<Inv
     {
     }
 
-    public async Task AddInvestmentAsync(Investment investment)
-    {
-        IMongoCollection<Investment> investmentsCollection = GetDatabaseCollection();
-        await investmentsCollection.InsertOneAsync(investment);
-    }
+    public async Task AddInvestmentAsync(Investment investment) => await AddOneAsync(investment);
 
-    public async Task<List<Investment>> GetInvestmentsByMonthAsync(int month)
+    public async Task<IEnumerable<Investment>> GetInvestmentsByMonthAsync(int month)
     {
         IMongoCollection<Investment> investmentsCollection = GetDatabaseCollection();
 
@@ -27,9 +23,5 @@ internal class MongoDbInvestmentsRepository : Database.MongoDbRepositoryBase<Inv
         return await cursor.ToListAsync();
     }
 
-    public async Task DeleteAllInvestments()
-    {
-        IMongoCollection<Investment> investmentsCollection = GetDatabaseCollection();
-        await investmentsCollection.DeleteManyAsync(EmptyFilter);
-    }
+    public async Task DeleteAllInvestmentsAsync() => await DeleteAllAsync();
 }

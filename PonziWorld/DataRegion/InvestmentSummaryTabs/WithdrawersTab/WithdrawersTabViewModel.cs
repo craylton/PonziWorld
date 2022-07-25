@@ -36,13 +36,13 @@ internal class WithdrawersTabViewModel : BindableBase
         this.investmentsRepository = investmentsRepository;
 
         eventAggregator.GetEvent<LoadGameRequestedEvent>()
-            .Subscribe(() => LoadLastMonthWithdrawals().Await());
+            .Subscribe(() => LoadLastMonthWithdrawalsAsync().Await());
 
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
-            .Subscribe(investmentsSummary => CompileWithdrawalList(investmentsSummary).Await());
+            .Subscribe(investmentsSummary => CompileWithdrawalListAsync(investmentsSummary).Await());
     }
 
-    private async Task LoadLastMonthWithdrawals()
+    private async Task LoadLastMonthWithdrawalsAsync()
     {
         Company.Company company = await companyRepository.GetCompanyAsync();
 
@@ -50,26 +50,26 @@ internal class WithdrawersTabViewModel : BindableBase
             .GetInvestmentsByMonthAsync(company.Month - 1))
             .Where(investment => investment.Amount < 0);
 
-        List<DetailedInvestment> investments = await GetDetailedWithdrawals(lastMonthWithdrawals);
+        IEnumerable<DetailedInvestment> investments = await GetDetailedWithdrawalsAsync(lastMonthWithdrawals);
         SetWithdrawalsList(investments);
     }
 
-    private async Task CompileWithdrawalList(NewInvestmentsSummary investmentsSummary)
+    private async Task CompileWithdrawalListAsync(NewInvestmentsSummary investmentsSummary)
     {
-        List<DetailedInvestment> withdrawals = await GetAllNewWithdrawals(investmentsSummary);
+        IEnumerable<DetailedInvestment> withdrawals = await GetAllNewWithdrawalsAsync(investmentsSummary);
         SetWithdrawalsList(withdrawals);
     }
 
-    private void SetWithdrawalsList(List<DetailedInvestment> withdrawals)
+    private void SetWithdrawalsList(IEnumerable<DetailedInvestment> withdrawals)
     {
         Withdrawals.Clear();
         Withdrawals.AddRange(withdrawals.OrderByDescending(withdrawal => withdrawal.InvestmentSize));
     }
 
-    private async Task<List<DetailedInvestment>> GetAllNewWithdrawals(NewInvestmentsSummary investmentsSummary) =>
-        await GetDetailedWithdrawals(investmentsSummary.Withdrawals);
+    private async Task<IEnumerable<DetailedInvestment>> GetAllNewWithdrawalsAsync(NewInvestmentsSummary investmentsSummary) =>
+        await GetDetailedWithdrawalsAsync(investmentsSummary.Withdrawals);
 
-    private async Task<List<DetailedInvestment>> GetDetailedWithdrawals(IEnumerable<Investment> withdrawals)
+    private async Task<IEnumerable<DetailedInvestment>> GetDetailedWithdrawalsAsync(IEnumerable<Investment> withdrawals)
     {
         List<DetailedInvestment> detailedInvestments = new();
 

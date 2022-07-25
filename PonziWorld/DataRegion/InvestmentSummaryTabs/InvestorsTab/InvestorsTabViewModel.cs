@@ -39,16 +39,16 @@ internal class InvestorsTabViewModel : BindableBase
             .Subscribe(_ => DeleteAllInvestmentsAsync().Await());
 
         eventAggregator.GetEvent<LoadGameRequestedEvent>()
-            .Subscribe(() => LoadLastMonthInvestments().Await());
+            .Subscribe(() => LoadLastMonthInvestmentsAsync().Await());
 
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
-            .Subscribe(investmentsSummary => CompileInvestmentList(investmentsSummary).Await());
+            .Subscribe(investmentsSummary => CompileInvestmentListAsync(investmentsSummary).Await());
     }
 
     private async Task DeleteAllInvestmentsAsync() =>
-        await investmentsRepository.DeleteAllInvestments();
+        await investmentsRepository.DeleteAllInvestmentsAsync();
 
-    private async Task LoadLastMonthInvestments()
+    private async Task LoadLastMonthInvestmentsAsync()
     {
         Company.Company company = await companyRepository.GetCompanyAsync();
 
@@ -56,13 +56,13 @@ internal class InvestorsTabViewModel : BindableBase
             .GetInvestmentsByMonthAsync(company.Month - 1))
             .Where(investment => investment.Amount > 0);
 
-        List<DetailedInvestment> investments = await GetDetailedInvestments(lastMonthInvestments);
+        IEnumerable<DetailedInvestment> investments = await GetDetailedInvestmentsAsync(lastMonthInvestments);
         SetInvestmentsList(investments);
     }
 
-    private async Task CompileInvestmentList(NewInvestmentsSummary investmentsSummary)
+    private async Task CompileInvestmentListAsync(NewInvestmentsSummary investmentsSummary)
     {
-        IEnumerable<DetailedInvestment> investments = await GetAllNewInvestments(investmentsSummary);
+        IEnumerable<DetailedInvestment> investments = await GetAllNewInvestmentsAsync(investmentsSummary);
         SetInvestmentsList(investments);
     }
 
@@ -72,17 +72,16 @@ internal class InvestorsTabViewModel : BindableBase
         Investments.AddRange(investments.OrderByDescending(investment => investment.InvestmentSize));
     }
 
-    private async Task<IEnumerable<DetailedInvestment>> GetAllNewInvestments(NewInvestmentsSummary investmentsSummary)
+    private async Task<IEnumerable<DetailedInvestment>> GetAllNewInvestmentsAsync(NewInvestmentsSummary investmentsSummary)
     {
-        List<DetailedInvestment> investments = investmentsSummary.NewInvestors
-            .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0))
-            .ToList();
+        IEnumerable<DetailedInvestment> investments = investmentsSummary.NewInvestors
+            .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0));
 
-        List<DetailedInvestment> reinvestments = await GetDetailedInvestments(investmentsSummary.Reinvestments);
+        IEnumerable<DetailedInvestment> reinvestments = await GetDetailedInvestmentsAsync(investmentsSummary.Reinvestments);
         return investments.Concat(reinvestments);
     }
 
-    private async Task<List<DetailedInvestment>> GetDetailedInvestments(IEnumerable<Investment> investments)
+    private async Task<IEnumerable<DetailedInvestment>> GetDetailedInvestmentsAsync(IEnumerable<Investment> investments)
     {
         List<DetailedInvestment> detailedInvestments = new();
 

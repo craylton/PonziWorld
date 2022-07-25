@@ -19,7 +19,7 @@
                                    Margin="5,2"
                                    />
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="Investment:"
+                            <TextBlock Text="Withdrawal:"
                                    FontSize="14"
                                    Margin="5,2"
                                    />

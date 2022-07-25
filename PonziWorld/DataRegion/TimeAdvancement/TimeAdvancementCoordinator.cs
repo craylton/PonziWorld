@@ -36,7 +36,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
         List<Investor> newInvestors = GetNewInvestors(prospectiveInvestors, company).ToList();
 
         // 2.1. People who didn't invest in previous months can still invest
-        newInvestors.AddRange(await GetNewInvestorsFromPool(company));
+        newInvestors.AddRange(await GetNewInvestorsFromPoolAsync(company));
 
         // 3. Existing investors might want to invest even more
         List<Investment> reinvestments = GetReinvestments(existingInvestors, company).ToList();
@@ -100,7 +100,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
             .Where(prospectiveInvestor => prospectiveInvestor.WantsToInvest(company))
             .Select(prospective => prospective.AsActiveInvestor(company));
 
-    private async Task<IEnumerable<Investor>> GetNewInvestorsFromPool(Company.Company company)
+    private async Task<IEnumerable<Investor>> GetNewInvestorsFromPoolAsync(Company.Company company)
     {
         IEnumerable<Investor> prospectiveInvestors = await investorsRepository.GetAllProspectiveInvestorsAsync();
 

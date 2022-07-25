@@ -33,8 +33,7 @@ internal record NewInvestmentsSummary(
 
     private IEnumerable<Investment> GetCombinedInvestments()
     {
-        IEnumerable<Investment> allInvestments = Withdrawals.ToList().Concat(Reinvestments);
-
+        IEnumerable<Investment> allInvestments = Withdrawals.Concat(Reinvestments);
         List<Investment> combinedInvestments = new();
 
         foreach (var investment in allInvestments)
@@ -45,11 +44,8 @@ internal record NewInvestmentsSummary(
         }
 
         // select a distinct investment for each investor
-        combinedInvestments = combinedInvestments
+        return combinedInvestments
             .GroupBy(p => p.InvestorId)
-            .Select(g => g.First())
-            .ToList();
-
-        return combinedInvestments;
+            .Select(g => g.First());
     }
 }

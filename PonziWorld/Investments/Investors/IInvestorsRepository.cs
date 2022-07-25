@@ -13,5 +13,5 @@ internal interface IInvestorsRepository
     Task<bool> GetInvestorExistsAsync(Investor newInvestor);
     Task<Investor> GetInvestorByIdAsync(Guid investorId);
     Task ApplyInvestmentAsync(Investment investment);
-    Task DeleteAllInvestors();
+    Task DeleteAllInvestorsAsync();
 }

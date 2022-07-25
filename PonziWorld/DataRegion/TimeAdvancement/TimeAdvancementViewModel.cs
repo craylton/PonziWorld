@@ -32,10 +32,10 @@ internal class TimeAdvancementViewModel : BindableBase
         this.timeAdvancementCoordinator = timeAdvancementCoordinator;
         this.eventAggregator = eventAggregator;
 
-        NextMonthCommand = new(() => GoToNextMonth().Await(), CanGoToNextMonth);
+        NextMonthCommand = new(() => GoToNextMonthAsync().Await(), CanGoToNextMonth);
     }
 
-    private async Task GoToNextMonth()
+    private async Task GoToNextMonthAsync()
     {
         CanAdvance = false;
 
