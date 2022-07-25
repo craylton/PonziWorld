@@ -28,13 +28,13 @@ internal class InvestorsViewModel : BindableBase
             .Subscribe(() => UpdateInvestorList().Await());
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
-            .Subscribe(companyName => DeleteAllInvestorsAsync(companyName).Await());
+            .Subscribe(_ => DeleteAllInvestorsAsync().Await());
 
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
             .Subscribe(_ => UpdateInvestorList().Await());
     }
 
-    private async Task DeleteAllInvestorsAsync(string _) =>
+    private async Task DeleteAllInvestorsAsync() =>
         await repository.DeleteAllInvestors();
 
     private async Task UpdateInvestorList()

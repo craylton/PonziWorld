@@ -26,4 +26,10 @@ internal class MongoDbInvestmentsRepository : Database.MongoDbRepositoryBase<Inv
         IAsyncCursor<Investment> cursor = await investmentsCollection.FindAsync(filter);
         return await cursor.ToListAsync();
     }
+
+    public async Task DeleteAllInvestments()
+    {
+        IMongoCollection<Investment> investmentsCollection = GetDatabaseCollection();
+        await investmentsCollection.DeleteManyAsync(EmptyFilter);
+    }
 }

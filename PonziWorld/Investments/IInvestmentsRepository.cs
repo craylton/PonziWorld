@@ -7,4 +7,5 @@ internal interface IInvestmentsRepository
 {
     Task AddInvestmentAsync(Investment investment);
     Task<List<Investment>> GetInvestmentsByMonthAsync(int month);
+    Task DeleteAllInvestments();
 }

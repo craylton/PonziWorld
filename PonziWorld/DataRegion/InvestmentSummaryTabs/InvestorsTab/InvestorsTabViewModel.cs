@@ -32,14 +32,21 @@ internal class InvestorsTabViewModel : BindableBase
     {
         this.investorsRepository = investorsRepository;
         this.companyRepository = companyRepository;
+        this.investmentsRepository = investmentsRepository;
+
+        // TODO: move this somewhere more appropriate
+        eventAggregator.GetEvent<NewGameInitiatedEvent>()
+            .Subscribe(_ => DeleteAllInvestmentsAsync().Await());
 
         eventAggregator.GetEvent<LoadGameRequestedEvent>()
             .Subscribe(() => LoadLastMonthInvestments().Await());
 
         eventAggregator.GetEvent<NextMonthRequestedEvent>()
             .Subscribe(investmentsSummary => CompileInvestmentList(investmentsSummary).Await());
-        this.investmentsRepository = investmentsRepository;
     }
+
+    private async Task DeleteAllInvestmentsAsync() =>
+        await investmentsRepository.DeleteAllInvestments();
 
     private async Task LoadLastMonthInvestments()
     {
@@ -55,25 +62,24 @@ internal class InvestorsTabViewModel : BindableBase
 
     private async Task CompileInvestmentList(NewInvestmentsSummary investmentsSummary)
     {
-        List<DetailedInvestment> investments = await GetAllNewInvestments(investmentsSummary);
+        IEnumerable<DetailedInvestment> investments = await GetAllNewInvestments(investmentsSummary);
         SetInvestmentsList(investments);
     }
 
-    private void SetInvestmentsList(List<DetailedInvestment> investments)
+    private void SetInvestmentsList(IEnumerable<DetailedInvestment> investments)
     {
         Investments.Clear();
         Investments.AddRange(investments.OrderByDescending(investment => investment.InvestmentSize));
     }
 
-    private async Task<List<DetailedInvestment>> GetAllNewInvestments(NewInvestmentsSummary investmentsSummary)
+    private async Task<IEnumerable<DetailedInvestment>> GetAllNewInvestments(NewInvestmentsSummary investmentsSummary)
     {
         List<DetailedInvestment> investments = investmentsSummary.NewInvestors
             .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0))
             .ToList();
 
         List<DetailedInvestment> reinvestments = await GetDetailedInvestments(investmentsSummary.Reinvestments);
-        investments.AddRange(reinvestments);
-        return investments;
+        return investments.Concat(reinvestments);
     }
 
     private async Task<List<DetailedInvestment>> GetDetailedInvestments(IEnumerable<Investment> investments)
