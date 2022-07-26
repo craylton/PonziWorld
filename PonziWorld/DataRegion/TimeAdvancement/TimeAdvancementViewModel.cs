@@ -39,9 +39,13 @@ internal class TimeAdvancementViewModel : BindableBase
     {
         CanAdvance = false;
 
+        // apply % to existing investors and update satisfaction
+        // update company stats (suspicion etc)
+        // calculate and store results of company's investments
+
         NewInvestmentsSummary newInvestmentsSummary = await timeAdvancementCoordinator.GetNextMonthInvestmentsAsync();
         await timeAdvancementCoordinator.ApplyAsync(newInvestmentsSummary);
-        eventAggregator.GetEvent<NextMonthRequestedEvent>().Publish(newInvestmentsSummary);
+        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>().Publish(newInvestmentsSummary);
 
         CanAdvance = true;
     }

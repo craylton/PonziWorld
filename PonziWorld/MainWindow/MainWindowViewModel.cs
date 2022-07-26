@@ -28,7 +28,7 @@ internal class MainWindowViewModel : BindableBase
         eventAggregator.GetEvent<NewGameRequestedEvent>()
             .Subscribe(() => StartNewGameAsync().Await());
 
-        eventAggregator.GetEvent<LoadGameRequestedEvent>()
+        eventAggregator.GetEvent<LoadGameCompletedEvent>()
             .Subscribe(OnGameLoaded);
     }
 

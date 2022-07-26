@@ -15,8 +15,7 @@ namespace PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
 internal class WithdrawersTabViewModel : BindableBase
 {
     private readonly IInvestorsRepository investorsRepository;
-    private readonly ICompanyRepository companyRepository;
-    private readonly IInvestmentsRepository investmentsRepository;
+    private readonly IEventAggregator eventAggregator;
     private ObservableCollection<DetailedInvestment> _withdrawals = new();
 
     public ObservableCollection<DetailedInvestment> Withdrawals
@@ -27,31 +26,27 @@ internal class WithdrawersTabViewModel : BindableBase
 
     public WithdrawersTabViewModel(
         IInvestorsRepository investorsRepository,
-        ICompanyRepository companyRepository,
-        IInvestmentsRepository investmentsRepository,
         IEventAggregator eventAggregator)
     {
         this.investorsRepository = investorsRepository;
-        this.companyRepository = companyRepository;
-        this.investmentsRepository = investmentsRepository;
+        this.eventAggregator = eventAggregator;
 
-        eventAggregator.GetEvent<LoadGameRequestedEvent>()
-            .Subscribe(() => LoadLastMonthWithdrawalsAsync().Await());
+        eventAggregator.GetEvent<LoadWithdrawalsCommand>()
+            .Subscribe(payload => LoadWithdrawals(payload).Await());
 
-        eventAggregator.GetEvent<NextMonthRequestedEvent>()
+        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .Subscribe(investmentsSummary => CompileWithdrawalListAsync(investmentsSummary).Await());
     }
 
-    private async Task LoadLastMonthWithdrawalsAsync()
+    private async Task LoadWithdrawals(LoadWithdrawalsCommandPayload payload)
     {
-        Company.Company company = await companyRepository.GetCompanyAsync();
-
-        IEnumerable<Investment> lastMonthWithdrawals = (await investmentsRepository
-            .GetInvestmentsByMonthAsync(company.Month - 1))
+        IEnumerable<Investment> lastMonthWithdrawals = payload.LastMonthInvestments
             .Where(investment => investment.Amount < 0);
 
         IEnumerable<DetailedInvestment> investments = await GetDetailedWithdrawalsAsync(lastMonthWithdrawals);
         SetWithdrawalsList(investments);
+
+        eventAggregator.GetEvent<WithdrawalsLoadedEvent>().Publish();
     }
 
     private async Task CompileWithdrawalListAsync(NewInvestmentsSummary investmentsSummary)

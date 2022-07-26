@@ -2,6 +2,6 @@
 
 namespace PonziWorld.Events;
 
-internal class LoadGameRequestedEvent : PubSubEvent
+internal class LoadGameCompletedEvent : PubSubEvent
 {
 }

@@ -10,6 +10,7 @@ namespace PonziWorld.Investments.Investors;
 internal class InvestorsViewModel : BindableBase
 {
     private readonly IInvestorsRepository repository;
+    private readonly IEventAggregator eventAggregator;
     private ObservableCollection<Investor> _investors = new();
 
     public ObservableCollection<Investor> Investors
@@ -23,14 +24,15 @@ internal class InvestorsViewModel : BindableBase
         IEventAggregator eventAggregator)
     {
         this.repository = repository;
+        this.eventAggregator = eventAggregator;
 
-        eventAggregator.GetEvent<LoadGameRequestedEvent>()
+        eventAggregator.GetEvent<LoadInvestorsCommand>()
             .Subscribe(() => UpdateInvestorListAsync().Await());
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
             .Subscribe(_ => DeleteAllInvestorsAsync().Await());
 
-        eventAggregator.GetEvent<NextMonthRequestedEvent>()
+        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .Subscribe(_ => UpdateInvestorListAsync().Await());
     }
 
@@ -42,5 +44,6 @@ internal class InvestorsViewModel : BindableBase
         IEnumerable<Investor> investors = await repository.GetAllActiveInvestorsAsync();
         Investors.Clear();
         Investors.AddRange(investors);
+        eventAggregator.GetEvent<InvestorsLoadedEvent>().Publish();
     }
 }

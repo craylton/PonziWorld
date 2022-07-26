@@ -10,6 +10,7 @@ namespace PonziWorld.Company;
 internal class CompanyViewModel : BindableBase
 {
     private readonly ICompanyRepository repository;
+    private readonly IEventAggregator eventAggregator;
     private Company _company = Company.Default;
 
     public Company Company
@@ -23,19 +24,23 @@ internal class CompanyViewModel : BindableBase
         IEventAggregator eventAggregator)
     {
         this.repository = repository;
+        this.eventAggregator = eventAggregator;
 
-        eventAggregator.GetEvent<LoadGameRequestedEvent>()
+        eventAggregator.GetEvent<LoadCompanyCommand>()
             .Subscribe(() => LoadCompanyAsync().Await());
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
             .Subscribe(companyName => CreateCompanyAsync(companyName).Await());
 
-        eventAggregator.GetEvent<NextMonthRequestedEvent>()
+        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .Subscribe(investmentsSummary => UpdateFundsAsync(investmentsSummary).Await());
     }
 
-    private async Task LoadCompanyAsync() =>
+    private async Task LoadCompanyAsync()
+    {
         Company = await repository.GetCompanyAsync();
+        eventAggregator.GetEvent<CompanyLoadedEvent>().Publish(new(Company));
+    }
 
     private async Task CreateCompanyAsync(string companyName)
     {

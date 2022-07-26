@@ -1,5 +1,6 @@
 ﻿using PonziWorld.Company;
 using PonziWorld.Events;
+using PonziWorld.Sagas;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
@@ -10,6 +11,7 @@ namespace PonziWorld.Splash;
 
 internal class SplashViewModel : BindableBase
 {
+    private readonly LoadGameSaga loadGameSaga;
     private readonly ICompanyRepository repository;
     private readonly IEventAggregator eventAggregator;
     private bool _savedGameExists = false;
@@ -39,9 +41,11 @@ internal class SplashViewModel : BindableBase
     public DelegateCommand NewGameCommand { get; }
 
     public SplashViewModel(
+        LoadGameSaga loadGameSaga,
         ICompanyRepository repository,
         IEventAggregator eventAggregator)
     {
+        this.loadGameSaga = loadGameSaga;
         this.repository = repository;
         this.eventAggregator = eventAggregator;
 
@@ -58,8 +62,10 @@ internal class SplashViewModel : BindableBase
         CanAccessDatabase = true;
     }
 
-    private void LoadGame() =>
-        eventAggregator.GetEvent<LoadGameRequestedEvent>().Publish();
+    private void LoadGame()
+    {
+        loadGameSaga.Start();
+    }
 
     private void StartNewGame() =>
         eventAggregator.GetEvent<NewGameRequestedEvent>().Publish();
