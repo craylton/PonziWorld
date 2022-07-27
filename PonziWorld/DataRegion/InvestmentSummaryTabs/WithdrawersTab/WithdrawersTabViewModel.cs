@@ -29,13 +29,13 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
     {
         this.investorsRepository = investorsRepository;
 
-        SubscribeToProcess(LoadWithdrawals.Process, LoadLatestWithdrawals);
+        SubscribeToProcess(LoadWithdrawals.Process, LoadLatestWithdrawalsAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .SubscribeAsync(CompileWithdrawalListAsync);
     }
 
-    private async Task<WithdrawalsLoadedEventPayload> LoadLatestWithdrawals(LoadWithdrawalsCommandPayload payload)
+    private async Task<WithdrawalsLoadedEventPayload> LoadLatestWithdrawalsAsync(LoadWithdrawalsCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthWithdrawals = payload.LastMonthInvestments
             .Where(investment => investment.Amount < 0);

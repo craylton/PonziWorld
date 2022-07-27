@@ -3,12 +3,11 @@ using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
-using Prism.Mvvm;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Company;
 
-internal class CompanyViewModel : BindableBase
+internal class CompanyViewModel : BindableSubscriberBase
 {
     private readonly ICompanyRepository repository;
     private readonly IEventAggregator eventAggregator;
@@ -23,12 +22,12 @@ internal class CompanyViewModel : BindableBase
     public CompanyViewModel(
         ICompanyRepository repository,
         IEventAggregator eventAggregator)
+        : base(eventAggregator)
     {
         this.repository = repository;
         this.eventAggregator = eventAggregator;
 
-        eventAggregator.GetEvent<LoadCompanyCommand>()
-            .SubscribeAsync(LoadCompanyAsync);
+        SubscribeToProcess(LoadCompany.Process, LoadCompanyAsync);
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
             .SubscribeAsync(CreateCompanyAsync);
@@ -37,13 +36,10 @@ internal class CompanyViewModel : BindableBase
             .SubscribeAsync(UpdateFundsAsync);
     }
 
-    private async Task LoadCompanyAsync(LoadCompanyCommandPayload _) =>
-        await LoadCompanyAsync();
-
-    private async Task LoadCompanyAsync()
+    private async Task<CompanyLoadedEventPayload> LoadCompanyAsync(LoadCompanyCommandPayload _)
     {
         Company = await repository.GetCompanyAsync();
-        eventAggregator.GetEvent<CompanyLoadedEvent>().Publish(new(Company));
+        return new(Company);
     }
 
     private async Task CreateCompanyAsync(string companyName)
@@ -71,6 +67,7 @@ internal class CompanyViewModel : BindableBase
         }
 
         await repository.MoveToNextMonthAsync(companyFunds);
-        await LoadCompanyAsync();
+        Company = await repository.GetCompanyAsync();
+        eventAggregator.GetEvent<CompanyLoadedEvent>().Publish(new(Company));
     }
 }

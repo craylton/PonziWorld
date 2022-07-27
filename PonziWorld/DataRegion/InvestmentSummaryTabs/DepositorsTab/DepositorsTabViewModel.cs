@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
 
-internal class DepositorsTabViewModel : BindableBase
+internal class DepositorsTabViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly IInvestmentsRepository investmentsRepository;
@@ -28,6 +28,7 @@ internal class DepositorsTabViewModel : BindableBase
         IInvestorsRepository investorsRepository,
         IInvestmentsRepository investmentsRepository,
         IEventAggregator eventAggregator)
+        : base(eventAggregator)
     {
         this.investorsRepository = investorsRepository;
         this.investmentsRepository = investmentsRepository;
@@ -37,17 +38,14 @@ internal class DepositorsTabViewModel : BindableBase
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
             .SubscribeAsync(DeleteAllInvestmentsAsync);
 
-        eventAggregator.GetEvent<LoadInvestmentsForLastMonthCommand>()
-            .SubscribeAsync(LoadAllLastMonthInvestmentsAsync);
-
-        eventAggregator.GetEvent<LoadDepositsCommand>()
-            .SubscribeAsync(LoadDepositsAsync);
+        SubscribeToProcess(LoadInvestmentsForLastMonth.Process, LoadAllLastMonthInvestmentsAsync);
+        SubscribeToProcess(LoadDeposits.Process, LoadDepositsAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .SubscribeAsync(CompileDepositListAsync);
     }
 
-    private async Task LoadDepositsAsync(LoadDepositsCommandPayload payload)
+    private async Task<DepositsLoadedEventPayload> LoadDepositsAsync(LoadDepositsCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthDeposits = payload.Investments
             .Where(investment => investment.Amount > 0);
@@ -55,19 +53,19 @@ internal class DepositorsTabViewModel : BindableBase
         IEnumerable<DetailedInvestment> deposits = await GetDetailedDepositsAsync(lastMonthDeposits);
         SetDepositsList(deposits);
 
-        eventAggregator.GetEvent<DepositsLoadedEvent>().Publish(new());
+        return new();
     }
 
     private async Task DeleteAllInvestmentsAsync(string _) =>
         await investmentsRepository.DeleteAllInvestmentsAsync();
 
-    private async Task LoadAllLastMonthInvestmentsAsync(LoadInvestmentsForLastMonthCommandPayload payload)
+    private async Task<InvestmentsForLastMonthLoadedEventPayload> LoadAllLastMonthInvestmentsAsync(
+        LoadInvestmentsForLastMonthCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthInvestments = await investmentsRepository
             .GetInvestmentsByMonthAsync(payload.Month - 1);
 
-        eventAggregator.GetEvent<InvestmentsForLastMonthLoadedEvent>()
-            .Publish(new(lastMonthInvestments));
+        return new(lastMonthInvestments);
     }
 
     private async Task CompileDepositListAsync(NewInvestmentsSummary investmentsSummary)
