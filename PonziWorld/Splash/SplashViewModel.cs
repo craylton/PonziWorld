@@ -64,7 +64,7 @@ internal class SplashViewModel : BindableBase
 
     private void LoadGame()
     {
-        loadGameSaga.Start();
+        loadGameSaga.StartSaga();
     }
 
     private void StartNewGame() =>

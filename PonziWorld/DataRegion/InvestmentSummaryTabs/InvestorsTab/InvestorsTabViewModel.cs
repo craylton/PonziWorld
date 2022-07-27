@@ -39,14 +39,14 @@ internal class InvestorsTabViewModel : BindableBase
         eventAggregator.GetEvent<LoadInvestmentsForLastMonthCommand>()
             .Subscribe(payload=> LoadAllLastMonthInvestmentsAsync(payload).Await());
 
-        eventAggregator.GetEvent<LoadInvestmentsCommand>()
+        eventAggregator.GetEvent<LoadDepositsCommand>()
             .Subscribe(payload => LoadInvestmentsAsync(payload).Await());
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .Subscribe(investmentsSummary => CompileInvestmentListAsync(investmentsSummary).Await());
     }
 
-    private async Task LoadInvestmentsAsync(LoadInvestmentsCommandPayload payload)
+    private async Task LoadInvestmentsAsync(LoadDepositsCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthInvestments = payload.Investments
             .Where(investment => investment.Amount > 0);
@@ -54,7 +54,7 @@ internal class InvestorsTabViewModel : BindableBase
         IEnumerable<DetailedInvestment> investments = await GetDetailedInvestmentsAsync(lastMonthInvestments);
         SetInvestmentsList(investments);
 
-        eventAggregator.GetEvent<InvestmentsLoadedEvent>().Publish();
+        eventAggregator.GetEvent<DepositsLoadedEvent>().Publish(new());
     }
 
     private async Task DeleteAllInvestmentsAsync() =>

@@ -4,6 +4,14 @@ using System.Collections.Generic;
 
 namespace PonziWorld.Events;
 
+internal class LoadInvestmentsForLastMonthProcess
+    : SagaProcess<
+        InvestmentsForLastMonthLoadedEvent,
+        InvestmentsForLastMonthLoadedEventPayload,
+        LoadInvestmentsForLastMonthCommand,
+        LoadInvestmentsForLastMonthCommandPayload>
+{ }
+
 internal class InvestmentsForLastMonthLoadedEvent
     : PubSubEvent<InvestmentsForLastMonthLoadedEventPayload>
 { }

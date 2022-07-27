@@ -27,7 +27,7 @@ internal class CompanyViewModel : BindableBase
         this.eventAggregator = eventAggregator;
 
         eventAggregator.GetEvent<LoadCompanyCommand>()
-            .Subscribe(() => LoadCompanyAsync().Await());
+            .Subscribe(_ => LoadCompanyAsync().Await());
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
             .Subscribe(companyName => CreateCompanyAsync(companyName).Await());
