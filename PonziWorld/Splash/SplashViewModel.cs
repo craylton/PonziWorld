@@ -61,10 +61,7 @@ internal class SplashViewModel : BindableBase
         CanAccessDatabase = true;
     }
 
-    private void LoadGame()
-    {
-        loadGameSaga.StartSaga();
-    }
+    private void LoadGame() => loadGameSaga.StartSaga();
 
     private void StartNewGame() =>
         eventAggregator.GetEvent<NewGameRequestedEvent>().Publish();

@@ -65,6 +65,6 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
     private bool AreAllProcessesComplete() =>
         hasLoadedInvestors && hasLoadedDeposits && hasLoadedWithdrawals;
 
-    protected override void Complete() =>
+    protected override void ResetSaga() =>
         hasLoadedInvestors = hasLoadedDeposits = hasLoadedWithdrawals = false;
 }

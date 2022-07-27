@@ -3,7 +3,6 @@ using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
-using Prism.Mvvm;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,7 +14,6 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly IInvestmentsRepository investmentsRepository;
-    private readonly IEventAggregator eventAggregator;
     private ObservableCollection<DetailedInvestment> _deposits = new();
 
     public ObservableCollection<DetailedInvestment> Deposits
@@ -32,7 +30,6 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
     {
         this.investorsRepository = investorsRepository;
         this.investmentsRepository = investmentsRepository;
-        this.eventAggregator = eventAggregator;
 
         // TODO: move this somewhere more appropriate
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
@@ -63,7 +60,7 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         LoadInvestmentsForLastMonthCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthInvestments = await investmentsRepository
-            .GetInvestmentsByMonthAsync(payload.Month - 1);
+            .GetInvestmentsByMonthAsync(payload.CurrentMonth - 1);
 
         return new(lastMonthInvestments);
     }
@@ -80,12 +77,15 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         Deposits.AddRange(deposits.OrderByDescending(deposit => deposit.InvestmentSize));
     }
 
-    private async Task<IEnumerable<DetailedInvestment>> GetAllNewDepositsAsync(NewInvestmentsSummary investmentsSummary)
+    private async Task<IEnumerable<DetailedInvestment>> GetAllNewDepositsAsync(
+        NewInvestmentsSummary investmentsSummary)
     {
         IEnumerable<DetailedInvestment> newInvestments = investmentsSummary.NewInvestors
             .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0));
 
-        IEnumerable<DetailedInvestment> reinvestments = await GetDetailedDepositsAsync(investmentsSummary.Reinvestments);
+        IEnumerable<DetailedInvestment> reinvestments = await GetDetailedDepositsAsync(
+            investmentsSummary.Reinvestments);
+
         return newInvestments.Concat(reinvestments);
     }
 

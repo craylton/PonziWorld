@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.Core;
 
-public static class PubSubEventExtensions
+internal static class PubSubEventExtensions
 {
     public static SubscriptionToken SubscribeAsync<TPayload>(
         this PubSubEvent<TPayload> @event,

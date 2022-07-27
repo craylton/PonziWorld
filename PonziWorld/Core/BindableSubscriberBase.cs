@@ -12,15 +12,18 @@ internal abstract class BindableSubscriberBase : BindableBase
     protected BindableSubscriberBase(IEventAggregator eventAggregator) =>
         this.eventAggregator = eventAggregator;
 
-    public void SubscribeToProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
+    protected void SubscribeToProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
         Events.SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,
         Func<TCommandPayload, Task<TEventPayload>> function)
         where TEvent : PubSubEvent<TEventPayload>, new()
         where TCommand : PubSubEvent<TCommandPayload>, new() =>
         eventAggregator.GetEvent<TCommand>()
-            .SubscribeAsync(commandPayload => GetProcessFunction<TEvent, TEventPayload, TCommandPayload>(function, commandPayload));
+            .SubscribeAsync(
+                commandPayload => GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
+                    function,
+                    commandPayload));
 
-    private async Task GetProcessFunction<TEvent, TEventPayload, TCommandPayload>(
+    private async Task GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
         Func<TCommandPayload, Task<TEventPayload>> function,
         TCommandPayload payload)
         where TEvent : PubSubEvent<TEventPayload>, new()

@@ -27,4 +27,4 @@ internal class LoadInvestmentsForLastMonthCommand
 { }
 
 internal record LoadInvestmentsForLastMonthCommandPayload(
-    int Month);
+    int CurrentMonth);

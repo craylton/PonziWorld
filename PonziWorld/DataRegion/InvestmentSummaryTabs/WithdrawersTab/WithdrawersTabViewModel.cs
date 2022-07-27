@@ -35,7 +35,8 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
             .SubscribeAsync(CompileWithdrawalListAsync);
     }
 
-    private async Task<WithdrawalsLoadedEventPayload> LoadLatestWithdrawalsAsync(LoadWithdrawalsCommandPayload payload)
+    private async Task<WithdrawalsLoadedEventPayload> LoadLatestWithdrawalsAsync(
+        LoadWithdrawalsCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthWithdrawals = payload.LastMonthInvestments
             .Where(investment => investment.Amount < 0);
@@ -58,10 +59,12 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
         Withdrawals.AddRange(withdrawals.OrderByDescending(withdrawal => withdrawal.InvestmentSize));
     }
 
-    private async Task<IEnumerable<DetailedInvestment>> GetAllNewWithdrawalsAsync(NewInvestmentsSummary investmentsSummary) =>
+    private async Task<IEnumerable<DetailedInvestment>> GetAllNewWithdrawalsAsync(
+        NewInvestmentsSummary investmentsSummary) =>
         await GetDetailedWithdrawalsAsync(investmentsSummary.Withdrawals);
 
-    private async Task<IEnumerable<DetailedInvestment>> GetDetailedWithdrawalsAsync(IEnumerable<Investment> withdrawals)
+    private async Task<IEnumerable<DetailedInvestment>> GetDetailedWithdrawalsAsync(
+        IEnumerable<Investment> withdrawals)
     {
         List<DetailedInvestment> detailedInvestments = new();
 

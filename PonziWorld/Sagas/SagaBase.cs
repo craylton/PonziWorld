@@ -29,11 +29,12 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
     protected void CompleteSaga()
     {
         eventAggregator.GetEvent<TCompletedEvent>().Publish();
-        Complete();
+        ResetSaga();
         isInProgress = false;
     }
 
-    protected abstract void Complete();
+    protected virtual void ResetSaga()
+    { }
 
     protected void StartProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
         SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,
