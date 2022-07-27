@@ -1,5 +1,5 @@
 ﻿using MongoDB.Driver;
-using PonziWorld.Database;
+using PonziWorld.Core;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

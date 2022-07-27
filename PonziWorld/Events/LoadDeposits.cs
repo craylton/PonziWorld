@@ -4,13 +4,16 @@ using System.Collections.Generic;
 
 namespace PonziWorld.Events;
 
-internal class LoadDepositsProcess
+internal class LoadDeposits
     : SagaProcess<
         DepositsLoadedEvent,
         DepositsLoadedEventPayload,
         LoadDepositsCommand,
         LoadDepositsCommandPayload>
-{ }
+{
+    public static LoadDeposits Process => new();
+    private LoadDeposits() { }
+}
 
 internal class DepositsLoadedEvent
     : PubSubEvent<DepositsLoadedEventPayload>

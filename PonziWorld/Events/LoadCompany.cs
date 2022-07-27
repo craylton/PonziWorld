@@ -2,13 +2,16 @@
 
 namespace PonziWorld.Events;
 
-internal class LoadCompanyProcess
+internal class LoadCompany
     : SagaProcess<
         CompanyLoadedEvent,
         CompanyLoadedEventPayload,
         LoadCompanyCommand,
         LoadCompanyCommandPayload>
-{ }
+{
+    public static LoadCompany Process => new();
+    private LoadCompany() { }
+}
 
 internal class CompanyLoadedEvent
     : PubSubEvent<CompanyLoadedEventPayload>

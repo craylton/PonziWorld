@@ -1,4 +1,5 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Core;
+using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
@@ -34,16 +35,16 @@ internal class DepositorsTabViewModel : BindableBase
 
         // TODO: move this somewhere more appropriate
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
-            .Subscribe(_ => DeleteAllInvestmentsAsync().Await());
+            .SubscribeAsync(DeleteAllInvestmentsAsync);
 
         eventAggregator.GetEvent<LoadInvestmentsForLastMonthCommand>()
-            .Subscribe(payload=> LoadAllLastMonthInvestmentsAsync(payload).Await());
+            .SubscribeAsync(LoadAllLastMonthInvestmentsAsync);
 
         eventAggregator.GetEvent<LoadDepositsCommand>()
-            .Subscribe(payload => LoadDepositsAsync(payload).Await());
+            .SubscribeAsync(LoadDepositsAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .Subscribe(investmentsSummary => CompileDepositListAsync(investmentsSummary).Await());
+            .SubscribeAsync(CompileDepositListAsync);
     }
 
     private async Task LoadDepositsAsync(LoadDepositsCommandPayload payload)
@@ -57,7 +58,7 @@ internal class DepositorsTabViewModel : BindableBase
         eventAggregator.GetEvent<DepositsLoadedEvent>().Publish(new());
     }
 
-    private async Task DeleteAllInvestmentsAsync() =>
+    private async Task DeleteAllInvestmentsAsync(string _) =>
         await investmentsRepository.DeleteAllInvestmentsAsync();
 
     private async Task LoadAllLastMonthInvestmentsAsync(LoadInvestmentsForLastMonthCommandPayload payload)

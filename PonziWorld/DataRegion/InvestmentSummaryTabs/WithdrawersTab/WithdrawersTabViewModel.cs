@@ -1,4 +1,5 @@
 ﻿using PonziWorld.Company;
+using PonziWorld.Core;
 using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
@@ -32,10 +33,10 @@ internal class WithdrawersTabViewModel : BindableBase
         this.eventAggregator = eventAggregator;
 
         eventAggregator.GetEvent<LoadWithdrawalsCommand>()
-            .Subscribe(payload => LoadWithdrawals(payload).Await());
+            .SubscribeAsync(LoadWithdrawals);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .Subscribe(investmentsSummary => CompileWithdrawalListAsync(investmentsSummary).Await());
+            .SubscribeAsync(CompileWithdrawalListAsync);
     }
 
     private async Task LoadWithdrawals(LoadWithdrawalsCommandPayload payload)

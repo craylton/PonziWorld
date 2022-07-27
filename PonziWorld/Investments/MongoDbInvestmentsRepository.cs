@@ -1,10 +1,11 @@
 ﻿using MongoDB.Driver;
+using PonziWorld.Core;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Investments;
 
-internal class MongoDbInvestmentsRepository : Database.MongoDbRepositoryBase<Investment>, IInvestmentsRepository
+internal class MongoDbInvestmentsRepository : MongoDbRepositoryBase<Investment>, IInvestmentsRepository
 {
     public MongoDbInvestmentsRepository() : base("investments")
     {

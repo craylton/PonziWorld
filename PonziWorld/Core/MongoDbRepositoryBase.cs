@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Threading.Tasks;
 
-namespace PonziWorld.Database;
+namespace PonziWorld.Core;
 
 internal abstract class MongoDbRepositoryBase<TEntity>
 {

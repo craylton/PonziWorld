@@ -2,13 +2,16 @@
 
 namespace PonziWorld.Events;
 
-internal class LoadInvestorsProcess
+internal class LoadInvestors
     : SagaProcess<
         InvestorsLoadedEvent,
         InvestorsLoadedEventPayload,
         LoadInvestorsCommand,
         LoadInvestorsCommandPayload>
-{ }
+{
+    public static LoadInvestors Process => new();
+    private LoadInvestors() { }
+}
 
 internal class InvestorsLoadedEvent
     : PubSubEvent<InvestorsLoadedEventPayload>

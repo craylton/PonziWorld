@@ -6,7 +6,7 @@ namespace PonziWorld.Sagas;
 internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEvent>
 {
     private bool hasLoadedInvestors = false;
-    private bool hasLoadedInvestments = false;
+    private bool hasLoadedDeposits = false;
     private bool hasLoadedWithdrawals = false;
 
     public LoadGameSaga(IEventAggregator eventAggregator)
@@ -15,8 +15,8 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
 
     protected override void Start()
     {
-        StartProcess(new LoadInvestorsProcess(), new(), InvestorsLoaded);
-        StartProcess(new LoadCompanyProcess(), new(), CompanyLoaded);
+        StartProcess(LoadInvestors.Process, new(), InvestorsLoaded);
+        StartProcess(LoadCompany.Process, new(), CompanyLoaded);
     }
 
     private void InvestorsLoaded(InvestorsLoadedEventPayload incomingPayload)
@@ -29,26 +29,26 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
 
     private void CompanyLoaded(CompanyLoadedEventPayload incomingPayload) =>
         StartProcess(
-            new LoadInvestmentsForLastMonthProcess(),
+            LoadInvestmentsForLastMonth.Process,
             new(incomingPayload.Company.Month),
             InvestmentsForMonthLoaded);
 
     private void InvestmentsForMonthLoaded(InvestmentsForLastMonthLoadedEventPayload incomingPayload)
     {
         StartProcess(
-            new LoadDepositsProcess(),
+            LoadDeposits.Process,
             new(incomingPayload.LastMonthInvestments),
             DepositsLoaded);
 
         StartProcess(
-            new LoadWithdrawalsProcess(),
+            LoadWithdrawals.Process,
             new(incomingPayload.LastMonthInvestments),
             WithdrawalsLoaded);
     }
 
     private void DepositsLoaded(DepositsLoadedEventPayload incomingPayload)
     {
-        hasLoadedInvestments = true;
+        hasLoadedDeposits = true;
 
         if (AreAllProcessesComplete())
             CompleteSaga();
@@ -63,5 +63,8 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
     }
 
     private bool AreAllProcessesComplete() =>
-        hasLoadedInvestors && hasLoadedInvestments && hasLoadedWithdrawals;
+        hasLoadedInvestors && hasLoadedDeposits && hasLoadedWithdrawals;
+
+    protected override void Complete() =>
+        hasLoadedInvestors = hasLoadedDeposits = hasLoadedWithdrawals = false;
 }

@@ -5,24 +5,35 @@ using System;
 namespace PonziWorld.Sagas;
 
 internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
-        where TStartedEvent : PubSubEvent, new()
-        where TCompletedEvent : PubSubEvent, new()
+    where TStartedEvent : PubSubEvent, new()
+    where TCompletedEvent : PubSubEvent, new()
 {
     private readonly IEventAggregator eventAggregator;
+    private bool isInProgress = false;
 
     protected SagaBase(IEventAggregator eventAggregator) =>
         this.eventAggregator = eventAggregator;
 
     public void StartSaga()
     {
+        if (isInProgress)
+            return;
+
+        isInProgress = true;
         eventAggregator.GetEvent<TStartedEvent>().Publish();
         Start();
     }
 
     protected abstract void Start();
 
-    protected void CompleteSaga() =>
+    protected void CompleteSaga()
+    {
         eventAggregator.GetEvent<TCompletedEvent>().Publish();
+        Complete();
+        isInProgress = false;
+    }
+
+    protected abstract void Complete();
 
     protected void StartProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
         SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,

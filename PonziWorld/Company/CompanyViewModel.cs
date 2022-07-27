@@ -1,4 +1,5 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Core;
+using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
@@ -27,14 +28,17 @@ internal class CompanyViewModel : BindableBase
         this.eventAggregator = eventAggregator;
 
         eventAggregator.GetEvent<LoadCompanyCommand>()
-            .Subscribe(_ => LoadCompanyAsync().Await());
+            .SubscribeAsync(LoadCompanyAsync);
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
-            .Subscribe(companyName => CreateCompanyAsync(companyName).Await());
+            .SubscribeAsync(CreateCompanyAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .Subscribe(investmentsSummary => UpdateFundsAsync(investmentsSummary).Await());
+            .SubscribeAsync(UpdateFundsAsync);
     }
+
+    private async Task LoadCompanyAsync(LoadCompanyCommandPayload _) =>
+        await LoadCompanyAsync();
 
     private async Task LoadCompanyAsync()
     {

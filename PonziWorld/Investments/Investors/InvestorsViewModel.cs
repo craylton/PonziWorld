@@ -1,4 +1,5 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Core;
+using PonziWorld.Events;
 using Prism.Events;
 using Prism.Mvvm;
 using System.Collections.Generic;
@@ -27,17 +28,23 @@ internal class InvestorsViewModel : BindableBase
         this.eventAggregator = eventAggregator;
 
         eventAggregator.GetEvent<LoadInvestorsCommand>()
-            .Subscribe(_ => UpdateInvestorListAsync().Await());
+            .SubscribeAsync(UpdateInvestorListAsync);
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
-            .Subscribe(_ => DeleteAllInvestorsAsync().Await());
+            .SubscribeAsync(DeleteAllInvestorsAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .Subscribe(_ => UpdateInvestorListAsync().Await());
+            .SubscribeAsync(UpdateInvestorListAsync);
     }
 
-    private async Task DeleteAllInvestorsAsync() =>
+    private async Task DeleteAllInvestorsAsync(string _) =>
         await repository.DeleteAllInvestorsAsync();
+
+    private async Task UpdateInvestorListAsync(LoadInvestorsCommandPayload _) =>
+        await UpdateInvestorListAsync();
+
+    private async Task UpdateInvestorListAsync(NewInvestmentsSummary _) =>
+        await UpdateInvestorListAsync();
 
     private async Task UpdateInvestorListAsync()
     {
