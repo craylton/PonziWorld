@@ -46,7 +46,7 @@ internal class WithdrawersTabViewModel : BindableBase
         IEnumerable<DetailedInvestment> investments = await GetDetailedWithdrawalsAsync(lastMonthWithdrawals);
         SetWithdrawalsList(investments);
 
-        eventAggregator.GetEvent<WithdrawalsLoadedEvent>().Publish();
+        eventAggregator.GetEvent<WithdrawalsLoadedEvent>().Publish(new());
     }
 
     private async Task CompileWithdrawalListAsync(NewInvestmentsSummary investmentsSummary)

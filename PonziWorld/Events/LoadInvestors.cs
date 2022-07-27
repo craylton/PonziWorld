@@ -2,10 +2,22 @@
 
 namespace PonziWorld.Events;
 
-internal class InvestorsLoadedEvent
-    : PubSubEvent
+internal class LoadInvestorsProcess
+    : SagaProcess<
+        InvestorsLoadedEvent,
+        InvestorsLoadedEventPayload,
+        LoadInvestorsCommand,
+        LoadInvestorsCommandPayload>
 { }
 
-internal class LoadInvestorsCommand
-    : PubSubEvent
+internal class InvestorsLoadedEvent
+    : PubSubEvent<InvestorsLoadedEventPayload>
 { }
+
+internal record InvestorsLoadedEventPayload;
+
+internal class LoadInvestorsCommand
+    : PubSubEvent<LoadInvestorsCommandPayload>
+{ }
+
+internal record LoadInvestorsCommandPayload;

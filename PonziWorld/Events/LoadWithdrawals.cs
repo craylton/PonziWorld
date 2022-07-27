@@ -4,9 +4,19 @@ using System.Collections.Generic;
 
 namespace PonziWorld.Events;
 
-internal class WithdrawalsLoadedEvent
-    : PubSubEvent
+internal class LoadWithdrawalsProcess
+    : SagaProcess<
+        WithdrawalsLoadedEvent,
+        WithdrawalsLoadedEventPayload,
+        LoadWithdrawalsCommand,
+        LoadWithdrawalsCommandPayload>
 { }
+
+internal class WithdrawalsLoadedEvent
+    : PubSubEvent<WithdrawalsLoadedEventPayload>
+{ }
+
+internal record WithdrawalsLoadedEventPayload;
 
 internal class LoadWithdrawalsCommand
     : PubSubEvent<LoadWithdrawalsCommandPayload>

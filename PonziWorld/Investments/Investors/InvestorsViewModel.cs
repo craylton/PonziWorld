@@ -27,7 +27,7 @@ internal class InvestorsViewModel : BindableBase
         this.eventAggregator = eventAggregator;
 
         eventAggregator.GetEvent<LoadInvestorsCommand>()
-            .Subscribe(() => UpdateInvestorListAsync().Await());
+            .Subscribe(_ => UpdateInvestorListAsync().Await());
 
         eventAggregator.GetEvent<NewGameInitiatedEvent>()
             .Subscribe(_ => DeleteAllInvestorsAsync().Await());
@@ -44,6 +44,6 @@ internal class InvestorsViewModel : BindableBase
         IEnumerable<Investor> investors = await repository.GetAllActiveInvestorsAsync();
         Investors.Clear();
         Investors.AddRange(investors);
-        eventAggregator.GetEvent<InvestorsLoadedEvent>().Publish();
+        eventAggregator.GetEvent<InvestorsLoadedEvent>().Publish(new());
     }
 }

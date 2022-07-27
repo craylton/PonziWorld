@@ -3,79 +3,65 @@ using Prism.Events;
 
 namespace PonziWorld.Sagas;
 
-internal class LoadGameSaga
+internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEvent>
 {
-    private readonly IEventAggregator eventAggregator;
     private bool hasLoadedInvestors = false;
     private bool hasLoadedInvestments = false;
     private bool hasLoadedWithdrawals = false;
 
     public LoadGameSaga(IEventAggregator eventAggregator)
+        : base(eventAggregator)
+    { }
+
+    protected override void Start()
     {
-        this.eventAggregator = eventAggregator;
+        StartProcess(new LoadInvestorsProcess(), new(), InvestorsLoaded);
+        StartProcess(new LoadCompanyProcess(), new(), CompanyLoaded);
     }
 
-    public void Start()
+    private void InvestorsLoaded(InvestorsLoadedEventPayload incomingPayload)
     {
-        eventAggregator.GetEvent<InvestorsLoadedEvent>().Subscribe(InvestorsLoaded);
-        eventAggregator.GetEvent<LoadInvestorsCommand>().Publish();
-
-        eventAggregator.GetEvent<CompanyLoadedEvent>().Subscribe(CompanyLoaded);
-        eventAggregator.GetEvent<LoadCompanyCommand>().Publish();
-    }
-
-    private void InvestorsLoaded()
-    {
-        eventAggregator.GetEvent<InvestorsLoadedEvent>().Unsubscribe(InvestorsLoaded);
         hasLoadedInvestors = true;
 
-        if (HasLoaded())
+        if (AreAllProcessesComplete())
             CompleteSaga();
     }
 
-    private void CompanyLoaded(CompanyLoadedEventPayload incomingPayload)
-    {
-        eventAggregator.GetEvent<CompanyLoadedEvent>().Unsubscribe(CompanyLoaded);
-        LoadInvestmentsForLastMonthCommandPayload payload = new(incomingPayload.Company.Month);
-
-        eventAggregator.GetEvent<InvestmentsForLastMonthLoadedEvent>().Subscribe(InvestmentsForMonthLoaded);
-        eventAggregator.GetEvent<LoadInvestmentsForLastMonthCommand>().Publish(payload);
-    }
+    private void CompanyLoaded(CompanyLoadedEventPayload incomingPayload) =>
+        StartProcess(
+            new LoadInvestmentsForLastMonthProcess(),
+            new(incomingPayload.Company.Month),
+            InvestmentsForMonthLoaded);
 
     private void InvestmentsForMonthLoaded(InvestmentsForLastMonthLoadedEventPayload incomingPayload)
     {
-        eventAggregator.GetEvent<InvestmentsForLastMonthLoadedEvent>().Unsubscribe(InvestmentsForMonthLoaded);
-        LoadInvestmentsCommandPayload investmentsPayload = new(incomingPayload.LastMonthInvestments);
-        LoadWithdrawalsCommandPayload withdrawalsPayload = new(incomingPayload.LastMonthInvestments);
+        StartProcess(
+            new LoadDepositsProcess(),
+            new(incomingPayload.LastMonthInvestments),
+            DepositsLoaded);
 
-        eventAggregator.GetEvent<InvestmentsLoadedEvent>().Subscribe(InvestmentsLoaded);
-        eventAggregator.GetEvent<LoadInvestmentsCommand>().Publish(investmentsPayload);
-
-        eventAggregator.GetEvent<WithdrawalsLoadedEvent>().Subscribe(WithdrawalsLoaded);
-        eventAggregator.GetEvent<LoadWithdrawalsCommand>().Publish(withdrawalsPayload);
+        StartProcess(
+            new LoadWithdrawalsProcess(),
+            new(incomingPayload.LastMonthInvestments),
+            WithdrawalsLoaded);
     }
 
-    private void InvestmentsLoaded()
+    private void DepositsLoaded(DepositsLoadedEventPayload incomingPayload)
     {
-        eventAggregator.GetEvent<InvestmentsLoadedEvent>().Unsubscribe(InvestmentsLoaded);
         hasLoadedInvestments = true;
 
-        if (HasLoaded())
+        if (AreAllProcessesComplete())
             CompleteSaga();
     }
 
-    private void WithdrawalsLoaded()
+    private void WithdrawalsLoaded(WithdrawalsLoadedEventPayload incomingPayload)
     {
-        eventAggregator.GetEvent<WithdrawalsLoadedEvent>().Unsubscribe(WithdrawalsLoaded);
         hasLoadedWithdrawals = true;
 
-        if (HasLoaded())
+        if (AreAllProcessesComplete())
             CompleteSaga();
     }
 
-    private void CompleteSaga() =>
-        eventAggregator.GetEvent<LoadGameCompletedEvent>().Publish();
-
-    private bool HasLoaded() =>
+    private bool AreAllProcessesComplete() =>
         hasLoadedInvestors && hasLoadedInvestments && hasLoadedWithdrawals;
 }
