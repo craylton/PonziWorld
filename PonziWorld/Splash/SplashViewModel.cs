@@ -1,14 +1,16 @@
 ﻿using PonziWorld.Company;
+using PonziWorld.Core;
 using PonziWorld.Events;
 using PonziWorld.Sagas;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Mvvm;
+using System;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Splash;
 
-internal class SplashViewModel : BindableBase
+internal class SplashViewModel : BindableSubscriberBase
 {
     private readonly LoadGameSaga loadGameSaga;
     private readonly ICompanyRepository repository;
@@ -43,6 +45,7 @@ internal class SplashViewModel : BindableBase
         LoadGameSaga loadGameSaga,
         ICompanyRepository repository,
         IEventAggregator eventAggregator)
+        : base(eventAggregator)
     {
         this.loadGameSaga = loadGameSaga;
         this.repository = repository;
@@ -51,14 +54,22 @@ internal class SplashViewModel : BindableBase
         LoadCommand = new(LoadGame, CanLoadGame);
         NewGameCommand = new(StartNewGame, CanStartNewGame);
 
-        eventAggregator.GetEvent<MainWindowInitialisedEvent>()
-            .Subscribe(() => InitialiseAsync().Await());
+        SubscribeToProcess(TestDatabaseConnection.Process, TryConnectToDatabase);
     }
 
-    private async Task InitialiseAsync()
+    private async Task<DatabaseConnectionTestedEventPayload> TryConnectToDatabase(TestDatabaseConnectionCommandPayload arg)
     {
-        SavedGameExists = await repository.GetCompanyExistsAsync();
-        CanAccessDatabase = true;
+        try
+        {
+            SavedGameExists = await repository.GetCompanyExistsAsync();
+            CanAccessDatabase = true;
+        }
+        catch
+        {
+            CanAccessDatabase = false;
+        }
+
+        return new(CanAccessDatabase);
     }
 
     private void LoadGame() => loadGameSaga.StartSaga();

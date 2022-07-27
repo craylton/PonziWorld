@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using PonziWorld.Events;
+using PonziWorld.Sagas;
 using Prism.Events;
 using Prism.Mvvm;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ namespace PonziWorld.MainWindow;
 
 internal class MainWindowViewModel : BindableBase
 {
+    private readonly StartApplicationSaga startApplicationSaga;
     private readonly IEventAggregator eventAggregator;
     private readonly IDialogCoordinator dialogCoordinator;
     private bool _isGameLoaded = false;
@@ -19,11 +21,16 @@ internal class MainWindowViewModel : BindableBase
     }
 
     public MainWindowViewModel(
+        StartApplicationSaga startApplicationSaga,
         IEventAggregator eventAggregator,
         IDialogCoordinator dialogCoordinator)
     {
+        this.startApplicationSaga = startApplicationSaga;
         this.eventAggregator = eventAggregator;
         this.dialogCoordinator = dialogCoordinator;
+
+        eventAggregator.GetEvent<MainWindowInitialisedEvent>()
+            .Subscribe(InitialiseApplication);
 
         eventAggregator.GetEvent<NewGameRequestedEvent>()
             .Subscribe(() => StartNewGameAsync().Await());
@@ -31,6 +38,8 @@ internal class MainWindowViewModel : BindableBase
         eventAggregator.GetEvent<LoadGameCompletedEvent>()
             .Subscribe(OnGameLoaded);
     }
+
+    private void InitialiseApplication() => startApplicationSaga.StartSaga();
 
     private void OnGameLoaded() => IsGameLoaded = true;
 
