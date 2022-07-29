@@ -31,11 +31,10 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         this.investorsRepository = investorsRepository;
         this.investmentsRepository = investmentsRepository;
 
-        // TODO: move this somewhere more appropriate
-        eventAggregator.GetEvent<NewGameInitiatedEvent>()
-            .SubscribeAsync(DeleteAllInvestmentsAsync);
-
+        // TODO: move these somewhere more appropriate
+        SubscribeToProcess(ClearInvestments.Process, DeleteAllInvestmentsAsync);
         SubscribeToProcess(LoadInvestmentsForLastMonth.Process, LoadAllLastMonthInvestmentsAsync);
+
         SubscribeToProcess(LoadDeposits.Process, LoadDepositsAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
@@ -53,8 +52,11 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         return new();
     }
 
-    private async Task DeleteAllInvestmentsAsync(string _) =>
+    private async Task<InvestmentsClearedEventPayload> DeleteAllInvestmentsAsync(ClearInvestmentsCommandPayload _)
+    {
         await investmentsRepository.DeleteAllInvestmentsAsync();
+        return new();
+    }
 
     private async Task<InvestmentsForLastMonthLoadedEventPayload> LoadAllLastMonthInvestmentsAsync(
         LoadInvestmentsForLastMonthCommandPayload payload)

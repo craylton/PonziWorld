@@ -28,9 +28,7 @@ internal class CompanyViewModel : BindableSubscriberBase
         this.eventAggregator = eventAggregator;
 
         SubscribeToProcess(LoadCompany.Process, LoadCompanyAsync);
-
-        eventAggregator.GetEvent<NewGameInitiatedEvent>()
-            .SubscribeAsync(CreateCompanyAsync);
+        SubscribeToProcess(StartNewCompany.Process, CreateCompanyAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .SubscribeAsync(UpdateFundsAsync);
@@ -42,11 +40,12 @@ internal class CompanyViewModel : BindableSubscriberBase
         return new(Company);
     }
 
-    private async Task CreateCompanyAsync(string companyName)
+    private async Task<NewCompanyStartedEventPayload> CreateCompanyAsync(StartNewCompanyCommandPayload payload)
     {
-        Company newCompany = new(companyName, 0, 0, 0, 10, 1, 5);
+        Company newCompany = new(payload.NewName, 0, 0, 0, 10, 1, 5);
         await repository.CreateNewCompanyAsync(newCompany);
         Company = newCompany;
+        return new();
     }
 
     private async Task UpdateFundsAsync(NewInvestmentsSummary investmentsSummary)

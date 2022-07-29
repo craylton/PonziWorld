@@ -35,15 +35,8 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
 
     private void InvestmentsForMonthLoaded(InvestmentsForLastMonthLoadedEventPayload incomingPayload)
     {
-        StartProcess(
-            LoadDeposits.Process,
-            new(incomingPayload.LastMonthInvestments),
-            DepositsLoaded);
-
-        StartProcess(
-            LoadWithdrawals.Process,
-            new(incomingPayload.LastMonthInvestments),
-            WithdrawalsLoaded);
+        StartProcess(LoadDeposits.Process, new(incomingPayload.LastMonthInvestments), DepositsLoaded);
+        StartProcess(LoadWithdrawals.Process, new(incomingPayload.LastMonthInvestments), WithdrawalsLoaded);
     }
 
     private void DepositsLoaded(DepositsLoadedEventPayload incomingPayload)

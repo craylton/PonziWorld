@@ -26,9 +26,6 @@ internal abstract class BindableSubscriberBase : BindableBase
     private async Task GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
         Func<TCommandPayload, Task<TEventPayload>> function,
         TCommandPayload payload)
-        where TEvent : PubSubEvent<TEventPayload>, new()
-    {
-        TEventPayload eventPayload = await function(payload);
-        eventAggregator.GetEvent<TEvent>().Publish(eventPayload);
-    }
+        where TEvent : PubSubEvent<TEventPayload>, new() =>
+        eventAggregator.GetEvent<TEvent>().Publish(await function(payload));
 }

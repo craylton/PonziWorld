@@ -1,16 +1,15 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
+using PonziWorld.Core;
 using PonziWorld.Events;
 using PonziWorld.Sagas;
 using Prism.Events;
-using Prism.Mvvm;
 using System.Threading.Tasks;
 
 namespace PonziWorld.MainWindow;
 
-internal class MainWindowViewModel : BindableBase
+internal class MainWindowViewModel : BindableSubscriberBase
 {
     private readonly StartApplicationSaga startApplicationSaga;
-    private readonly IEventAggregator eventAggregator;
     private readonly IDialogCoordinator dialogCoordinator;
     private bool _isGameLoaded = false;
 
@@ -24,34 +23,39 @@ internal class MainWindowViewModel : BindableBase
         StartApplicationSaga startApplicationSaga,
         IEventAggregator eventAggregator,
         IDialogCoordinator dialogCoordinator)
+        : base(eventAggregator)
     {
         this.startApplicationSaga = startApplicationSaga;
-        this.eventAggregator = eventAggregator;
         this.dialogCoordinator = dialogCoordinator;
 
         eventAggregator.GetEvent<MainWindowInitialisedEvent>()
             .Subscribe(InitialiseApplication);
 
-        eventAggregator.GetEvent<NewGameRequestedEvent>()
-            .Subscribe(() => StartNewGameAsync().Await());
+        SubscribeToProcess(GetNewGameSettings.Process, StartNewGameAsync);
+        SubscribeToProcess(ExitMenu.Process, OnGameLoaded);
 
         eventAggregator.GetEvent<LoadGameCompletedEvent>()
             .Subscribe(OnGameLoaded);
+    }
+
+    private async Task<MenuExitedEventPayload> OnGameLoaded(ExitMenuCommandPayload _)
+    {
+        OnGameLoaded();
+        return new();
     }
 
     private void InitialiseApplication() => startApplicationSaga.StartSaga();
 
     private void OnGameLoaded() => IsGameLoaded = true;
 
-    private async Task StartNewGameAsync()
+    private async Task<NewGameSettingsObtainedEventPayload> StartNewGameAsync(GetNewGameSettingsCommandPayload arg)
     {
         string? companyName = await dialogCoordinator
             .ShowInputAsync(this, "Create a new game", "Enter the name of your company");
 
         if (companyName is null)
-            return;
+            return new(string.Empty, true);
 
-        eventAggregator.GetEvent<NewGameInitiatedEvent>().Publish(companyName);
-        IsGameLoaded = true;
+        return new(companyName, false);
     }
 }
