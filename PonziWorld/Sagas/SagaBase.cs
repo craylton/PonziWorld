@@ -1,6 +1,7 @@
 ﻿using PonziWorld.Events;
 using Prism.Events;
 using System;
+using System.Collections.Concurrent;
 
 namespace PonziWorld.Sagas;
 
@@ -9,6 +10,7 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
     where TCompletedEvent : PubSubEvent, new()
 {
     private readonly IEventAggregator eventAggregator;
+    private readonly ConcurrentDictionary<Type, SubscriptionToken> eventSubscriptions = new();
     private bool isInProgress = false;
 
     protected SagaBase(IEventAggregator eventAggregator) =>
@@ -43,8 +45,10 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
         where TEvent : PubSubEvent<TEventPayload>, new()
         where TCommand : PubSubEvent<TCommandPayload>, new()
     {
-        eventAggregator.GetEvent<TEvent>().Subscribe(
-            eventPayload => GetOnCompletionAction<TEvent, TEventPayload>(action, eventPayload));
+        SubscriptionToken subscriptionToken = eventAggregator.GetEvent<TEvent>().Subscribe(
+            eventPayload => GetOnCompletionAction<TEvent, TEventPayload>(action, eventPayload), true);
+
+        eventSubscriptions.TryAdd(typeof(TEvent), subscriptionToken);
 
         eventAggregator.GetEvent<TCommand>().Publish(payload);
     }
@@ -54,8 +58,10 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
         TEventPayload payload)
         where TEvent : PubSubEvent<TEventPayload>, new()
     {
-        eventAggregator.GetEvent<TEvent>().Unsubscribe(
-            payload => GetOnCompletionAction<TEvent, TEventPayload>(payload => action(payload), payload));
+        eventAggregator.GetEvent<TEvent>()
+            .Unsubscribe(eventSubscriptions[typeof(TEvent)]);
+
+        eventSubscriptions.TryRemove(typeof(TEvent), out _);
 
         action(payload);
     }
