@@ -16,7 +16,7 @@
         </Grid.RowDefinitions>
 
         <TabControl Style="{DynamicResource MahApps.Styles.TabControl}">
-            <TabItem Header="Investments">
+            <TabItem Header="Deposits">
                 <depositorsTab:DepositorsTabView />
             </TabItem>
             <TabItem Header="Withdrawals">

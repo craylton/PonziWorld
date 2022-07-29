@@ -56,7 +56,8 @@ internal class SplashViewModel : BindableSubscriberBase
         SubscribeToProcess(TestDatabaseConnection.Process, TryConnectToDatabase);
     }
 
-    private async Task<DatabaseConnectionTestedEventPayload> TryConnectToDatabase(TestDatabaseConnectionCommandPayload arg)
+    private async Task<DatabaseConnectionTestedEventPayload> TryConnectToDatabase(
+        TestDatabaseConnectionCommandPayload _)
     {
         try
         {
@@ -71,9 +72,9 @@ internal class SplashViewModel : BindableSubscriberBase
         return new(CanAccessDatabase);
     }
 
-    private void LoadGame() => loadGameSaga.StartSaga();
+    private void LoadGame() => loadGameSaga.Start();
 
-    private void StartNewGame() => startNewGameSaga.StartSaga();
+    private void StartNewGame() => startNewGameSaga.Start();
 
     private bool CanLoadGame() => SavedGameExists;
 

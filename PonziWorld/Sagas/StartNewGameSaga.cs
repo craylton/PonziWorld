@@ -13,10 +13,10 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
         : base(eventAggregator)
     { }
 
-    protected override void Start() =>
-        StartProcess(GetNewGameSettings.Process, new(), NewGameSettingsObtained);
+    protected override void StartInternal() =>
+        StartProcess(AcquireNewGameSettings.Process, new(), NewGameSettingsObtained);
 
-    private void NewGameSettingsObtained(NewGameSettingsObtainedEventPayload incomingPayload)
+    private void NewGameSettingsObtained(NewGameSettingsAcquiredEventPayload incomingPayload)
     {
         if (incomingPayload.IsCancelled)
         {

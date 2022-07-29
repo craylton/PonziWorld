@@ -33,7 +33,7 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
 
         // TODO: move these somewhere more appropriate
         SubscribeToProcess(ClearInvestments.Process, DeleteAllInvestmentsAsync);
-        SubscribeToProcess(LoadInvestmentsForLastMonth.Process, LoadAllLastMonthInvestmentsAsync);
+        SubscribeToProcess(RetrieveInvestmentsForLastMonth.Process, GetAllLastMonthInvestmentsAsync);
 
         SubscribeToProcess(LoadDeposits.Process, LoadDepositsAsync);
 
@@ -58,8 +58,8 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         return new();
     }
 
-    private async Task<InvestmentsForLastMonthLoadedEventPayload> LoadAllLastMonthInvestmentsAsync(
-        LoadInvestmentsForLastMonthCommandPayload payload)
+    private async Task<InvestmentsForLastMonthRetrievedEventPayload> GetAllLastMonthInvestmentsAsync(
+        RetrieveInvestmentsForLastMonthCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthInvestments = await investmentsRepository
             .GetInvestmentsByMonthAsync(payload.CurrentMonth - 1);
@@ -79,8 +79,7 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         Deposits.AddRange(deposits.OrderByDescending(deposit => deposit.InvestmentSize));
     }
 
-    private async Task<IEnumerable<DetailedInvestment>> GetAllNewDepositsAsync(
-        NewInvestmentsSummary investmentsSummary)
+    private async Task<IEnumerable<DetailedInvestment>> GetAllNewDepositsAsync(NewInvestmentsSummary investmentsSummary)
     {
         IEnumerable<DetailedInvestment> newInvestments = investmentsSummary.NewInvestors
             .Select(investor => new DetailedInvestment(investor.Name, investor.Investment, 0));
@@ -98,10 +97,7 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         foreach (Investment deposit in deposits)
         {
             Investor investor = await investorsRepository.GetInvestorByIdAsync(deposit.InvestorId);
-            detailedDeposits.Add(new DetailedInvestment(
-                investor.Name,
-                deposit.Amount,
-                investor.Investment - deposit.Amount));
+            detailedDeposits.Add(new DetailedInvestment(investor, deposit));
         }
 
         return detailedDeposits;

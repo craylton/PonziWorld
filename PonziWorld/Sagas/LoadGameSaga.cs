@@ -13,7 +13,7 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
         : base(eventAggregator)
     { }
 
-    protected override void Start()
+    protected override void StartInternal()
     {
         StartProcess(LoadInvestors.Process, new(), InvestorsLoaded);
         StartProcess(LoadCompany.Process, new(), CompanyLoaded);
@@ -29,11 +29,11 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
 
     private void CompanyLoaded(CompanyLoadedEventPayload incomingPayload) =>
         StartProcess(
-            LoadInvestmentsForLastMonth.Process,
+            RetrieveInvestmentsForLastMonth.Process,
             new(incomingPayload.Company.Month),
             InvestmentsForMonthLoaded);
 
-    private void InvestmentsForMonthLoaded(InvestmentsForLastMonthLoadedEventPayload incomingPayload)
+    private void InvestmentsForMonthLoaded(InvestmentsForLastMonthRetrievedEventPayload incomingPayload)
     {
         StartProcess(LoadDeposits.Process, new(incomingPayload.LastMonthInvestments), DepositsLoaded);
         StartProcess(LoadWithdrawals.Process, new(incomingPayload.LastMonthInvestments), WithdrawalsLoaded);

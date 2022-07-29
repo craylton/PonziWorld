@@ -10,7 +10,6 @@ namespace PonziWorld.Investments.Investors;
 internal class InvestorsViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository repository;
-    private readonly IEventAggregator eventAggregator;
     private ObservableCollection<Investor> _investors = new();
 
     public ObservableCollection<Investor> Investors
@@ -25,7 +24,6 @@ internal class InvestorsViewModel : BindableSubscriberBase
         : base(eventAggregator)
     {
         this.repository = repository;
-        this.eventAggregator = eventAggregator;
 
         SubscribeToProcess(LoadInvestors.Process, UpdateInvestorListAsync);
         SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
@@ -42,17 +40,17 @@ internal class InvestorsViewModel : BindableSubscriberBase
 
     private async Task<InvestorsLoadedEventPayload> UpdateInvestorListAsync(LoadInvestorsCommandPayload _)
     {
-        IEnumerable<Investor> investors = await repository.GetAllActiveInvestorsAsync();
-        Investors.Clear();
-        Investors.AddRange(investors);
+        await LoadInvestorsAsync();
         return new();
     }
 
-    private async Task UpdateInvestorListAsync(NewInvestmentsSummary _)
+    private async Task UpdateInvestorListAsync(NewInvestmentsSummary _) =>
+        await LoadInvestorsAsync();
+
+    private async Task LoadInvestorsAsync()
     {
         IEnumerable<Investor> investors = await repository.GetAllActiveInvestorsAsync();
         Investors.Clear();
         Investors.AddRange(investors);
-        eventAggregator.GetEvent<InvestorsLoadedEvent>().Publish(new());
     }
 }

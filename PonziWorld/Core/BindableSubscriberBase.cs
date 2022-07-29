@@ -14,16 +14,33 @@ internal abstract class BindableSubscriberBase : BindableBase
 
     protected void SubscribeToProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
         Events.SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,
+        Func<TCommandPayload, TEventPayload> function)
+        where TEvent : PubSubEvent<TEventPayload>, new()
+        where TCommand : PubSubEvent<TCommandPayload>, new() =>
+        eventAggregator.GetEvent<TCommand>()
+            .Subscribe(
+                commandPayload => GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
+                    function,
+                    commandPayload));
+
+    protected void SubscribeToProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
+        Events.SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,
         Func<TCommandPayload, Task<TEventPayload>> function)
         where TEvent : PubSubEvent<TEventPayload>, new()
         where TCommand : PubSubEvent<TCommandPayload>, new() =>
         eventAggregator.GetEvent<TCommand>()
             .SubscribeAsync(
-                commandPayload => GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
+                commandPayload => GetProcessActionAsync<TEvent, TEventPayload, TCommandPayload>(
                     function,
                     commandPayload));
 
-    private async Task GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
+    private void GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
+        Func<TCommandPayload, TEventPayload> function,
+        TCommandPayload payload)
+        where TEvent : PubSubEvent<TEventPayload>, new() =>
+        eventAggregator.GetEvent<TEvent>().Publish(function(payload));
+
+    private async Task GetProcessActionAsync<TEvent, TEventPayload, TCommandPayload>(
         Func<TCommandPayload, Task<TEventPayload>> function,
         TCommandPayload payload)
         where TEvent : PubSubEvent<TEventPayload>, new() =>

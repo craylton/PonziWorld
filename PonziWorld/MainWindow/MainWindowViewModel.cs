@@ -31,24 +31,24 @@ internal class MainWindowViewModel : BindableSubscriberBase
         eventAggregator.GetEvent<MainWindowInitialisedEvent>()
             .Subscribe(InitialiseApplication);
 
-        SubscribeToProcess(GetNewGameSettings.Process, StartNewGameAsync);
+        SubscribeToProcess(AcquireNewGameSettings.Process, StartNewGameAsync);
         SubscribeToProcess(ExitMenu.Process, OnGameLoaded);
 
         eventAggregator.GetEvent<LoadGameCompletedEvent>()
             .Subscribe(OnGameLoaded);
     }
 
-    private async Task<MenuExitedEventPayload> OnGameLoaded(ExitMenuCommandPayload _)
+    private MenuExitedEventPayload OnGameLoaded(ExitMenuCommandPayload _)
     {
         OnGameLoaded();
         return new();
     }
 
-    private void InitialiseApplication() => startApplicationSaga.StartSaga();
+    private void InitialiseApplication() => startApplicationSaga.Start();
 
     private void OnGameLoaded() => IsGameLoaded = true;
 
-    private async Task<NewGameSettingsObtainedEventPayload> StartNewGameAsync(GetNewGameSettingsCommandPayload arg)
+    private async Task<NewGameSettingsAcquiredEventPayload> StartNewGameAsync(AcquireNewGameSettingsCommandPayload arg)
     {
         string? companyName = await dialogCoordinator
             .ShowInputAsync(this, "Create a new game", "Enter the name of your company");

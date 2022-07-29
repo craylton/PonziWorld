@@ -9,7 +9,7 @@ internal class StartApplicationSaga : SagaBase<StartApplicationStartedEvent, Sta
         : base(eventAggregator)
     { }
 
-    protected override void Start() =>
+    protected override void StartInternal() =>
         StartProcess(TestDatabaseConnection.Process, new(), DatabaseTestComplete);
 
     private void DatabaseTestComplete(DatabaseConnectionTestedEventPayload incomingPayload) =>

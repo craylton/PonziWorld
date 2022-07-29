@@ -16,17 +16,17 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
     protected SagaBase(IEventAggregator eventAggregator) =>
         this.eventAggregator = eventAggregator;
 
-    public void StartSaga()
+    public void Start()
     {
         if (isInProgress)
             return;
 
         isInProgress = true;
         eventAggregator.GetEvent<TStartedEvent>().Publish();
-        Start();
+        StartInternal();
     }
 
-    protected abstract void Start();
+    protected abstract void StartInternal();
 
     protected void CompleteSaga()
     {

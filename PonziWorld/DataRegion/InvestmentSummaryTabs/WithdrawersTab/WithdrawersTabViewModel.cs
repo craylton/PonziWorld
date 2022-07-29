@@ -3,7 +3,6 @@ using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -29,14 +28,13 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
     {
         this.investorsRepository = investorsRepository;
 
-        SubscribeToProcess(LoadWithdrawals.Process, LoadLatestWithdrawalsAsync);
+        SubscribeToProcess(LoadWithdrawals.Process, LoadWithdrawalsAsync);
 
         eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
             .SubscribeAsync(CompileWithdrawalListAsync);
     }
 
-    private async Task<WithdrawalsLoadedEventPayload> LoadLatestWithdrawalsAsync(
-        LoadWithdrawalsCommandPayload payload)
+    private async Task<WithdrawalsLoadedEventPayload> LoadWithdrawalsAsync(LoadWithdrawalsCommandPayload payload)
     {
         IEnumerable<Investment> lastMonthWithdrawals = payload.LastMonthInvestments
             .Where(investment => investment.Amount < 0);
@@ -49,7 +47,7 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
 
     private async Task CompileWithdrawalListAsync(NewInvestmentsSummary investmentsSummary)
     {
-        IEnumerable<DetailedInvestment> withdrawals = await GetAllNewWithdrawalsAsync(investmentsSummary);
+        IEnumerable<DetailedInvestment> withdrawals = await GetDetailedWithdrawalsAsync(investmentsSummary.Withdrawals);
         SetWithdrawalsList(withdrawals);
     }
 
@@ -59,22 +57,14 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
         Withdrawals.AddRange(withdrawals.OrderByDescending(withdrawal => withdrawal.InvestmentSize));
     }
 
-    private async Task<IEnumerable<DetailedInvestment>> GetAllNewWithdrawalsAsync(
-        NewInvestmentsSummary investmentsSummary) =>
-        await GetDetailedWithdrawalsAsync(investmentsSummary.Withdrawals);
-
-    private async Task<IEnumerable<DetailedInvestment>> GetDetailedWithdrawalsAsync(
-        IEnumerable<Investment> withdrawals)
+    private async Task<IEnumerable<DetailedInvestment>> GetDetailedWithdrawalsAsync(IEnumerable<Investment> withdrawals)
     {
         List<DetailedInvestment> detailedInvestments = new();
 
         foreach (Investment withdrawal in withdrawals)
         {
             Investor investor = await investorsRepository.GetInvestorByIdAsync(withdrawal.InvestorId);
-            detailedInvestments.Add(new DetailedInvestment(
-                investor.Name,
-                Math.Abs(withdrawal.Amount),
-                investor.Investment - withdrawal.Amount));
+            detailedInvestments.Add(new DetailedInvestment(investor, withdrawal));
         }
 
         return detailedInvestments;
