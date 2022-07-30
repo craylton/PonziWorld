@@ -1,6 +1,5 @@
 ﻿using PonziWorld.Company;
 using PonziWorld.Core;
-using PonziWorld.Events;
 using PonziWorld.Sagas;
 using Prism.Commands;
 using Prism.Events;

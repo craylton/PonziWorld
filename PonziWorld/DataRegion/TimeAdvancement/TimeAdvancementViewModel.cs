@@ -1,6 +1,5 @@
 ﻿using PonziWorld.Core;
 using PonziWorld.Events;
-using PonziWorld.Investments;
 using PonziWorld.Sagas;
 using Prism.Commands;
 using Prism.Events;
@@ -37,22 +36,18 @@ internal class TimeAdvancementViewModel : BindableSubscriberBase
 
         NextMonthCommand = new(GoToNextMonth, CanGoToNextMonth);
 
-        SubscribeToProcess(Events.GenerateNewMonthInvestments.Process, GenerateNewMonthInvestments);
+        SubscribeToProcess(GenerateNewMonthInvestments.Process, GetNewMonthInvestments);
         SubscribeToProcess(ApplyNewMonthInvestments.Process, ApplyNewMonthInvestmentsAsync);
 
         eventAggregator.GetEvent<AdvanceToNextMonthStartedEvent>().Subscribe(() => CanAdvance = false);
         eventAggregator.GetEvent<AdvanceToNextMonthCompletedEvent>().Subscribe(() => CanAdvance = true);
     }
 
-    private NewMonthInvestmentsGeneratedEventPayload GenerateNewMonthInvestments(
-        GenerateNewMonthInvestmentsCommandPayload payload)
-    {
-        NewInvestmentsSummary newInvestmentsSummary = timeAdvancementCoordinator.GetNextMonthInvestments(
+    private NewMonthInvestmentsGeneratedEventPayload GetNewMonthInvestments(
+        GenerateNewMonthInvestmentsCommandPayload payload) =>
+        new(timeAdvancementCoordinator.GetNextMonthInvestments(
             payload.Company,
-            payload.Investors);
-
-        return new(newInvestmentsSummary);
-    }
+            payload.Investors));
 
     private async Task<NewMonthInvestmentsAppliedEventPayload> ApplyNewMonthInvestmentsAsync(
         ApplyNewMonthInvestmentsCommandPayload payload)

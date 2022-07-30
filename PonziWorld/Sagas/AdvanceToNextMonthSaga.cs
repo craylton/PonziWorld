@@ -1,4 +1,8 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Company;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
+using PonziWorld.DataRegion.TimeAdvancement;
+using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;

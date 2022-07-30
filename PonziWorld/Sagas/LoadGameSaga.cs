@@ -1,4 +1,9 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Company;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.InvestmentsTab;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
+using PonziWorld.Events;
+using PonziWorld.Investments.Investors;
 using Prism.Events;
 
 namespace PonziWorld.Sagas;

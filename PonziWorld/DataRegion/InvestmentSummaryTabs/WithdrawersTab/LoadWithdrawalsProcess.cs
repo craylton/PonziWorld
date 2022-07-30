@@ -1,8 +1,9 @@
-﻿using PonziWorld.Investments;
+﻿using PonziWorld.Events;
+using PonziWorld.Investments;
 using Prism.Events;
 using System.Collections.Generic;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
 
 internal class LoadWithdrawals
     : SagaProcess<
@@ -19,7 +20,8 @@ internal class WithdrawalsLoadedEvent
     : PubSubEvent<WithdrawalsLoadedEventPayload>
 { }
 
-internal record WithdrawalsLoadedEventPayload;
+internal record WithdrawalsLoadedEventPayload(
+    IEnumerable<DetailedInvestment> LastMonthWithdrawals);
 
 internal class LoadWithdrawalsCommand
     : PubSubEvent<LoadWithdrawalsCommandPayload>

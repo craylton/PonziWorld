@@ -1,9 +1,10 @@
-﻿using PonziWorld.Investments;
+﻿using PonziWorld.Events;
+using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
 using System.Collections.Generic;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.DataRegion.TimeAdvancement;
 
 internal class GenerateNewMonthInvestments
     : SagaProcess<
@@ -28,4 +29,5 @@ internal class GenerateNewMonthInvestmentsCommand
 { }
 
 internal record GenerateNewMonthInvestmentsCommandPayload(
-    Company.Company Company, IEnumerable<Investor> Investors);
+    Company.Company Company,
+    IEnumerable<Investor> Investors);

@@ -1,4 +1,8 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Company;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.InvestmentsTab;
+using PonziWorld.Events;
+using PonziWorld.Investments.Investors;
+using PonziWorld.MainWindow;
 using Prism.Events;
 
 namespace PonziWorld.Sagas;
@@ -54,7 +58,7 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
     }
 
     private void ExitMenu() =>
-        StartProcess(Events.ExitMenu.Process, new(), OnMenuExited);
+        StartProcess(MainWindow.ExitMenu.Process, new(), OnMenuExited);
 
     private void OnMenuExited(MenuExitedEventPayload incomingPayload) => CompleteSaga();
 

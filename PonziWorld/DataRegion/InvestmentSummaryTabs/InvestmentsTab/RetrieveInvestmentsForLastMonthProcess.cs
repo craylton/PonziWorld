@@ -1,8 +1,9 @@
-﻿using PonziWorld.Investments;
+﻿using PonziWorld.Events;
+using PonziWorld.Investments;
 using Prism.Events;
 using System.Collections.Generic;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestmentsTab;
 
 internal class RetrieveInvestmentsForLastMonth
     : SagaProcess<

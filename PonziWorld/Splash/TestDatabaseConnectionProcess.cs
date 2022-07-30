@@ -1,6 +1,7 @@
-﻿using Prism.Events;
+﻿using PonziWorld.Events;
+using Prism.Events;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.Splash;
 
 internal class TestDatabaseConnection
     : SagaProcess<

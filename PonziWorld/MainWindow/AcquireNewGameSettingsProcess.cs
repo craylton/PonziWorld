@@ -1,6 +1,7 @@
-﻿using Prism.Events;
+﻿using PonziWorld.Events;
+using Prism.Events;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.MainWindow;
 
 internal class AcquireNewGameSettings
     : SagaProcess<
@@ -18,7 +19,8 @@ internal class NewGameSettingsAcquiredEvent
 { }
 
 internal record NewGameSettingsAcquiredEventPayload(
-    string CompanyName, bool IsCancelled);
+    string CompanyName,
+    bool IsCancelled);
 
 internal class AcquireNewGameSettingsCommand
     : PubSubEvent<AcquireNewGameSettingsCommandPayload>

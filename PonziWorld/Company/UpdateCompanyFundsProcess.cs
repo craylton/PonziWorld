@@ -1,7 +1,8 @@
-﻿using PonziWorld.Investments;
+﻿using PonziWorld.Events;
+using PonziWorld.Investments;
 using Prism.Events;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.Company;
 
 internal class UpdateCompanyFunds
     : SagaProcess<
@@ -18,7 +19,8 @@ internal class CompanyFundsUpdatedEvent
     : PubSubEvent<CompanyFundsUpdatedEventPayload>
 { }
 
-internal record CompanyFundsUpdatedEventPayload();
+internal record CompanyFundsUpdatedEventPayload(
+    Company Company);
 
 internal class UpdateCompanyFundsCommand
     : PubSubEvent<UpdateCompanyFundsCommandPayload>

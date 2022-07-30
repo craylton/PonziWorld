@@ -1,7 +1,8 @@
-﻿using PonziWorld.Investments;
+﻿using PonziWorld.Events;
+using PonziWorld.Investments;
 using Prism.Events;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.DataRegion.TimeAdvancement;
 
 internal class ApplyNewMonthInvestments
     : SagaProcess<

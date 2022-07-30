@@ -1,5 +1,4 @@
 ﻿using PonziWorld.Core;
-using PonziWorld.Events;
 using Prism.Events;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -25,28 +24,25 @@ internal class InvestorsViewModel : BindableSubscriberBase
     {
         this.repository = repository;
 
+        SubscribeToProcess(RetrieveInvestors.Process, GetAllInvestorsAsync);
         SubscribeToProcess(LoadInvestors.Process, UpdateInvestorListAsync);
         SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
-        SubscribeToProcess(RetrieveInvestors.Process, GetAllInvestorsAsync);
     }
 
-    private async Task<InvestorsRetrievedEventPayload> GetAllInvestorsAsync(RetrieveInvestorsCommandPayload _)
-    {
-        var investors = await repository.GetAllInvestorsAsync();
-        return new(investors);
-    }
-
-    private async Task<InvestorsClearedEventPayload> DeleteAllInvestorsAsync(ClearInvestorsCommandPayload _)
-    {
-        await repository.DeleteAllInvestorsAsync();
-        return new();
-    }
+    private async Task<InvestorsRetrievedEventPayload> GetAllInvestorsAsync(RetrieveInvestorsCommandPayload _) =>
+        new(await repository.GetAllInvestorsAsync());
 
     private async Task<InvestorsLoadedEventPayload> UpdateInvestorListAsync(LoadInvestorsCommandPayload _)
     {
         IEnumerable<Investor> investors = await repository.GetAllActiveInvestorsAsync();
         Investors.Clear();
         Investors.AddRange(investors);
+        return new(investors);
+    }
+
+    private async Task<InvestorsClearedEventPayload> DeleteAllInvestorsAsync(ClearInvestorsCommandPayload _)
+    {
+        await repository.DeleteAllInvestorsAsync();
         return new();
     }
 }

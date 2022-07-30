@@ -1,8 +1,8 @@
-﻿using PonziWorld.Investments.Investors;
+﻿using PonziWorld.Events;
 using Prism.Events;
 using System.Collections.Generic;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.Investments.Investors;
 
 internal class RetrieveInvestors
     : SagaProcess<

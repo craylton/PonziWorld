@@ -1,6 +1,7 @@
-﻿using Prism.Events;
+﻿using PonziWorld.Events;
+using Prism.Events;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.Investments.Investors;
 
 internal class ClearInvestors
     : SagaProcess<

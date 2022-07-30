@@ -1,5 +1,4 @@
 ﻿using PonziWorld.Core;
-using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
@@ -40,7 +39,7 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
         IEnumerable<DetailedInvestment> investments = await GetDetailedWithdrawalsAsync(lastMonthWithdrawals);
         SetWithdrawalsList(investments);
 
-        return new();
+        return new(investments);
     }
 
     private async Task<WithdrawalsForNewMonthLoadedEventPayload> LoadWithdrawalsForNewMonthAsync(
@@ -50,7 +49,7 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
             payload.NewInvestmentsSummary.Withdrawals);
 
         SetWithdrawalsList(withdrawals);
-        return new();
+        return new(withdrawals);
     }
 
     private void SetWithdrawalsList(IEnumerable<DetailedInvestment> withdrawals)

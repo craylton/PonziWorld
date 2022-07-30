@@ -1,6 +1,8 @@
-﻿using Prism.Events;
+﻿using PonziWorld.Events;
+using Prism.Events;
+using System.Collections.Generic;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.Investments.Investors;
 
 internal class LoadInvestors
     : SagaProcess<
@@ -17,7 +19,8 @@ internal class InvestorsLoadedEvent
     : PubSubEvent<InvestorsLoadedEventPayload>
 { }
 
-internal record InvestorsLoadedEventPayload;
+internal record InvestorsLoadedEventPayload(
+    IEnumerable<Investor> ActiveInvestors);
 
 internal class LoadInvestorsCommand
     : PubSubEvent<LoadInvestorsCommandPayload>

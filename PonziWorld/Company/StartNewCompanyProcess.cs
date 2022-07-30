@@ -1,6 +1,7 @@
-﻿using Prism.Events;
+﻿using PonziWorld.Events;
+using Prism.Events;
 
-namespace PonziWorld.Events;
+namespace PonziWorld.Company;
 
 internal class StartNewCompany
     : SagaProcess<
@@ -17,11 +18,12 @@ internal class NewCompanyStartedEvent
     : PubSubEvent<NewCompanyStartedEventPayload>
 { }
 
-internal record NewCompanyStartedEventPayload;
+internal record NewCompanyStartedEventPayload(
+    Company Company);
 
 internal class StartNewCompanyCommand
     : PubSubEvent<StartNewCompanyCommandPayload>
 { }
 
 internal record StartNewCompanyCommandPayload(
-    string NewName);
+    string NewCompanyName);

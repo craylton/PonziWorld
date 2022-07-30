@@ -1,5 +1,5 @@
 ﻿using PonziWorld.Core;
-using PonziWorld.Events;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.InvestmentsTab;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
@@ -56,13 +56,13 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
 
     private async Task<DepositsLoadedEventPayload> LoadDepositsAsync(LoadDepositsCommandPayload payload)
     {
-        IEnumerable<Investment> lastMonthDeposits = payload.Investments
+        IEnumerable<Investment> lastMonthDeposits = payload.LastMonthInvestments
             .Where(investment => investment.Amount > 0);
 
         IEnumerable<DetailedInvestment> deposits = await GetDetailedDepositsAsync(lastMonthDeposits);
         SetDepositsList(deposits);
 
-        return new();
+        return new(deposits);
     }
 
     private async Task<DepositsForNewMonthLoadedEventPayload> LoadDepositsForNewMonthAsync(
@@ -70,7 +70,7 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
     {
         IEnumerable<DetailedInvestment> deposits = await GetAllNewDepositsAsync(payload.NewInvestmentsSummary);
         SetDepositsList(deposits);
-        return new();
+        return new(deposits);
     }
 
     private void SetDepositsList(IEnumerable<DetailedInvestment> deposits)
