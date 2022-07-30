@@ -7,7 +7,7 @@ namespace PonziWorld.Events;
 
 internal class GenerateNewMonthInvestments
     : SagaProcess<
-        NewMonthInvestmentsGeneratedEvent2,
+        NewMonthInvestmentsGeneratedEvent,
         NewMonthInvestmentsGeneratedEventPayload,
         GenerateNewMonthInvestmentsCommand,
         GenerateNewMonthInvestmentsCommandPayload>
@@ -16,7 +16,7 @@ internal class GenerateNewMonthInvestments
     private GenerateNewMonthInvestments() { }
 }
 
-internal class NewMonthInvestmentsGeneratedEvent2
+internal class NewMonthInvestmentsGeneratedEvent
     : PubSubEvent<NewMonthInvestmentsGeneratedEventPayload>
 { }
 
