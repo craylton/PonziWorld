@@ -1,6 +1,7 @@
 ﻿using PonziWorld.Core;
 using PonziWorld.Events;
 using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -27,9 +28,16 @@ internal class InvestorsViewModel : BindableSubscriberBase
 
         SubscribeToProcess(LoadInvestors.Process, UpdateInvestorListAsync);
         SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
+        SubscribeToProcess(RetrieveInvestors.Process, GetAllInvestorsAsync);
 
-        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .SubscribeAsync(UpdateInvestorListAsync);
+        //eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
+        //    .SubscribeAsync(UpdateInvestorListAsync);
+    }
+
+    private async Task<InvestorsRetrievedEventPayload> GetAllInvestorsAsync(RetrieveInvestorsCommandPayload _)
+    {
+        var investors = await repository.GetAllInvestorsAsync();
+        return new(investors);
     }
 
     private async Task<InvestorsClearedEventPayload> DeleteAllInvestorsAsync(ClearInvestorsCommandPayload _)

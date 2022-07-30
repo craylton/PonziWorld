@@ -23,10 +23,10 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
 
         isInProgress = true;
         eventAggregator.GetEvent<TStartedEvent>().Publish();
-        StartInternal();
+        OnSagaStarted();
     }
 
-    protected abstract void StartInternal();
+    protected abstract void OnSagaStarted();
 
     protected void CompleteSaga()
     {
@@ -41,12 +41,16 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
     protected void StartProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
         SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,
         TCommandPayload payload,
-        Action<TEventPayload> action)
+        Action<TEventPayload> onCompletion)
         where TEvent : PubSubEvent<TEventPayload>, new()
         where TCommand : PubSubEvent<TCommandPayload>, new()
     {
-        SubscriptionToken subscriptionToken = eventAggregator.GetEvent<TEvent>().Subscribe(
-            eventPayload => GetOnCompletionAction<TEvent, TEventPayload>(action, eventPayload), true);
+        SubscriptionToken subscriptionToken = eventAggregator.GetEvent<TEvent>()
+            .Subscribe(eventPayload =>
+                GetOnCompletionAction<TEvent, TEventPayload>(
+                    onCompletion,
+                    eventPayload),
+                true);
 
         eventSubscriptions.TryAdd(typeof(TEvent), subscriptionToken);
 

@@ -9,10 +9,10 @@ internal class StartApplicationSaga : SagaBase<StartApplicationStartedEvent, Sta
         : base(eventAggregator)
     { }
 
-    protected override void StartInternal() =>
-        StartProcess(TestDatabaseConnection.Process, new(), DatabaseTestComplete);
+    protected override void OnSagaStarted() =>
+        StartProcess(TestDatabaseConnection.Process, new(), OnDatabaseTestComplete);
 
-    private void DatabaseTestComplete(DatabaseConnectionTestedEventPayload incomingPayload) =>
+    private void OnDatabaseTestComplete(DatabaseConnectionTestedEventPayload incomingPayload) =>
         // TODO: do something when we can't connect to the db
         CompleteSaga();
 }

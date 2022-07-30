@@ -3,6 +3,7 @@ using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -36,9 +37,17 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         SubscribeToProcess(RetrieveInvestmentsForLastMonth.Process, GetAllLastMonthInvestmentsAsync);
 
         SubscribeToProcess(LoadDeposits.Process, LoadDepositsAsync);
+        SubscribeToProcess(LoadDepositsForNewMonth.Process, LoadDepositsForNewMonthAsync);
 
-        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .SubscribeAsync(CompileDepositListAsync);
+        //eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
+        //    .SubscribeAsync(CompileDepositListAsync);
+    }
+
+    private async Task<DepositsForNewMonthLoadedEventPayload> LoadDepositsForNewMonthAsync(LoadDepositsForNewMonthCommandPayload payload)
+    {
+        IEnumerable<DetailedInvestment> deposits = await GetAllNewDepositsAsync(payload.NewInvestmentsSummary);
+        SetDepositsList(deposits);
+        return new();
     }
 
     private async Task<DepositsLoadedEventPayload> LoadDepositsAsync(LoadDepositsCommandPayload payload)

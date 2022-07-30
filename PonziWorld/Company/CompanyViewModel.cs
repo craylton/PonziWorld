@@ -3,6 +3,7 @@ using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
+using System;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Company;
@@ -29,9 +30,33 @@ internal class CompanyViewModel : BindableSubscriberBase
 
         SubscribeToProcess(LoadCompany.Process, LoadCompanyAsync);
         SubscribeToProcess(StartNewCompany.Process, CreateCompanyAsync);
+        SubscribeToProcess(UpdateCompanyFunds.Process, UpdateFundsAsync);
 
-        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .SubscribeAsync(UpdateFundsAsync);
+        //eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
+        //    .SubscribeAsync(UpdateFundsAsync);
+    }
+
+    private async Task<CompanyFundsUpdatedEventPayload> UpdateFundsAsync(UpdateCompanyFundsCommandPayload payload)
+    {
+        var investmentsSummary = payload.NewInvestmentsSummary;
+        int companyFunds = Company.ActualFunds;
+
+        foreach (Investor newInvestor in investmentsSummary.NewInvestors)
+        {
+            companyFunds += newInvestor.Investment;
+        }
+        foreach (Investment reinvestment in investmentsSummary.Reinvestments)
+        {
+            companyFunds += reinvestment.Amount;
+        }
+        foreach (Investment withdrawal in investmentsSummary.Withdrawals)
+        {
+            companyFunds += withdrawal.Amount;
+        }
+
+        await repository.MoveToNextMonthAsync(companyFunds);
+        Company = await repository.GetCompanyAsync();
+        return new();
     }
 
     private async Task<CompanyLoadedEventPayload> LoadCompanyAsync(LoadCompanyCommandPayload _)

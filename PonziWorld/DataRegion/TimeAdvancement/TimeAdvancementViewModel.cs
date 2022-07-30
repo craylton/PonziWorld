@@ -1,14 +1,17 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.Core;
+using PonziWorld.Events;
 using PonziWorld.Investments;
+using PonziWorld.Sagas;
 using Prism.Commands;
 using Prism.Events;
-using Prism.Mvvm;
+using System;
 using System.Threading.Tasks;
 
 namespace PonziWorld.DataRegion.TimeAdvancement;
 
-internal class TimeAdvancementViewModel : BindableBase
+internal class TimeAdvancementViewModel : BindableSubscriberBase
 {
+    private readonly AdvanceToNextMonthSaga advanceToNextMonthSaga;
     private readonly ITimeAdvancementCoordinator timeAdvancementCoordinator;
     private readonly IEventAggregator eventAggregator;
     private bool _canAdvance = true;
@@ -26,28 +29,51 @@ internal class TimeAdvancementViewModel : BindableBase
     public DelegateCommand NextMonthCommand { get; }
 
     public TimeAdvancementViewModel(
+        AdvanceToNextMonthSaga advanceToNextMonthSaga,
         ITimeAdvancementCoordinator timeAdvancementCoordinator,
         IEventAggregator eventAggregator)
+        : base(eventAggregator)
     {
+        this.advanceToNextMonthSaga = advanceToNextMonthSaga;
         this.timeAdvancementCoordinator = timeAdvancementCoordinator;
         this.eventAggregator = eventAggregator;
 
-        NextMonthCommand = new(() => GoToNextMonthAsync().Await(), CanGoToNextMonth);
+        NextMonthCommand = new(GoToNextMonth, CanGoToNextMonth);
+
+        SubscribeToProcess(GenerateNewMonthInvestments.Process, GenerateNewMonthInvestmentsAsync);
+        SubscribeToProcess(ApplyNewMonthInvestments.Process, ApplyNewMonthInvestmentsAsync);
     }
 
-    private async Task GoToNextMonthAsync()
+    private async Task<NewMonthInvestmentsAppliedEventPayload> ApplyNewMonthInvestmentsAsync(
+        ApplyNewMonthInvestmentsCommandPayload payload)
     {
-        CanAdvance = false;
+        await timeAdvancementCoordinator.ApplyAsync(payload.NewInvestmentsSummary);
+        return new();
+    }
 
-        // apply % to existing investors and update satisfaction
-        // update company stats (suspicion etc)
-        // calculate and store results of company's investments
-
+    private async Task<NewMonthInvestmentsGeneratedEventPayload> GenerateNewMonthInvestmentsAsync(
+        GenerateNewMonthInvestmentsCommandPayload _)
+    {
         NewInvestmentsSummary newInvestmentsSummary = await timeAdvancementCoordinator.GetNextMonthInvestmentsAsync();
-        await timeAdvancementCoordinator.ApplyAsync(newInvestmentsSummary);
-        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>().Publish(newInvestmentsSummary);
+        return new(newInvestmentsSummary);
+    }
 
-        CanAdvance = true;
+    private void GoToNextMonth()
+    {
+        advanceToNextMonthSaga.Start();
+
+
+        //CanAdvance = false;
+
+        //// apply % to existing investors and update satisfaction
+        //// update company stats (suspicion etc)
+        //// calculate and store results of company's investments
+
+        //NewInvestmentsSummary newInvestmentsSummary = await timeAdvancementCoordinator.GetNextMonthInvestmentsAsync();
+        //await timeAdvancementCoordinator.ApplyAsync(newInvestmentsSummary);
+        //eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>().Publish(newInvestmentsSummary);
+
+        //CanAdvance = true;
     }
 
     private bool CanGoToNextMonth() => CanAdvance;
