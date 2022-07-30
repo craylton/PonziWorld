@@ -3,7 +3,6 @@ using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -31,16 +30,6 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
 
         SubscribeToProcess(LoadWithdrawals.Process, LoadWithdrawalsAsync);
         SubscribeToProcess(LoadWithdrawalsForNewMonth.Process, LoadWithdrawalsForNewMonthAsync);
-
-        //eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-        //    .SubscribeAsync(CompileWithdrawalListAsync);
-    }
-
-    private async Task<WithdrawalsForNewMonthLoadedEventPayload> LoadWithdrawalsForNewMonthAsync(LoadWithdrawalsForNewMonthCommandPayload payload)
-    {
-        IEnumerable<DetailedInvestment> withdrawals = await GetDetailedWithdrawalsAsync(payload.NewInvestmentsSummary.Withdrawals);
-        SetWithdrawalsList(withdrawals);
-        return new();
     }
 
     private async Task<WithdrawalsLoadedEventPayload> LoadWithdrawalsAsync(LoadWithdrawalsCommandPayload payload)
@@ -54,10 +43,14 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
         return new();
     }
 
-    private async Task CompileWithdrawalListAsync(NewInvestmentsSummary investmentsSummary)
+    private async Task<WithdrawalsForNewMonthLoadedEventPayload> LoadWithdrawalsForNewMonthAsync(
+        LoadWithdrawalsForNewMonthCommandPayload payload)
     {
-        IEnumerable<DetailedInvestment> withdrawals = await GetDetailedWithdrawalsAsync(investmentsSummary.Withdrawals);
+        IEnumerable<DetailedInvestment> withdrawals = await GetDetailedWithdrawalsAsync(
+            payload.NewInvestmentsSummary.Withdrawals);
+
         SetWithdrawalsList(withdrawals);
+        return new();
     }
 
     private void SetWithdrawalsList(IEnumerable<DetailedInvestment> withdrawals)

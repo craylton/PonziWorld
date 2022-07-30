@@ -24,10 +24,11 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
         this.investmentsRepository = investmentsRepository;
     }
 
-    public async Task<NewInvestmentsSummary> GetNextMonthInvestmentsAsync()
+    public NewInvestmentsSummary GetNextMonthInvestments(
+        Company.Company company,
+        IEnumerable<Investor> allInvestors)
     {
-        Company.Company company = await companyRepository.GetCompanyAsync();
-        IEnumerable<Investor> existingInvestors = await investorsRepository.GetAllActiveInvestorsAsync();
+        IEnumerable<Investor> existingInvestors = allInvestors.Where(investor => investor.IsActiveInvestor);
 
         // 1. Generate a list of people who have just heard about the company and _might_ invest
         List<ProspectiveInvestor> prospectiveInvestors = GenerateNewProspectiveInvestors(company.Fame).ToList();
@@ -36,7 +37,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
         List<Investor> newInvestors = GetNewInvestors(prospectiveInvestors, company).ToList();
 
         // 2.1. People who didn't invest in previous months can still invest
-        newInvestors.AddRange(await GetNewInvestorsFromPoolAsync(company));
+        newInvestors.AddRange(GetNewInvestorsFromPool(company, allInvestors));
 
         // 3. Existing investors might want to invest even more
         List<Investment> reinvestments = GetReinvestments(existingInvestors, company).ToList();
@@ -100,17 +101,16 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
             .Where(prospectiveInvestor => prospectiveInvestor.WantsToInvest(company))
             .Select(prospective => prospective.AsActiveInvestor(company));
 
-    private async Task<IEnumerable<Investor>> GetNewInvestorsFromPoolAsync(Company.Company company)
-    {
-        IEnumerable<Investor> prospectiveInvestors = await investorsRepository.GetAllProspectiveInvestorsAsync();
-
-        return prospectiveInvestors
+    private IEnumerable<Investor> GetNewInvestorsFromPool(
+        Company.Company company,
+        IEnumerable<Investor> allInvestors) =>
+        allInvestors
+            .Where(investor => !investor.IsActiveInvestor)
             .Where(prospectiveInvestor => prospectiveInvestor.WantsToInvest(company))
             .Select(prospective => prospective with
             {
                 Investment = prospective.DetermineInvestmentSize(company)
             });
-    }
 
     private static IEnumerable<Investment> GetReinvestments(
         IEnumerable<Investor> existingInvestors,

@@ -24,6 +24,10 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
         : base(eventAggregator)
     { }
 
+    // apply % to existing investors and update satisfaction
+    // update company stats (suspicion etc)
+    // calculate and store results of company's investments
+
     protected override void OnSagaStarted()
     {
         StartProcess(LoadCompany.Process, new(), OnCompanyLoaded);
