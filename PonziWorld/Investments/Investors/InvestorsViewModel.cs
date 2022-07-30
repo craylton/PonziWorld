@@ -27,9 +27,13 @@ internal class InvestorsViewModel : BindableSubscriberBase
 
         SubscribeToProcess(LoadInvestors.Process, UpdateInvestorListAsync);
         SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
+        SubscribeToProcess(RetrieveInvestors.Process, GetAllInvestorsAsync);
+    }
 
-        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .SubscribeAsync(UpdateInvestorListAsync);
+    private async Task<InvestorsRetrievedEventPayload> GetAllInvestorsAsync(RetrieveInvestorsCommandPayload _)
+    {
+        var investors = await repository.GetAllInvestorsAsync();
+        return new(investors);
     }
 
     private async Task<InvestorsClearedEventPayload> DeleteAllInvestorsAsync(ClearInvestorsCommandPayload _)
@@ -40,17 +44,9 @@ internal class InvestorsViewModel : BindableSubscriberBase
 
     private async Task<InvestorsLoadedEventPayload> UpdateInvestorListAsync(LoadInvestorsCommandPayload _)
     {
-        await LoadInvestorsAsync();
-        return new();
-    }
-
-    private async Task UpdateInvestorListAsync(NewInvestmentsSummary _) =>
-        await LoadInvestorsAsync();
-
-    private async Task LoadInvestorsAsync()
-    {
         IEnumerable<Investor> investors = await repository.GetAllActiveInvestorsAsync();
         Investors.Clear();
         Investors.AddRange(investors);
+        return new();
     }
 }

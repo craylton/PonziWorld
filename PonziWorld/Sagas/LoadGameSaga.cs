@@ -13,49 +13,49 @@ internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEv
         : base(eventAggregator)
     { }
 
-    protected override void StartInternal()
+    protected override void OnSagaStarted()
     {
-        StartProcess(LoadInvestors.Process, new(), InvestorsLoaded);
-        StartProcess(LoadCompany.Process, new(), CompanyLoaded);
+        StartProcess(LoadInvestors.Process, new(), OnInvestorsLoaded);
+        StartProcess(LoadCompany.Process, new(), OnCompanyLoaded);
     }
 
-    private void InvestorsLoaded(InvestorsLoadedEventPayload incomingPayload)
+    private void OnInvestorsLoaded(InvestorsLoadedEventPayload incomingPayload)
     {
         hasLoadedInvestors = true;
 
-        if (AreAllProcessesComplete())
+        if (IsReadyToCompleteSaga())
             CompleteSaga();
     }
 
-    private void CompanyLoaded(CompanyLoadedEventPayload incomingPayload) =>
+    private void OnCompanyLoaded(CompanyLoadedEventPayload incomingPayload) =>
         StartProcess(
             RetrieveInvestmentsForLastMonth.Process,
             new(incomingPayload.Company.Month),
-            InvestmentsForMonthLoaded);
+            OnInvestmentsForMonthLoaded);
 
-    private void InvestmentsForMonthLoaded(InvestmentsForLastMonthRetrievedEventPayload incomingPayload)
+    private void OnInvestmentsForMonthLoaded(InvestmentsForLastMonthRetrievedEventPayload incomingPayload)
     {
-        StartProcess(LoadDeposits.Process, new(incomingPayload.LastMonthInvestments), DepositsLoaded);
-        StartProcess(LoadWithdrawals.Process, new(incomingPayload.LastMonthInvestments), WithdrawalsLoaded);
+        StartProcess(LoadDeposits.Process, new(incomingPayload.LastMonthInvestments), OnDepositsLoaded);
+        StartProcess(LoadWithdrawals.Process, new(incomingPayload.LastMonthInvestments), OnWithdrawalsLoaded);
     }
 
-    private void DepositsLoaded(DepositsLoadedEventPayload incomingPayload)
+    private void OnDepositsLoaded(DepositsLoadedEventPayload incomingPayload)
     {
         hasLoadedDeposits = true;
 
-        if (AreAllProcessesComplete())
+        if (IsReadyToCompleteSaga())
             CompleteSaga();
     }
 
-    private void WithdrawalsLoaded(WithdrawalsLoadedEventPayload incomingPayload)
+    private void OnWithdrawalsLoaded(WithdrawalsLoadedEventPayload incomingPayload)
     {
         hasLoadedWithdrawals = true;
 
-        if (AreAllProcessesComplete())
+        if (IsReadyToCompleteSaga())
             CompleteSaga();
     }
 
-    private bool AreAllProcessesComplete() =>
+    private bool IsReadyToCompleteSaga() =>
         hasLoadedInvestors && hasLoadedDeposits && hasLoadedWithdrawals;
 
     protected override void ResetSaga() =>

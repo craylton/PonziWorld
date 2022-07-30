@@ -13,10 +13,10 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
         : base(eventAggregator)
     { }
 
-    protected override void StartInternal() =>
-        StartProcess(AcquireNewGameSettings.Process, new(), NewGameSettingsObtained);
+    protected override void OnSagaStarted() =>
+        StartProcess(AcquireNewGameSettings.Process, new(), OnNewGameSettingsObtained);
 
-    private void NewGameSettingsObtained(NewGameSettingsAcquiredEventPayload incomingPayload)
+    private void OnNewGameSettingsObtained(NewGameSettingsAcquiredEventPayload incomingPayload)
     {
         if (incomingPayload.IsCancelled)
         {
@@ -24,41 +24,41 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
             return;
         }
 
-        StartProcess(ClearInvestors.Process, new(), InvestorsCleared);
-        StartProcess(ClearInvestments.Process, new(), InvestmentsCleared);
-        StartProcess(StartNewCompany.Process, new(incomingPayload.CompanyName), NewCompanyStarted);
+        StartProcess(ClearInvestors.Process, new(), OnInvestorsCleared);
+        StartProcess(ClearInvestments.Process, new(), OnInvestmentsCleared);
+        StartProcess(StartNewCompany.Process, new(incomingPayload.CompanyName), OnNewCompanyStarted);
     }
 
-    private void InvestorsCleared(InvestorsClearedEventPayload incomingPayload)
+    private void OnInvestorsCleared(InvestorsClearedEventPayload incomingPayload)
     {
         investorsCleared = true;
 
-        if (AreAllProcessesComplete())
-            ReadyToStartGame();
+        if (IsReadyToExitMenu())
+            ExitMenu();
     }
 
-    private void InvestmentsCleared(InvestmentsClearedEventPayload incomingPayload)
+    private void OnInvestmentsCleared(InvestmentsClearedEventPayload incomingPayload)
     {
         investmentsCleared = true;
 
-        if (AreAllProcessesComplete())
-            ReadyToStartGame();
+        if (IsReadyToExitMenu())
+            ExitMenu();
     }
 
-    private void NewCompanyStarted(NewCompanyStartedEventPayload incomingPayload)
+    private void OnNewCompanyStarted(NewCompanyStartedEventPayload incomingPayload)
     {
         newCompanyCreated = true;
 
-        if (AreAllProcessesComplete())
-            ReadyToStartGame();
+        if (IsReadyToExitMenu())
+            ExitMenu();
     }
 
-    private void ReadyToStartGame() =>
-        StartProcess(ExitMenu.Process, new(), MenuExited);
+    private void ExitMenu() =>
+        StartProcess(Events.ExitMenu.Process, new(), OnMenuExited);
 
-    private void MenuExited(MenuExitedEventPayload incomingPayload) => CompleteSaga();
+    private void OnMenuExited(MenuExitedEventPayload incomingPayload) => CompleteSaga();
 
-    private bool AreAllProcessesComplete() =>
+    private bool IsReadyToExitMenu() =>
         investorsCleared && investmentsCleared && newCompanyCreated;
 
     protected override void ResetSaga() =>

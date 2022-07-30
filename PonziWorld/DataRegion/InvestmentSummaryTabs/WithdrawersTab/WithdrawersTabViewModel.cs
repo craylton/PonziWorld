@@ -29,9 +29,7 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
         this.investorsRepository = investorsRepository;
 
         SubscribeToProcess(LoadWithdrawals.Process, LoadWithdrawalsAsync);
-
-        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .SubscribeAsync(CompileWithdrawalListAsync);
+        SubscribeToProcess(LoadWithdrawalsForNewMonth.Process, LoadWithdrawalsForNewMonthAsync);
     }
 
     private async Task<WithdrawalsLoadedEventPayload> LoadWithdrawalsAsync(LoadWithdrawalsCommandPayload payload)
@@ -45,10 +43,14 @@ internal class WithdrawersTabViewModel : BindableSubscriberBase
         return new();
     }
 
-    private async Task CompileWithdrawalListAsync(NewInvestmentsSummary investmentsSummary)
+    private async Task<WithdrawalsForNewMonthLoadedEventPayload> LoadWithdrawalsForNewMonthAsync(
+        LoadWithdrawalsForNewMonthCommandPayload payload)
     {
-        IEnumerable<DetailedInvestment> withdrawals = await GetDetailedWithdrawalsAsync(investmentsSummary.Withdrawals);
+        IEnumerable<DetailedInvestment> withdrawals = await GetDetailedWithdrawalsAsync(
+            payload.NewInvestmentsSummary.Withdrawals);
+
         SetWithdrawalsList(withdrawals);
+        return new();
     }
 
     private void SetWithdrawalsList(IEnumerable<DetailedInvestment> withdrawals)

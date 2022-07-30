@@ -32,13 +32,26 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         this.investmentsRepository = investmentsRepository;
 
         // TODO: move these somewhere more appropriate
-        SubscribeToProcess(ClearInvestments.Process, DeleteAllInvestmentsAsync);
         SubscribeToProcess(RetrieveInvestmentsForLastMonth.Process, GetAllLastMonthInvestmentsAsync);
+        SubscribeToProcess(ClearInvestments.Process, DeleteAllInvestmentsAsync);
 
         SubscribeToProcess(LoadDeposits.Process, LoadDepositsAsync);
+        SubscribeToProcess(LoadDepositsForNewMonth.Process, LoadDepositsForNewMonthAsync);
+    }
 
-        eventAggregator.GetEvent<NewMonthInvestmentsGeneratedEvent>()
-            .SubscribeAsync(CompileDepositListAsync);
+    private async Task<InvestmentsForLastMonthRetrievedEventPayload> GetAllLastMonthInvestmentsAsync(
+        RetrieveInvestmentsForLastMonthCommandPayload payload)
+    {
+        IEnumerable<Investment> lastMonthInvestments = await investmentsRepository
+            .GetInvestmentsByMonthAsync(payload.CurrentMonth - 1);
+
+        return new(lastMonthInvestments);
+    }
+
+    private async Task<InvestmentsClearedEventPayload> DeleteAllInvestmentsAsync(ClearInvestmentsCommandPayload _)
+    {
+        await investmentsRepository.DeleteAllInvestmentsAsync();
+        return new();
     }
 
     private async Task<DepositsLoadedEventPayload> LoadDepositsAsync(LoadDepositsCommandPayload payload)
@@ -52,25 +65,12 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         return new();
     }
 
-    private async Task<InvestmentsClearedEventPayload> DeleteAllInvestmentsAsync(ClearInvestmentsCommandPayload _)
+    private async Task<DepositsForNewMonthLoadedEventPayload> LoadDepositsForNewMonthAsync(
+        LoadDepositsForNewMonthCommandPayload payload)
     {
-        await investmentsRepository.DeleteAllInvestmentsAsync();
-        return new();
-    }
-
-    private async Task<InvestmentsForLastMonthRetrievedEventPayload> GetAllLastMonthInvestmentsAsync(
-        RetrieveInvestmentsForLastMonthCommandPayload payload)
-    {
-        IEnumerable<Investment> lastMonthInvestments = await investmentsRepository
-            .GetInvestmentsByMonthAsync(payload.CurrentMonth - 1);
-
-        return new(lastMonthInvestments);
-    }
-
-    private async Task CompileDepositListAsync(NewInvestmentsSummary investmentsSummary)
-    {
-        IEnumerable<DetailedInvestment> deposits = await GetAllNewDepositsAsync(investmentsSummary);
+        IEnumerable<DetailedInvestment> deposits = await GetAllNewDepositsAsync(payload.NewInvestmentsSummary);
         SetDepositsList(deposits);
+        return new();
     }
 
     private void SetDepositsList(IEnumerable<DetailedInvestment> deposits)

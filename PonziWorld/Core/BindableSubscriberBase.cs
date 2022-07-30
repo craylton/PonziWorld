@@ -21,7 +21,8 @@ internal abstract class BindableSubscriberBase : BindableBase
             .Subscribe(
                 commandPayload => GetProcessAction<TEvent, TEventPayload, TCommandPayload>(
                     function,
-                    commandPayload));
+                    commandPayload),
+                true);
 
     protected void SubscribeToProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
         Events.SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,

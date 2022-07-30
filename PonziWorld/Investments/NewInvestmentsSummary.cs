@@ -11,6 +11,12 @@ internal record NewInvestmentsSummary(
     IEnumerable<Investment> Withdrawals,
     IEnumerable<ProspectiveInvestor> NewProspectiveInvestors)
 {
+    public static NewInvestmentsSummary Default =>
+        new(new List<Investor>(),
+            new List<Investment>(),
+            new List<Investment>(),
+            new List<ProspectiveInvestor>());
+
     internal NewInvestmentsSummary Sanitise()
     {
         // Those who actually invested are no longer 'prospective' investors
