@@ -15,15 +15,15 @@ internal class LoadInvestors
     private LoadInvestors() { }
 }
 
+internal class LoadInvestorsCommand
+    : PubSubEvent<LoadInvestorsCommandPayload>
+{ }
+
+internal record LoadInvestorsCommandPayload;
+
 internal class InvestorsLoadedEvent
     : PubSubEvent<InvestorsLoadedEventPayload>
 { }
 
 internal record InvestorsLoadedEventPayload(
     IEnumerable<Investor> ActiveInvestors);
-
-internal class LoadInvestorsCommand
-    : PubSubEvent<LoadInvestorsCommandPayload>
-{ }
-
-internal record LoadInvestorsCommandPayload;

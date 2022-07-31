@@ -33,22 +33,15 @@ internal class MainWindowViewModel : BindableSubscriberBase
 
         SubscribeToProcess(AcquireNewGameSettings.Process, StartNewGameAsync);
         SubscribeToProcess(ExitMenu.Process, OnGameLoaded);
+        SubscribeToProcess(AcquireClaimedInterest.Process, ClaimInterestRate);
 
         eventAggregator.GetEvent<LoadGameCompletedEvent>()
             .Subscribe(OnGameLoaded);
     }
 
-    private MenuExitedEventPayload OnGameLoaded(ExitMenuCommandPayload _)
-    {
-        OnGameLoaded();
-        return new();
-    }
-
     private void InitialiseApplication() => startApplicationSaga.Start();
 
-    private void OnGameLoaded() => IsGameLoaded = true;
-
-    private async Task<NewGameSettingsAcquiredEventPayload> StartNewGameAsync(AcquireNewGameSettingsCommandPayload arg)
+    private async Task<NewGameSettingsAcquiredEventPayload> StartNewGameAsync(AcquireNewGameSettingsCommandPayload _)
     {
         string? companyName = await dialogCoordinator
             .ShowInputAsync(this, "Create a new game", "Enter the name of your company");
@@ -58,4 +51,15 @@ internal class MainWindowViewModel : BindableSubscriberBase
 
         return new(companyName, false);
     }
+
+    private MenuExitedEventPayload OnGameLoaded(ExitMenuCommandPayload _)
+    {
+        OnGameLoaded();
+        return new();
+    }
+
+    private ClaimedInterestAcquiredEventPayload ClaimInterestRate(AcquireClaimedInterestCommandPayload _) =>
+        new(1d);
+
+    private void OnGameLoaded() => IsGameLoaded = true;
 }
