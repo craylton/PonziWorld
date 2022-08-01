@@ -6,8 +6,8 @@ namespace PonziWorld.DataRegion.InvestmentSummaryTabs;
 
 internal record DetailedInvestment(
     string InvestorName,
-    int InvestmentSize,
-    int AmountPreviouslyInvested)
+    double InvestmentSize,
+    double AmountPreviouslyInvested)
 {
     public DetailedInvestment(Investor investor, Investment investment)
         : this(

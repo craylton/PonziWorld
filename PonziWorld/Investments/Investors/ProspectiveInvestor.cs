@@ -6,7 +6,7 @@ namespace PonziWorld.Investments.Investors;
 internal record ProspectiveInvestor(
     Guid Id,
     string Name,
-    int TotalFunds)
+    double TotalFunds)
     : InvestorBase(Id, Name, TotalFunds)
 {
     public static ProspectiveInvestor GenerateRandom() =>
@@ -19,12 +19,12 @@ internal record ProspectiveInvestor(
 
     public Investor AsActiveInvestor(Company.Company company)
     {
-        int investmentSize = DetermineInvestmentSize(company);
+        double investmentSize = DetermineInvestmentSize(company);
         return new(Id, Name, TotalFunds, investmentSize, 50);
     }
 
     public Investor AsInactiveInvestor() => new(Id, Name, TotalFunds, 0, 50);
 
-    private int DetermineInvestmentSize(Company.Company company) =>
-        Random.Shared.Next(TotalFunds * (100 - company.Suspicion) / 100);
+    private double DetermineInvestmentSize(Company.Company company) =>
+        Random.Shared.NextDouble() * TotalFunds * (100 - company.Suspicion) / 100d;
 }

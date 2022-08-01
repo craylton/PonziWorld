@@ -4,9 +4,9 @@ using Prism.Events;
 
 namespace PonziWorld.DataRegion.CompanyInvestmentsTab
 {
-    internal class CompanyInvestmentsViewModel : BindableSubscriberBase
+    internal class CompanyInvestmentsTabViewModel : BindableSubscriberBase
     {
-        public CompanyInvestmentsViewModel(
+        public CompanyInvestmentsTabViewModel(
             IEventAggregator eventAggregator)
             : base(eventAggregator) =>
             SubscribeToProcess(DetermineCompanyInvestmentResults.Process, CalculateMonthlyProfit);

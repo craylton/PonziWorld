@@ -7,6 +7,7 @@
              xmlns:depositorsTab="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab"
              xmlns:withdrawersTab="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab"
              xmlns:timeAdvancement="clr-namespace:PonziWorld.DataRegion.TimeAdvancement"
+             xmlns:companyInvestments="clr-namespace:PonziWorld.DataRegion.CompanyInvestmentsTab"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -21,6 +22,9 @@
             </TabItem>
             <TabItem Header="Withdrawals">
                 <withdrawersTab:WithdrawersTabView />
+            </TabItem>
+            <TabItem Header="Your Investments">
+                <companyInvestments:CompanyInvestmentsTabView />
             </TabItem>
         </TabControl>
         <timeAdvancement:TimeAdvancementView Grid.Row="1" />

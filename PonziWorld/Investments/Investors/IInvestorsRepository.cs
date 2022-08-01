@@ -12,6 +12,7 @@ internal interface IInvestorsRepository
     Task<IEnumerable<Investor>> GetAllProspectiveInvestorsAsync();
     Task<bool> GetInvestorExistsAsync(Investor newInvestor);
     Task<Investor> GetInvestorByIdAsync(Guid investorId);
+    Task ApplyInterestRateAsync(double interestRate);
     Task ApplyInvestmentAsync(Investment investment);
     Task DeleteAllInvestorsAsync();
 }

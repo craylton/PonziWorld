@@ -6,8 +6,8 @@ namespace PonziWorld.Company;
 internal record Company(
     string Name,
     int Month,
-    int ClaimedFunds,
-    int ActualFunds,
+    double ClaimedFunds,
+    double ActualFunds,
     int Attractiveness,
     int Fame,
     int Suspicion)

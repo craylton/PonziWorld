@@ -22,26 +22,26 @@
                                    />
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Investment:"
-                                   FontSize="14"
-                                   Margin="5,2"
-                                   />
+                                       FontSize="14"
+                                       Margin="5,2,0,2"
+                                       />
                             <TextBlock Visibility="{Binding
                                 Path=AmountPreviouslyInvested,
                                 Converter={StaticResource AmountToVisibility}}"
-                                   Text="{Binding
+                                       Text="{Binding
                                 Path=AmountPreviouslyInvested,
-                                StringFormat='£{0} + '}"
-                                   FontSize="14"
-                                   Margin="0,2"
-                                   />
-                        <TextBlock Text="{Binding
-                            Path=InvestmentSize,
-                            StringFormat='£{0}'}"
-                                   FontSize="14"
-                                   FontWeight="Bold"
-                                   Margin="0,2"
-                                   />
-                    </StackPanel>
+                                StringFormat={} {0:C} +}"
+                                       FontSize="14"
+                                       Margin="0,2"
+                                       />
+                            <TextBlock Text="{Binding
+                                Path=InvestmentSize,
+                                StringFormat={} {0:C}}"
+                                       FontSize="14"
+                                       FontWeight="Bold"
+                                       Margin="0,2"
+                                       />
+                        </StackPanel>
                     </StackPanel>
                 </Border>
             </Border>

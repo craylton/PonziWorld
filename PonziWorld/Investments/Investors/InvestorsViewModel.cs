@@ -48,7 +48,9 @@ internal class InvestorsViewModel : BindableSubscriberBase
     }
 
     private async Task<NewInterestRateAppliedEventPayload> OnNewInterestDeclarationAsync(
-        ApplyNewInterestRateCommandPayload incomingPayload) =>
-        // TODO: Multiply all investment amounts by incomingPayload.ClaimedInterest
-        new(await repository.GetAllInvestorsAsync());
+        ApplyNewInterestRateCommandPayload incomingPayload)
+    {
+        await repository.ApplyInterestRateAsync(incomingPayload.ClaimedInterest);
+        return new(await repository.GetAllInvestorsAsync());
+    }
 }

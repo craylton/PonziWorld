@@ -48,7 +48,7 @@ internal class CompanyViewModel : BindableSubscriberBase
     private async Task<CompanyFundsUpdatedEventPayload> UpdateFundsAsync(UpdateCompanyFundsCommandPayload payload)
     {
         var investmentsSummary = payload.NewInvestmentsSummary;
-        int companyFunds = Company.ActualFunds;
+        double companyFunds = Company.ActualFunds;
 
         foreach (Investor newInvestor in investmentsSummary.NewInvestors)
         {

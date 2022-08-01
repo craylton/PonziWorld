@@ -5,7 +5,7 @@ using System;
 namespace PonziWorld.Investments;
 
 [BsonIgnoreExtraElements]
-internal record Investment(Guid Id, Guid InvestorId, int Amount, int Month)
+internal record Investment(Guid Id, Guid InvestorId, double Amount, int Month)
 {
     public static Investment GetNew(Investor investor, Company.Company company) =>
         new(Guid.NewGuid(),

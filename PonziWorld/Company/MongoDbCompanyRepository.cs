@@ -30,7 +30,7 @@ internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompa
         return await companyCollection.CountDocumentsAsync(EmptyFilter) > 0;
     }
 
-    public async Task MoveToNextMonthAsync(int newFunds)
+    public async Task MoveToNextMonthAsync(double newFunds)
     {
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();
 

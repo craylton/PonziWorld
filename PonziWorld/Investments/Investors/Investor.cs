@@ -7,8 +7,8 @@ namespace PonziWorld.Investments.Investors;
 internal record Investor(
     Guid Id,
     string Name,
-    int TotalFunds,
-    int Investment,
+    double TotalFunds,
+    double Investment,
     int Satisfaction)
     : InvestorBase(Id, Name, TotalFunds)
 {
@@ -30,15 +30,15 @@ internal record Investor(
 
     public Investment DetermineInvestment(Company.Company company)
     {
-        int investmentSize = DetermineInvestmentSize(company);
+        double investmentSize = DetermineInvestmentSize(company);
         return new Investment(Guid.NewGuid(), Id, investmentSize, company.Month);
     }
 
-    public int DetermineInvestmentSize(Company.Company company)
+    public double DetermineInvestmentSize(Company.Company company)
     {
-        int availableFunds = TotalFunds - Investment;
-        double multiplier = (100 - company.Suspicion) / (double)100;
-        return Random.Shared.Next((int)(availableFunds * multiplier));
+        double availableFunds = TotalFunds - Investment;
+        double multiplier = (100 - company.Suspicion) / 100d;
+        return Random.Shared.NextDouble() * availableFunds * multiplier;
     }
 
     public bool WantsToWithdraw() =>
@@ -52,7 +52,7 @@ internal record Investor(
 
     private int DetermineWithdrawalSize(Company.Company company)
     {
-        double multiplier = company.Suspicion / (double)100;
+        double multiplier = company.Suspicion / 100d;
         return Random.Shared.Next((int)(Investment * multiplier));
     }
 }

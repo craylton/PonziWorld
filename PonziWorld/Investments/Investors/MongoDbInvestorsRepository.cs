@@ -67,6 +67,17 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
         return await cursor.SingleAsync();
     }
 
+    public async Task ApplyInterestRateAsync(double interestRate)
+    {
+        IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();
+
+        var interestRateMultiplier = (interestRate / 100d) + 1;
+        UpdateDefinition<Investor> update = Builders<Investor>.Update
+            .Mul(investor => investor.Investment, interestRateMultiplier);
+
+        await investorsCollection.UpdateManyAsync(EmptyFilter, update);
+    }
+
     public async Task ApplyInvestmentAsync(Investment investment)
     {
         IMongoCollection<Investor> investorsCollection = GetDatabaseCollection();

@@ -12,7 +12,7 @@ internal class AmountToVisibilityConverter : IValueConverter
         Type targetType,
         object parameter,
         CultureInfo culture) =>
-        value is int i && i != 0 ? Visibility.Visible : Visibility.Collapsed;
+        value is double i && i != 0 ? Visibility.Visible : Visibility.Collapsed;
 
     public object ConvertBack(
         object value,

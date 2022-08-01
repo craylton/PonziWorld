@@ -14,21 +14,24 @@
         <DataTemplate x:Key="investorTemplate">
             <Border BorderThickness="2">
                 <Border BorderThickness="2" BorderBrush="#111">
-                    <Grid Background="#CC60A917">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
+                    <StackPanel Background="#CC60A917">
 
                         <TextBlock Grid.Row="0"
                                    Text="{Binding Name}"
                                    FontSize="16"
+                                   Margin="5,0"
                                    />
-                        <TextBlock Grid.Row="1"
-                                   Text="{Binding Path=Investment, StringFormat='Investment: £{0}'}"
+                        <StackPanel Orientation="Horizontal" Margin="5,0">
+                            <TextBlock Grid.Row="1"
+                                   Text="Investment: "
                                    FontSize="14"
                                    />
-                    </Grid>
+                            <TextBlock Grid.Row="1"
+                                   Text="{Binding Path=Investment, StringFormat={}{0:C}}"
+                                   FontSize="14"
+                                   />
+                        </StackPanel>
+                    </StackPanel>
                 </Border>
             </Border>
         </DataTemplate>
