@@ -27,7 +27,7 @@ internal class InvestorsViewModel : BindableSubscriberBase
         SubscribeToProcess(RetrieveInvestors.Process, GetAllInvestorsAsync);
         SubscribeToProcess(LoadInvestors.Process, UpdateInvestorListAsync);
         SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
-        SubscribeToProcess(ApplyNewInterestRate.Process, OnNewInterestDeclarationAsync);
+        SubscribeToProcess(ApplyNewInterestRateToInvestors.Process, OnNewInterestDeclarationAsync);
     }
 
     private async Task<InvestorsRetrievedEventPayload> GetAllInvestorsAsync(RetrieveInvestorsCommandPayload _) =>
@@ -47,10 +47,10 @@ internal class InvestorsViewModel : BindableSubscriberBase
         return new();
     }
 
-    private async Task<NewInterestRateAppliedEventPayload> OnNewInterestDeclarationAsync(
-        ApplyNewInterestRateCommandPayload incomingPayload)
+    private async Task<NewInterestRateAppliedToInvestorsEventPayload> OnNewInterestDeclarationAsync(
+        ApplyNewInterestRateToInvestorsCommandPayload incomingPayload)
     {
-        await repository.ApplyInterestRateAsync(incomingPayload.ClaimedInterest);
+        await repository.ApplyInterestRateAsync(incomingPayload.ClaimedInterestRate);
         return new(await repository.GetAllInvestorsAsync());
     }
 }

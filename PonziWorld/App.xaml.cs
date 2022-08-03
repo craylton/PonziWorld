@@ -25,16 +25,21 @@ public partial class App : PrismApplication
         containerRegistry.Register<ITimeAdvancementCoordinator, TimeAdvancementCoordinator>();
     }
 
-    protected override void OnInitialized()
+    protected override void Initialize()
     {
-        base.OnInitialized();
-
         // Make it use local currency instead of default $
         FrameworkElement.LanguageProperty.OverrideMetadata(
             typeof(FrameworkElement),
             new FrameworkPropertyMetadata(
                 XmlLanguage.GetLanguage(
                     CultureInfo.CurrentCulture.IetfLanguageTag)));
+
+        base.Initialize();
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
 
         IEventAggregator eventAggregator = Container.Resolve<IEventAggregator>();
         eventAggregator.GetEvent<MainWindowInitialisedEvent>().Publish();

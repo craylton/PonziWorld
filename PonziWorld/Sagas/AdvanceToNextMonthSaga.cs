@@ -34,11 +34,18 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
 
     private void OnClaimedInterestAcquired(ClaimedInterestAcquiredEventPayload incomingPayload)
     {
-        StartProcess(ApplyNewInterestRate.Process, new(incomingPayload.ClaimedInterest), OnNewInterestRateApplied);
-        StartProcess(LoadCompany.Process, new(), OnCompanyLoaded);
+        StartProcess(
+            ApplyNewInterestRateToInvestors.Process,
+            new(incomingPayload.ClaimedInterestRate),
+            OnNewInterestRateAppliedToInvestors);
+
+        StartProcess(
+            ApplyClaimedInterestRateToCompany.Process,
+            new(incomingPayload.ClaimedInterestRate),
+            OnClaimedInterestRateAppliedToCompany);
     }
 
-    private void OnNewInterestRateApplied(NewInterestRateAppliedEventPayload incomingPayload)
+    private void OnNewInterestRateAppliedToInvestors(NewInterestRateAppliedToInvestorsEventPayload incomingPayload)
     {
         allInvestors = incomingPayload.AllInvestors;
         hasRetrievedInvestors = true;
@@ -47,7 +54,7 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
             GenerateInvestments();
     }
 
-    private void OnCompanyLoaded(CompanyLoadedEventPayload incomingPayload)
+    private void OnClaimedInterestRateAppliedToCompany(ClaimedInterestRateAppliedToCompanyEventPayload incomingPayload)
     {
         company = incomingPayload.Company;
         StartProcess(DetermineCompanyInvestmentResults.Process, new(company), OnCompanyInvestmentResultsDetermined);

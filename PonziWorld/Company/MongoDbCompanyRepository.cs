@@ -30,13 +30,34 @@ internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompa
         return await companyCollection.CountDocumentsAsync(EmptyFilter) > 0;
     }
 
-    public async Task MoveToNextMonthAsync(double newFunds)
+    public async Task MoveToNextMonthAsync(double totalChangeInFunds)
     {
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();
 
         UpdateDefinition<Company> update = Builders<Company>.Update
-            .Set(company => company.ActualFunds, newFunds)
+            .Inc(company => company.ActualFunds, totalChangeInFunds)
+            .Inc(company => company.ClaimedFunds, totalChangeInFunds)
             .Inc(company => company.Month, 1);
+
+        await companyCollection.UpdateOneAsync(EmptyFilter, update);
+    }
+
+    public async Task AddProfitAsync(double profit)
+    {
+        IMongoCollection<Company> companyCollection = GetDatabaseCollection();
+
+        UpdateDefinition<Company> update = Builders<Company>.Update
+            .Inc(company => company.ActualFunds, profit);
+
+        await companyCollection.UpdateOneAsync(EmptyFilter, update);
+    }
+
+    public async Task ClaimInterest(double claimedInterestRate)
+    {
+        IMongoCollection<Company> companyCollection = GetDatabaseCollection();
+
+        UpdateDefinition<Company> update = Builders<Company>.Update
+            .Mul(company => company.ClaimedFunds, claimedInterestRate);
 
         await companyCollection.UpdateOneAsync(EmptyFilter, update);
     }

@@ -25,4 +25,4 @@ internal class ClaimedInterestAcquiredEvent
 { }
 
 internal record ClaimedInterestAcquiredEventPayload(
-    double ClaimedInterest);
+    double ClaimedInterestRate);

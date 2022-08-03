@@ -1,8 +1,6 @@
 ﻿using PonziWorld.Core;
-using PonziWorld.Investments;
-using PonziWorld.Investments.Investors;
 using Prism.Events;
-using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Company;
@@ -29,6 +27,7 @@ internal class CompanyViewModel : BindableSubscriberBase
         SubscribeToProcess(StartNewCompany.Process, CreateCompanyAsync);
         SubscribeToProcess(UpdateCompanyFunds.Process, UpdateFundsAsync);
         SubscribeToProcess(ApplyCompanyInvestmentResults.Process, OnInvestmentProfitsReceived);
+        SubscribeToProcess(ApplyClaimedInterestRateToCompany.Process, ApplyClaimedInterestRate);
     }
 
     private async Task<CompanyLoadedEventPayload> LoadCompanyAsync(LoadCompanyCommandPayload _)
@@ -47,29 +46,28 @@ internal class CompanyViewModel : BindableSubscriberBase
 
     private async Task<CompanyFundsUpdatedEventPayload> UpdateFundsAsync(UpdateCompanyFundsCommandPayload payload)
     {
-        var investmentsSummary = payload.NewInvestmentsSummary;
-        double companyFunds = Company.ActualFunds;
+        double delta =
+            payload.NewInvestmentsSummary.NewInvestors.Sum(newInvestor => newInvestor.Investment) +
+            payload.NewInvestmentsSummary.Reinvestments.Sum(newInvestor => newInvestor.Amount) +
+            payload.NewInvestmentsSummary.Withdrawals.Sum(newInvestor => newInvestor.Amount);
 
-        foreach (Investor newInvestor in investmentsSummary.NewInvestors)
-        {
-            companyFunds += newInvestor.Investment;
-        }
-        foreach (Investment reinvestment in investmentsSummary.Reinvestments)
-        {
-            companyFunds += reinvestment.Amount;
-        }
-        foreach (Investment withdrawal in investmentsSummary.Withdrawals)
-        {
-            companyFunds += withdrawal.Amount;
-        }
-
-        await repository.MoveToNextMonthAsync(companyFunds);
+        await repository.MoveToNextMonthAsync(delta);
         Company = await repository.GetCompanyAsync();
         return new(Company);
     }
 
-    private CompanyInvestmentResultsAppliedEventPayload OnInvestmentProfitsReceived(
-        ApplyCompanyInvestmentResultsCommandPayload payload) =>
-        // TODO: add payload.ProfitFromInvestments to ActualProfit, and update stats
-        new();
+    private async Task<CompanyInvestmentResultsAppliedEventPayload> OnInvestmentProfitsReceived(
+        ApplyCompanyInvestmentResultsCommandPayload payload)
+    {
+        await repository.AddProfitAsync(payload.ProfitFromInvestments);
+        return new();
+    }
+
+    private async Task<ClaimedInterestRateAppliedToCompanyEventPayload> ApplyClaimedInterestRate(
+        ApplyClaimedInterestRateToCompanyCommandPayload payload)
+    {
+        await repository.ClaimInterest((payload.ClaimedInterestRate / 100d) + 1);
+        Company = await repository.GetCompanyAsync();
+        return new(Company);
+    }
 }
