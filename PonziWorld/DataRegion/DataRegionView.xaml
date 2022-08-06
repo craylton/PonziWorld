@@ -3,11 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:PonziWorld.DataRegion"
              xmlns:depositorsTab="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab"
              xmlns:withdrawersTab="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab"
              xmlns:timeAdvancement="clr-namespace:PonziWorld.DataRegion.TimeAdvancement"
              xmlns:companyInvestments="clr-namespace:PonziWorld.DataRegion.CompanyInvestmentsTab"
+             xmlns:performanceHistory="clr-namespace:PonziWorld.DataRegion.PerformanceHistoryTab"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -16,7 +18,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TabControl Style="{DynamicResource MahApps.Styles.TabControl}">
+        <TabControl Style="{DynamicResource MahApps.Styles.TabControl}"
+                    Controls:HeaderedControlHelper.HeaderFontSize="20">
             <TabItem Header="Deposits">
                 <depositorsTab:DepositorsTabView />
             </TabItem>
@@ -25,6 +28,9 @@
             </TabItem>
             <TabItem Header="Your Investments">
                 <companyInvestments:CompanyInvestmentsTabView />
+            </TabItem>
+            <TabItem Header="Performance">
+                <performanceHistory:PerformanceHistoryTabView />
             </TabItem>
         </TabControl>
         <timeAdvancement:TimeAdvancementView Grid.Row="1" />

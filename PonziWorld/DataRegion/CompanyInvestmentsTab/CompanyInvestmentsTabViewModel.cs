@@ -2,17 +2,16 @@
 using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
 using Prism.Events;
 
-namespace PonziWorld.DataRegion.CompanyInvestmentsTab
-{
-    internal class CompanyInvestmentsTabViewModel : BindableSubscriberBase
-    {
-        public CompanyInvestmentsTabViewModel(
-            IEventAggregator eventAggregator)
-            : base(eventAggregator) =>
-            SubscribeToProcess(DetermineCompanyInvestmentResults.Process, CalculateMonthlyProfit);
+namespace PonziWorld.DataRegion.CompanyInvestmentsTab;
 
-        private CompanyInvestmentResultsDeterminedEventPayload CalculateMonthlyProfit(
-            DetermineCompanyInvestmentResultsCommandPayload payload) =>
-            new(payload.Company.ActualFunds * 0.005);
-    }
+internal class CompanyInvestmentsTabViewModel : BindableSubscriberBase
+{
+    public CompanyInvestmentsTabViewModel(
+        IEventAggregator eventAggregator)
+        : base(eventAggregator) =>
+        SubscribeToProcess(DetermineCompanyInvestmentResults.Process, CalculateMonthlyProfit);
+
+    private CompanyInvestmentResultsDeterminedEventPayload CalculateMonthlyProfit(
+        DetermineCompanyInvestmentResultsCommandPayload payload) =>
+        new(payload.Company.ActualFunds * 0.005);
 }

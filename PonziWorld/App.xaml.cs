@@ -1,5 +1,6 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using PonziWorld.Company;
+using PonziWorld.DataRegion.PerformanceHistoryTab;
 using PonziWorld.DataRegion.TimeAdvancement;
 using PonziWorld.Events;
 using PonziWorld.Investments;
@@ -21,6 +22,7 @@ public partial class App : PrismApplication
         containerRegistry.Register<IInvestorsRepository, MongoDbInvestorsRepository>();
         containerRegistry.Register<ICompanyRepository, MongoDbCompanyRepository>();
         containerRegistry.Register<IInvestmentsRepository, MongoDbInvestmentsRepository>();
+        containerRegistry.Register<IPerformanceHistoryRepository, MongoDbPerformanceHistoryRepository>();
         containerRegistry.Register<IDialogCoordinator, DialogCoordinator>();
         containerRegistry.Register<ITimeAdvancementCoordinator, TimeAdvancementCoordinator>();
     }

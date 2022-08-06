@@ -1,6 +1,7 @@
 ﻿using PonziWorld.Company;
 using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
 using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
+using PonziWorld.DataRegion.PerformanceHistoryTab;
 using PonziWorld.DataRegion.TimeAdvancement;
 using PonziWorld.Events;
 using PonziWorld.Investments;
@@ -16,6 +17,7 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     private Company.Company company = Company.Company.Default;
     private IEnumerable<Investor> allInvestors = new List<Investor>();
     private NewInvestmentsSummary newInvestmentsSummary = NewInvestmentsSummary.Default;
+    private double claimedInterestRate = default;
 
     private bool hasAppliedCompanyInvestments = false;
     private bool hasRetrievedInvestors = false;
@@ -24,6 +26,7 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     private bool hasLoadedWithdrawals = false;
     private bool hasLoadedInvestors = false;
     private bool hasUpdatedCompanyFunds = false;
+    private bool hasStoredPerformance = false;
 
     public AdvanceToNextMonthSaga(IEventAggregator eventAggregator)
         : base(eventAggregator)
@@ -34,14 +37,16 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
 
     private void OnClaimedInterestAcquired(ClaimedInterestAcquiredEventPayload incomingPayload)
     {
+        claimedInterestRate = incomingPayload.ClaimedInterestRate;
+
         StartProcess(
             ApplyNewInterestRateToInvestors.Process,
-            new(incomingPayload.ClaimedInterestRate),
+            new(claimedInterestRate),
             OnNewInterestRateAppliedToInvestors);
 
         StartProcess(
             ApplyClaimedInterestRateToCompany.Process,
-            new(incomingPayload.ClaimedInterestRate),
+            new(claimedInterestRate),
             OnClaimedInterestRateAppliedToCompany);
     }
 
@@ -57,7 +62,16 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     private void OnClaimedInterestRateAppliedToCompany(ClaimedInterestRateAppliedToCompanyEventPayload incomingPayload)
     {
         company = incomingPayload.Company;
-        StartProcess(DetermineCompanyInvestmentResults.Process, new(company), OnCompanyInvestmentResultsDetermined);
+
+        StartProcess(
+            DetermineCompanyInvestmentResults.Process,
+            new(company),
+            OnCompanyInvestmentResultsDetermined);
+
+        StartProcess(
+            StoreClaimedInterestRate.Process,
+            new(company.Month, claimedInterestRate),
+            OnClaimedInterestRateStored);
     }
 
     private void OnCompanyInvestmentResultsDetermined(
@@ -95,6 +109,14 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
         StartProcess(LoadInvestors.Process, new(), OnInvestorsLoaded);
     }
 
+    private void OnClaimedInterestRateStored(ClaimedInterestRateStoredEventPayload incomingPayload)
+    {
+        hasStoredPerformance = true;
+
+        if (IsReadyToCompleteSaga())
+            CompleteSaga();
+    }
+
     private void OnCompanyFundsUpdated(CompanyFundsUpdatedEventPayload incomingPayload)
     {
         hasUpdatedCompanyFunds = true;
@@ -128,13 +150,18 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     }
 
     private bool IsReadyToCompleteSaga() =>
-        hasUpdatedCompanyFunds && hasLoadedInvestors && hasLoadedWithdrawals && hasLoadedDeposits;
+        hasStoredPerformance &&
+        hasUpdatedCompanyFunds &&
+        hasLoadedInvestors &&
+        hasLoadedWithdrawals &&
+        hasLoadedDeposits;
 
     protected override void ResetSaga()
     {
         company = Company.Company.Default;
         allInvestors = new List<Investor>();
         newInvestmentsSummary = NewInvestmentsSummary.Default;
+        claimedInterestRate = default;
 
         hasAppliedCompanyInvestments = false;
         hasRetrievedInvestors = false;
@@ -143,5 +170,6 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
         hasLoadedWithdrawals = false;
         hasLoadedInvestors = false;
         hasUpdatedCompanyFunds = false;
+        hasStoredPerformance = false;
     }
 }

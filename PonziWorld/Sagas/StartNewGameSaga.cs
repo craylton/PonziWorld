@@ -1,5 +1,6 @@
 ﻿using PonziWorld.Company;
 using PonziWorld.DataRegion.InvestmentSummaryTabs.InvestmentsTab;
+using PonziWorld.DataRegion.PerformanceHistoryTab;
 using PonziWorld.Events;
 using PonziWorld.Investments.Investors;
 using PonziWorld.MainWindow;
@@ -9,9 +10,10 @@ namespace PonziWorld.Sagas;
 
 internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGameCompletedEvent>
 {
-    private bool investorsCleared = false;
-    private bool investmentsCleared = false;
-    private bool newCompanyCreated = false;
+    private bool areInvestorsCleared = false;
+    private bool areInvestmentsCleared = false;
+    private bool isNewCompanyCreated = false;
+    private bool isPerformanceCleared = false;
 
     public StartNewGameSaga(IEventAggregator eventAggregator)
         : base(eventAggregator)
@@ -31,11 +33,12 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
         StartProcess(ClearInvestors.Process, new(), OnInvestorsCleared);
         StartProcess(ClearInvestments.Process, new(), OnInvestmentsCleared);
         StartProcess(StartNewCompany.Process, new(incomingPayload.CompanyName), OnNewCompanyStarted);
+        StartProcess(ClearPerformance.Process, new(), OnPerformanceCleared);
     }
 
     private void OnInvestorsCleared(InvestorsClearedEventPayload incomingPayload)
     {
-        investorsCleared = true;
+        areInvestorsCleared = true;
 
         if (IsReadyToExitMenu())
             ExitMenu();
@@ -43,7 +46,7 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
 
     private void OnInvestmentsCleared(InvestmentsClearedEventPayload incomingPayload)
     {
-        investmentsCleared = true;
+        areInvestmentsCleared = true;
 
         if (IsReadyToExitMenu())
             ExitMenu();
@@ -51,7 +54,15 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
 
     private void OnNewCompanyStarted(NewCompanyStartedEventPayload incomingPayload)
     {
-        newCompanyCreated = true;
+        isNewCompanyCreated = true;
+
+        if (IsReadyToExitMenu())
+            ExitMenu();
+    }
+
+    private void OnPerformanceCleared(PerformanceClearedEventPayload obj)
+    {
+        isPerformanceCleared = true;
 
         if (IsReadyToExitMenu())
             ExitMenu();
@@ -63,8 +74,8 @@ internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGam
     private void OnMenuExited(MenuExitedEventPayload incomingPayload) => CompleteSaga();
 
     private bool IsReadyToExitMenu() =>
-        investorsCleared && investmentsCleared && newCompanyCreated;
+        areInvestorsCleared && areInvestmentsCleared && isNewCompanyCreated && isPerformanceCleared;
 
     protected override void ResetSaga() =>
-        investorsCleared = investmentsCleared = newCompanyCreated = false;
+        areInvestorsCleared = areInvestmentsCleared = isNewCompanyCreated = isPerformanceCleared = false;
 }
