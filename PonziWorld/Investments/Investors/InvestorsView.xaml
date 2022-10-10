@@ -12,28 +12,16 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="investorTemplate">
-            <Border BorderThickness="2">
-                <Border BorderThickness="2" BorderBrush="#111">
-                    <StackPanel Background="#CC60A917">
-
-                        <TextBlock Grid.Row="0"
-                                   Text="{Binding Name}"
-                                   FontSize="16"
-                                   Margin="5,0"
-                                   />
-                        <StackPanel Orientation="Horizontal" Margin="5,0">
-                            <TextBlock Grid.Row="1"
-                                   Text="Investment: "
-                                   FontSize="14"
-                                   />
-                            <TextBlock Grid.Row="1"
-                                   Text="{Binding Path=Investment, StringFormat={}{0:C}}"
-                                   FontSize="14"
-                                   />
-                        </StackPanel>
-                    </StackPanel>
-                </Border>
-            </Border>
+                <StackPanel Margin="5,2">
+                    <TextBlock Grid.Row="0"
+                               Text="{Binding Name}"
+                               FontSize="16"
+                               />
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding Path=Investment, StringFormat={}Investment: {0:C}}"
+                               FontSize="14"
+                               />
+                </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -55,9 +43,10 @@
 
         <ScrollViewer Grid.Row="1">
             <UniformGrid>
-                <ItemsControl ItemsSource="{Binding Investors}"
-                              ItemTemplate="{StaticResource investorTemplate}"
-                              />
+                <ListView ItemsSource="{Binding Investors}"
+                          SelectedItem="{Binding SelectedInvestor}"
+                          ItemTemplate="{StaticResource investorTemplate}"
+                          />
             </UniformGrid>
         </ScrollViewer>
     </Grid>

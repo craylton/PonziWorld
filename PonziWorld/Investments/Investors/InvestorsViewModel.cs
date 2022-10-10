@@ -1,4 +1,5 @@
 ﻿using PonziWorld.Core;
+using PonziWorld.Sagas;
 using Prism.Events;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,8 +9,10 @@ namespace PonziWorld.Investments.Investors;
 
 internal class InvestorsViewModel : BindableSubscriberBase
 {
+    private readonly SelectInvestorSaga selectInvestorSaga;
     private readonly IInvestorsRepository repository;
     private ObservableCollection<Investor> _investors = new();
+    private Investor? _selectedInvestor;
 
     public ObservableCollection<Investor> Investors
     {
@@ -17,14 +20,27 @@ internal class InvestorsViewModel : BindableSubscriberBase
         set => SetProperty(ref _investors, value);
     }
 
+    public Investor? SelectedInvestor
+    {
+        get => _selectedInvestor;
+        set
+        {
+            SetProperty(ref _selectedInvestor, value);
+            selectInvestorSaga.Start();
+        }
+    }
+
     public InvestorsViewModel(
+        SelectInvestorSaga selectInvestorSaga,
         IInvestorsRepository repository,
         IEventAggregator eventAggregator)
         : base(eventAggregator)
     {
+        this.selectInvestorSaga = selectInvestorSaga;
         this.repository = repository;
 
         SubscribeToProcess(RetrieveInvestors.Process, GetAllInvestorsAsync);
+        SubscribeToProcess(RetrieveSelectedInvestor.Process, GetSelectedInvestorAsync);
         SubscribeToProcess(LoadInvestors.Process, UpdateInvestorListAsync);
         SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
         SubscribeToProcess(ApplyNewInterestRateToInvestors.Process, OnNewInterestDeclarationAsync);
@@ -32,6 +48,9 @@ internal class InvestorsViewModel : BindableSubscriberBase
 
     private async Task<InvestorsRetrievedEventPayload> GetAllInvestorsAsync(RetrieveInvestorsCommandPayload _) =>
         new(await repository.GetAllInvestorsAsync());
+
+    private RetrieveSelectedInvestorEventPayload GetSelectedInvestorAsync(RetrieveSelectedInvestorCommandPayload _) =>
+        new(SelectedInvestor);
 
     private async Task<InvestorsLoadedEventPayload> UpdateInvestorListAsync(LoadInvestorsCommandPayload _)
     {

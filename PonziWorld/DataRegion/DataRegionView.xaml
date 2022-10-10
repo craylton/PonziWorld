@@ -10,6 +10,7 @@
              xmlns:timeAdvancement="clr-namespace:PonziWorld.DataRegion.TimeAdvancement"
              xmlns:companyInvestments="clr-namespace:PonziWorld.DataRegion.CompanyInvestmentsTab"
              xmlns:performanceHistory="clr-namespace:PonziWorld.DataRegion.PerformanceHistoryTab"
+             xmlns:investor="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorTab"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -20,6 +21,9 @@
 
         <TabControl Style="{DynamicResource MahApps.Styles.TabControl}"
                     Controls:HeaderedControlHelper.HeaderFontSize="20">
+            <TabItem Header="Investor">
+                <investor:InvestorTabView />
+            </TabItem>
             <TabItem Header="Deposits">
                 <depositorsTab:DepositorsTabView />
             </TabItem>

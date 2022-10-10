@@ -27,7 +27,8 @@ internal class PerformanceHistoryTabViewModel : BindableSubscriberBase
         return new();
     }
 
-    private async Task<PerformanceClearedEventPayload> DeletePerformanceHistoryAsync(ClearPerformanceCommandPayload arg)
+    private async Task<PerformanceClearedEventPayload> DeletePerformanceHistoryAsync(
+        ClearPerformanceCommandPayload payload)
     {
         await performanceHistoryRepository.DeleteAllPerformanceAsync();
         return new();
