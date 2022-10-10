@@ -1,0 +1,6 @@
+﻿Combine Depositors and Withdrawers tabs into a single Investors tab
+Only show the Investor tab when there's an investor selected
+Update the title of the Investor tab to be the name of the investor
+Formalise naming conventions and conventions in processes (retrieve vs get etc)
+Should processes be called ProcessXXX or just be put in a Processes folder?
+swap commands and events in process definition
