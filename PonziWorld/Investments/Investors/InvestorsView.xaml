@@ -45,6 +45,7 @@
             <UniformGrid>
                 <ListView ItemsSource="{Binding Investors}"
                           SelectedItem="{Binding SelectedInvestor}"
+                          SelectionMode="Single"
                           ItemTemplate="{StaticResource investorTemplate}"
                           />
             </UniformGrid>

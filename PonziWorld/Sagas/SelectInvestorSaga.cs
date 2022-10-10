@@ -6,6 +6,9 @@ namespace PonziWorld.Sagas;
 
 internal class SelectInvestorSaga : SagaBase<SelectInvestorStartedEvent, SelectInvestorCompletedEvent>
 {
+    private bool isInvestorTabDisplayed = false;
+    private bool isCorrectInvestorDisplayed = false;
+
     public SelectInvestorSaga(IEventAggregator eventAggregator)
         : base(eventAggregator)
     { }
@@ -16,14 +19,33 @@ internal class SelectInvestorSaga : SagaBase<SelectInvestorStartedEvent, SelectI
     private void OnSelectedInvestorRetrieved(RetrieveSelectedInvestorEventPayload payload)
     {
         if (payload.Investor is null)
-        {
-            CompleteSaga();
-            return;
-        }
+            isCorrectInvestorDisplayed = true;
+        else
+            StartProcess(DisplayInvestor.Process, new(payload.Investor), OnInvestorDisplayed);
 
-        StartProcess(DisplayInvestor.Process, new(payload.Investor), OnInvestorDisplayed);
+        StartProcess(DisplayInvestorTab.Process, new(payload.Investor), OnInvestorTabDisplayed);
+
     }
 
-    private void OnInvestorDisplayed(InvestorDisplayedEventPayload obj) =>
-        CompleteSaga();
+    private void OnInvestorTabDisplayed(InvestorDisplayedEventPayload payload)
+    {
+        isInvestorTabDisplayed = true;
+
+        if (IsReadyToCompleteSaga())
+            CompleteSaga();
+    }
+
+    private void OnInvestorDisplayed(InvestorDisplayedEventPayload payload)
+    {
+        isCorrectInvestorDisplayed = true;
+
+        if (IsReadyToCompleteSaga())
+            CompleteSaga();
+    }
+
+    private bool IsReadyToCompleteSaga() =>
+        isInvestorTabDisplayed && isCorrectInvestorDisplayed;
+
+    protected override void ResetSaga() =>
+        isInvestorTabDisplayed = isCorrectInvestorDisplayed = false;
 }

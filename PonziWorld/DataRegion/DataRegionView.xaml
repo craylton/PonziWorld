@@ -11,8 +11,15 @@
              xmlns:companyInvestments="clr-namespace:PonziWorld.DataRegion.CompanyInvestmentsTab"
              xmlns:performanceHistory="clr-namespace:PonziWorld.DataRegion.PerformanceHistoryTab"
              xmlns:investor="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorTab"
+             xmlns:prism="http://prismlibrary.com/"
+             prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -20,8 +27,13 @@
         </Grid.RowDefinitions>
 
         <TabControl Style="{DynamicResource MahApps.Styles.TabControl}"
-                    Controls:HeaderedControlHelper.HeaderFontSize="20">
-            <TabItem Header="Investor">
+                    Controls:HeaderedControlHelper.HeaderFontSize="20"
+                    SelectedIndex="{Binding SelectedTabIndex}"
+                    >
+            <TabItem
+                Header="{Binding SelectedInvestorName}"
+                Visibility="{Binding Path=IsInvestorSelected, Converter={StaticResource BoolToVisibility}}"
+                >
                 <investor:InvestorTabView />
             </TabItem>
             <TabItem Header="Deposits">
