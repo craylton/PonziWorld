@@ -27,17 +27,17 @@ internal class SelectInvestorSaga : SagaBase<SelectInvestorStartedEvent, SelectI
 
     }
 
-    private void OnInvestorTabDisplayed(InvestorDisplayedEventPayload payload)
+    private void OnInvestorDisplayed(InvestorDisplayedEventPayload payload)
     {
-        isInvestorTabDisplayed = true;
+        isCorrectInvestorDisplayed = true;
 
         if (IsReadyToCompleteSaga())
             CompleteSaga();
     }
 
-    private void OnInvestorDisplayed(InvestorDisplayedEventPayload payload)
+    private void OnInvestorTabDisplayed(InvestorTabDisplayedEventPayload payload)
     {
-        isCorrectInvestorDisplayed = true;
+        isInvestorTabDisplayed = true;
 
         if (IsReadyToCompleteSaga())
             CompleteSaga();

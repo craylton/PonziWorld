@@ -9,5 +9,14 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <TextBlock Text="{Binding Investor.Name}" />
+    <StackPanel>
+        <TextBlock Text="Investments" />
+
+        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Investments}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Month" Binding="{Binding Path=Month}" Width="100"/>
+                <DataGridTextColumn Header="Amount" Binding="{Binding Path=Amount}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
 </UserControl>

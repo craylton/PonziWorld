@@ -35,7 +35,7 @@ internal class DataRegionViewModel : BindableSubscriberBase
         : base(eventAggregator) =>
         SubscribeToProcess(DisplayInvestorTab.Process, ShowInvestorTab);
 
-    private InvestorDisplayedEventPayload ShowInvestorTab(DisplayInvestorTabCommandPayload payload)
+    private InvestorTabDisplayedEventPayload ShowInvestorTab(DisplayInvestorTabCommandPayload payload)
     {
         IsInvestorSelected = payload.Investor is not null;
         SelectedInvestorName = payload.Investor?.Name ?? DefaulInvestorTabName;

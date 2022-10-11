@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using PonziWorld.Core;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -19,6 +20,17 @@ internal class MongoDbInvestmentsRepository : MongoDbRepositoryBase<Investment>,
 
         FilterDefinition<Investment> filter = Builders<Investment>.Filter
             .Eq(investment => investment.Month, month);
+
+        IAsyncCursor<Investment> cursor = await investmentsCollection.FindAsync(filter);
+        return await cursor.ToListAsync();
+    }
+
+    public async Task<IEnumerable<Investment>> GetInvestmentsByInvestorIdAsync(Guid investorId)
+    {
+        IMongoCollection<Investment> investmentsCollection = GetDatabaseCollection();
+
+        FilterDefinition<Investment> filter = Builders<Investment>.Filter
+            .Eq(investment => investment.InvestorId, investorId);
 
         IAsyncCursor<Investment> cursor = await investmentsCollection.FindAsync(filter);
         return await cursor.ToListAsync();

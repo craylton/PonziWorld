@@ -5,8 +5,8 @@ namespace PonziWorld.Investments.Investors;
 
 internal class DisplayInvestorTab
     : SagaProcess<
-        InvestorDisplayedEvent,
-        InvestorDisplayedEventPayload,
+        InvestorTabDisplayedEvent,
+        InvestorTabDisplayedEventPayload,
         DisplayInvestorTabCommand,
         DisplayInvestorTabCommandPayload>
 {
