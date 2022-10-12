@@ -1,5 +1,7 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.DataRegion.PerformanceHistoryTab;
+using PonziWorld.Events;
 using Prism.Events;
+using System.Collections.Generic;
 
 namespace PonziWorld.Investments.Investors;
 
@@ -19,7 +21,8 @@ internal class DisplayInvestorCommand
 { }
 
 internal record DisplayInvestorCommandPayload(
-    Investor Investor);
+    Investor Investor,
+    IEnumerable<MonthlyPerformance> interestRateHistory);
 
 internal class InvestorDisplayedEvent
     : PubSubEvent<InvestorDisplayedEventPayload>

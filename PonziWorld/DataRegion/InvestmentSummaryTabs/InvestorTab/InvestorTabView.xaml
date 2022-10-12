@@ -9,14 +9,12 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <StackPanel>
-        <TextBlock Text="Investments" />
-
-        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Investments}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Month" Binding="{Binding Path=Month}" Width="100"/>
-                <DataGridTextColumn Header="Amount" Binding="{Binding Path=Amount}"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </StackPanel>
+    <DataGrid ItemsSource="{Binding Transactions}">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Month" Binding="{Binding Path=Month}" Width="70"/>
+            <DataGridTextColumn Header="Type" Binding="{Binding Path=TransactionType}"/>
+            <DataGridTextColumn Header="Amount" Binding="{Binding Path=Amount}"/>
+            <DataGridTextColumn Header="Balance" Binding="{Binding Path=CumulativeTotal}"/>
+        </DataGrid.Columns>
+    </DataGrid>
 </UserControl>

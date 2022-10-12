@@ -1,5 +1,5 @@
-﻿using MongoDB.Driver;
-using PonziWorld.Core;
+﻿using PonziWorld.Core;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PonziWorld.DataRegion.PerformanceHistoryTab;
@@ -10,15 +10,12 @@ internal class MongoDbPerformanceHistoryRepository : MongoDbRepositoryBase<Month
     {
     }
 
-    public async Task StoreInterestRateAsync(MonthlyPerformance monthlyPerformance)
-    {
-        IMongoCollection<MonthlyPerformance> performanceCollection = GetDatabaseCollection();
-        await performanceCollection.InsertOneAsync(monthlyPerformance);
-    }
+    public async Task StoreInterestRateAsync(MonthlyPerformance monthlyPerformance) =>
+        await AddOneAsync(monthlyPerformance);
 
-    public async Task DeleteAllPerformanceAsync()
-    {
-        IMongoCollection<MonthlyPerformance> performanceCollection = GetDatabaseCollection();
-        await performanceCollection.DeleteManyAsync(EmptyFilter);
-    }
+    public async Task<IEnumerable<MonthlyPerformance>> GetInterestRateHistoryAsync() =>
+        await GetAllAsync();
+
+    public async Task DeleteAllPerformanceAsync() =>
+        await DeleteAllAsync();
 }

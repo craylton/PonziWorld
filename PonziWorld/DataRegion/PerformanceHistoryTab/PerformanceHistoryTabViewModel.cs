@@ -16,6 +16,7 @@ internal class PerformanceHistoryTabViewModel : BindableSubscriberBase
         this.performanceHistoryRepository = performanceHistoryRepository;
 
         SubscribeToProcess(StoreClaimedInterestRate.Process, StoreInterestRateAsync);
+        SubscribeToProcess(RetrieveInterestRateHistory.Process, GetHistoricalPerformance);
         SubscribeToProcess(ClearPerformance.Process, DeletePerformanceHistoryAsync);
     }
 
@@ -27,8 +28,15 @@ internal class PerformanceHistoryTabViewModel : BindableSubscriberBase
         return new();
     }
 
+    private async Task<InterestRateHistoryRetrievedPayload> GetHistoricalPerformance(
+        RetrieveInterestRateHistoryCommandPayload _)
+    {
+        var performance = await performanceHistoryRepository.GetInterestRateHistoryAsync();
+        return new(performance);
+    }
+
     private async Task<PerformanceClearedEventPayload> DeletePerformanceHistoryAsync(
-        ClearPerformanceCommandPayload payload)
+        ClearPerformanceCommandPayload _)
     {
         await performanceHistoryRepository.DeleteAllPerformanceAsync();
         return new();

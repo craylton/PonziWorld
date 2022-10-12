@@ -2,3 +2,4 @@
 Formalise naming conventions and conventions in processes (retrieve vs get etc)
 Should processes be called ProcessXXX or just be put in a Processes folder?
 Swap commands and events in process definition
+Make sagas actually async
