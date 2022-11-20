@@ -16,8 +16,8 @@
                       prism:ViewModelLocator.AutoWireViewModel="True"
                       mc:Ignorable="d"
                       Title="Ponzi World"
-                      Height="480" Width="900"
-                      MinWidth="640" MinHeight="320">
+                      Width="1280" Height="720"
+                      MinWidth="720" MinHeight="480">
 
     <Controls:MetroWindow.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />

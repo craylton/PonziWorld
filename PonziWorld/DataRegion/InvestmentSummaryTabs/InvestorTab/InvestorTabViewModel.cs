@@ -1,4 +1,7 @@
-﻿using PonziWorld.Core;
+﻿using LiveChartsCore;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.SkiaSharpView;
+using PonziWorld.Core;
 using PonziWorld.DataRegion.PerformanceHistoryTab;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
@@ -14,11 +17,18 @@ internal class InvestorTabViewModel : BindableSubscriberBase
 {
     private readonly IInvestmentsRepository investmentsRepository;
     private ObservableCollection<HistoricalTransaction> _transactions = new();
+    private ISeries[] _series = new ISeries[1];
 
     public ObservableCollection<HistoricalTransaction> Transactions
     {
         get => _transactions;
         set => SetProperty(ref _transactions, value);
+    }
+
+    public ISeries[] Series
+    {
+        get => _series;
+        set => SetProperty(ref _series, value);
     }
 
     public InvestorTabViewModel(
@@ -39,6 +49,7 @@ internal class InvestorTabViewModel : BindableSubscriberBase
         int firstInvestmentMonth = investments.Min(investment => investment.Month);
         int currentMonth = payload.interestRateHistory.Count();
         double cumulativeTotal = 0;
+        List<ObservablePoint> dataPoints = new();
 
         for (int month = firstInvestmentMonth; month < currentMonth; month++)
         {
@@ -57,7 +68,20 @@ internal class InvestorTabViewModel : BindableSubscriberBase
                 cumulativeTotal += investment.Amount;
                 Transactions.Add(new(month, investment.Amount, cumulativeTotal, TransactionType.Investment));
             }
+
+            dataPoints.Add(new ObservablePoint(month, cumulativeTotal));
         }
+
+        Series = new ISeries[]
+        {
+            new LineSeries<ObservablePoint>
+            {
+                Values = dataPoints,
+                Fill = null,
+                GeometrySize = 4,
+                LineSmoothness = 0.2,
+            }
+        };
 
         return new();
     }
