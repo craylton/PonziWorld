@@ -2,9 +2,9 @@
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
 using PonziWorld.Core;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorTab.Processes;
 using PonziWorld.DataRegion.PerformanceHistoryTab;
 using PonziWorld.Investments;
-using PonziWorld.Investments.Investors;
 using Prism.Events;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -72,6 +72,12 @@ internal class InvestorTabViewModel : BindableSubscriberBase
             dataPoints.Add(new ObservablePoint(month, cumulativeTotal));
         }
 
+        SetInvestmentDataSeries(dataPoints);
+
+        return new();
+    }
+
+    private void SetInvestmentDataSeries(List<ObservablePoint> dataPoints) =>
         Series = new ISeries[]
         {
             new LineSeries<ObservablePoint>
@@ -82,9 +88,6 @@ internal class InvestorTabViewModel : BindableSubscriberBase
                 LineSmoothness = 0.2,
             }
         };
-
-        return new();
-    }
 
     private static double GetInterestAmount(
         int month,

@@ -1,6 +1,6 @@
-﻿using PonziWorld.Core;
+﻿using PonziWorld.Company.Processes;
+using PonziWorld.Core;
 using Prism.Events;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Company;
@@ -23,17 +23,11 @@ internal class CompanyViewModel : BindableSubscriberBase
     {
         this.repository = repository;
 
-        SubscribeToProcess(LoadCompany.Process, LoadCompanyAsync);
         SubscribeToProcess(StartNewCompany.Process, CreateCompanyAsync);
+        SubscribeToProcess(LoadCompany.Process, LoadCompanyAsync);
         SubscribeToProcess(UpdateCompanyFunds.Process, UpdateFundsAsync);
         SubscribeToProcess(ApplyCompanyInvestmentResults.Process, OnInvestmentProfitsReceived);
         SubscribeToProcess(ApplyClaimedInterestRateToCompany.Process, ApplyClaimedInterestRate);
-    }
-
-    private async Task<CompanyLoadedEventPayload> LoadCompanyAsync(LoadCompanyCommandPayload _)
-    {
-        Company = await repository.GetCompanyAsync();
-        return new(Company);
     }
 
     private async Task<NewCompanyStartedEventPayload> CreateCompanyAsync(StartNewCompanyCommandPayload payload)
@@ -44,13 +38,15 @@ internal class CompanyViewModel : BindableSubscriberBase
         return new(newCompany);
     }
 
+    private async Task<CompanyLoadedEventPayload> LoadCompanyAsync(LoadCompanyCommandPayload _)
+    {
+        Company = await repository.GetCompanyAsync();
+        return new(Company);
+    }
+
     private async Task<CompanyFundsUpdatedEventPayload> UpdateFundsAsync(UpdateCompanyFundsCommandPayload payload)
     {
-        double delta =
-            payload.NewInvestmentsSummary.NewInvestors.Sum(newInvestor => newInvestor.Investment) +
-            payload.NewInvestmentsSummary.Reinvestments.Sum(newInvestor => newInvestor.Amount) +
-            payload.NewInvestmentsSummary.Withdrawals.Sum(newInvestor => newInvestor.Amount);
-
+        double delta = payload.NewInvestmentsSummary.GetTotalInvestment();
         await repository.MoveToNextMonthAsync(delta);
         Company = await repository.GetCompanyAsync();
         return new(Company);

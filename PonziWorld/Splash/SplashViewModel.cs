@@ -1,6 +1,7 @@
 ﻿using PonziWorld.Company;
 using PonziWorld.Core;
 using PonziWorld.Sagas;
+using PonziWorld.Splash.Processes;
 using Prism.Commands;
 using Prism.Events;
 using System.Threading.Tasks;

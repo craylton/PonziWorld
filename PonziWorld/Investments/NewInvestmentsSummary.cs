@@ -17,7 +17,12 @@ internal record NewInvestmentsSummary(
             new List<Investment>(),
             new List<ProspectiveInvestor>());
 
-    internal NewInvestmentsSummary Sanitise()
+    public double GetTotalInvestment() =>
+            NewInvestors.Sum(investor => investor.Investment) +
+            Reinvestments.Sum(investment => investment.Amount) +
+            Withdrawals.Sum(withdrawal => withdrawal.Amount);
+
+    public NewInvestmentsSummary Sanitise()
     {
         // Those who actually invested are no longer 'prospective' investors
         IEnumerable<ProspectiveInvestor> newNewProspectiveInvestors = NewProspectiveInvestors

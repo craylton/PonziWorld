@@ -1,4 +1,5 @@
 ﻿using PonziWorld.Core;
+using PonziWorld.Investments.Investors.Processes;
 using PonziWorld.Sagas;
 using Prism.Events;
 using System.Collections.Generic;
@@ -42,8 +43,8 @@ internal class InvestorsViewModel : BindableSubscriberBase
         SubscribeToProcess(RetrieveInvestors.Process, GetAllInvestorsAsync);
         SubscribeToProcess(RetrieveSelectedInvestor.Process, GetSelectedInvestorAsync);
         SubscribeToProcess(LoadInvestors.Process, UpdateInvestorListAsync);
-        SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
         SubscribeToProcess(ApplyNewInterestRateToInvestors.Process, OnNewInterestDeclarationAsync);
+        SubscribeToProcess(ClearInvestors.Process, DeleteAllInvestorsAsync);
     }
 
     private async Task<InvestorsRetrievedEventPayload> GetAllInvestorsAsync(RetrieveInvestorsCommandPayload _) =>
@@ -60,16 +61,16 @@ internal class InvestorsViewModel : BindableSubscriberBase
         return new(investors);
     }
 
-    private async Task<InvestorsClearedEventPayload> DeleteAllInvestorsAsync(ClearInvestorsCommandPayload _)
-    {
-        await repository.DeleteAllInvestorsAsync();
-        return new();
-    }
-
     private async Task<NewInterestRateAppliedToInvestorsEventPayload> OnNewInterestDeclarationAsync(
         ApplyNewInterestRateToInvestorsCommandPayload incomingPayload)
     {
         await repository.ApplyInterestRateAsync(incomingPayload.ClaimedInterestRate);
         return new(await repository.GetAllInvestorsAsync());
+    }
+
+    private async Task<InvestorsClearedEventPayload> DeleteAllInvestorsAsync(ClearInvestorsCommandPayload _)
+    {
+        await repository.DeleteAllInvestorsAsync();
+        return new();
     }
 }

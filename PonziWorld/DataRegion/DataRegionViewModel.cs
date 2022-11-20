@@ -1,15 +1,15 @@
 ﻿using PonziWorld.Core;
-using PonziWorld.Investments.Investors;
+using PonziWorld.DataRegion.Processes;
 using Prism.Events;
 
 namespace PonziWorld.DataRegion;
 
 internal class DataRegionViewModel : BindableSubscriberBase
 {
-    private const string DefaulInvestorTabName = "Investor";
+    private const string DefaultInvestorTabName = "Investor";
 
     private bool _isInvestorSelected = false;
-    private string _selectedInvestorName = DefaulInvestorTabName;
+    private string _selectedInvestorName = DefaultInvestorTabName;
     private int _selectedTabIndex = 1;
 
     public bool IsInvestorSelected
@@ -38,7 +38,7 @@ internal class DataRegionViewModel : BindableSubscriberBase
     private InvestorTabDisplayedEventPayload ShowInvestorTab(DisplayInvestorTabCommandPayload payload)
     {
         IsInvestorSelected = payload.Investor is not null;
-        SelectedInvestorName = payload.Investor?.Name ?? DefaulInvestorTabName;
+        SelectedInvestorName = payload.Investor?.Name ?? DefaultInvestorTabName;
         OpenTabAfterInvestorSelect();
         return new();
     }

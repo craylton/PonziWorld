@@ -1,5 +1,5 @@
 ﻿using PonziWorld.Events;
-using PonziWorld.Splash;
+using PonziWorld.Splash.Processes;
 using Prism.Events;
 
 namespace PonziWorld.Sagas;

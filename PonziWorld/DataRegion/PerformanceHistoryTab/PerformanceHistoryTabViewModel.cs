@@ -1,4 +1,5 @@
 ﻿using PonziWorld.Core;
+using PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
 using Prism.Events;
 using System.Threading.Tasks;
 
@@ -15,9 +16,16 @@ internal class PerformanceHistoryTabViewModel : BindableSubscriberBase
     {
         this.performanceHistoryRepository = performanceHistoryRepository;
 
-        SubscribeToProcess(StoreClaimedInterestRate.Process, StoreInterestRateAsync);
         SubscribeToProcess(RetrieveInterestRateHistory.Process, GetHistoricalPerformance);
+        SubscribeToProcess(StoreClaimedInterestRate.Process, StoreInterestRateAsync);
         SubscribeToProcess(ClearPerformance.Process, DeletePerformanceHistoryAsync);
+    }
+
+    private async Task<InterestRateHistoryRetrievedPayload> GetHistoricalPerformance(
+        RetrieveInterestRateHistoryCommandPayload _)
+    {
+        var performance = await performanceHistoryRepository.GetInterestRateHistoryAsync();
+        return new(performance);
     }
 
     private async Task<ClaimedInterestRateStoredEventPayload> StoreInterestRateAsync(
@@ -26,13 +34,6 @@ internal class PerformanceHistoryTabViewModel : BindableSubscriberBase
         var performance = new MonthlyPerformance(payload.Month, payload.InterestRate);
         await performanceHistoryRepository.StoreInterestRateAsync(performance);
         return new();
-    }
-
-    private async Task<InterestRateHistoryRetrievedPayload> GetHistoricalPerformance(
-        RetrieveInterestRateHistoryCommandPayload _)
-    {
-        var performance = await performanceHistoryRepository.GetInterestRateHistoryAsync();
-        return new(performance);
     }
 
     private async Task<PerformanceClearedEventPayload> DeletePerformanceHistoryAsync(

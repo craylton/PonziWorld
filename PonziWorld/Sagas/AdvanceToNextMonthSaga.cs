@@ -1,12 +1,14 @@
-﻿using PonziWorld.Company;
-using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
-using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab;
-using PonziWorld.DataRegion.PerformanceHistoryTab;
-using PonziWorld.DataRegion.TimeAdvancement;
+﻿using PonziWorld.Company.Processes;
+using PonziWorld.DataRegion.CompanyInvestmentsTab.Processes;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab.Processes;
+using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab.Processes;
+using PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
+using PonziWorld.DataRegion.TimeAdvancement.Processes;
 using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
-using PonziWorld.MainWindow;
+using PonziWorld.Investments.Investors.Processes;
+using PonziWorld.MainWindow.Processes;
 using Prism.Events;
 using System.Collections.Generic;
 
