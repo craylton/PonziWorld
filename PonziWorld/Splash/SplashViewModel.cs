@@ -4,6 +4,8 @@ using PonziWorld.Sagas;
 using PonziWorld.Splash.Processes;
 using Prism.Commands;
 using Prism.Events;
+using Serilog;
+using System;
 using System.Threading.Tasks;
 
 namespace PonziWorld.Splash;
@@ -64,8 +66,9 @@ internal class SplashViewModel : BindableSubscriberBase
             SavedGameExists = await repository.GetCompanyExistsAsync();
             CanAccessDatabase = true;
         }
-        catch
+        catch (Exception ex)
         {
+            Log.Logger.Error("Failed to connect to database: " + ex.ToString());
             CanAccessDatabase = false;
         }
 

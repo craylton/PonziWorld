@@ -1,5 +1,6 @@
 ﻿using PonziWorld.Events;
 using Prism.Events;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 
@@ -13,14 +14,20 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
     private readonly ConcurrentDictionary<Type, SubscriptionToken> eventSubscriptions = new();
     private bool isInProgress = false;
 
+    protected string SagaName => GetType().Name;
+
     protected SagaBase(IEventAggregator eventAggregator) =>
         this.eventAggregator = eventAggregator;
 
     public void Start()
     {
         if (isInProgress)
+        {
+            Log.Logger.Warning($"Could not start {SagaName} saga as it is already running");
             return;
+        }
 
+        Log.Logger.Information($"{SagaName} saga starting");
         isInProgress = true;
         eventAggregator.GetEvent<TStartedEvent>().Publish();
         OnSagaStarted();
@@ -30,6 +37,7 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
 
     protected void CompleteSaga()
     {
+        Log.Logger.Information($"{SagaName} saga completing");
         eventAggregator.GetEvent<TCompletedEvent>().Publish();
         ResetSaga();
         isInProgress = false;
@@ -45,6 +53,8 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
         where TEvent : PubSubEvent<TEventPayload>, new()
         where TCommand : PubSubEvent<TCommandPayload>, new()
     {
+        Log.Logger.Information($"{SagaName} saga sending {typeof(TCommand).Name} command");
+
         SubscriptionToken subscriptionToken = eventAggregator.GetEvent<TEvent>()
             .Subscribe(eventPayload =>
                 GetOnCompletionAction<TEvent, TEventPayload>(
@@ -62,6 +72,8 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
         TEventPayload payload)
         where TEvent : PubSubEvent<TEventPayload>, new()
     {
+        Log.Logger.Information($"{SagaName} saga received {typeof(TEvent).Name} event");
+
         eventAggregator.GetEvent<TEvent>()
             .Unsubscribe(eventSubscriptions[typeof(TEvent)]);
 

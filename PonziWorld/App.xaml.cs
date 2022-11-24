@@ -8,6 +8,8 @@ using PonziWorld.Investments.Investors;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;
+using Serilog;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Markup;
@@ -29,12 +31,22 @@ public partial class App : PrismApplication
 
     protected override void Initialize()
     {
+        // Set up global unhandled exceptions
+        AppDomain currentDomain = AppDomain.CurrentDomain;
+        currentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleGlobalException);
+
         // Make it use local currency instead of default $
         FrameworkElement.LanguageProperty.OverrideMetadata(
             typeof(FrameworkElement),
             new FrameworkPropertyMetadata(
                 XmlLanguage.GetLanguage(
                     CultureInfo.CurrentCulture.IetfLanguageTag)));
+
+        // Set up logger
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
 
         base.Initialize();
     }
@@ -43,10 +55,20 @@ public partial class App : PrismApplication
     {
         base.OnInitialized();
 
+        Log.Logger.Information("=======================");
+        Log.Logger.Information("Application initialised");
+        Log.Logger.Information("=======================");
+
         IEventAggregator eventAggregator = Container.Resolve<IEventAggregator>();
         eventAggregator.GetEvent<MainWindowInitialisedEvent>().Publish();
     }
 
     protected override Window CreateShell() =>
         Container.Resolve<Window>();
+
+    static void HandleGlobalException(object sender, UnhandledExceptionEventArgs args)
+    {
+        Exception ex = (Exception)args.ExceptionObject;
+        Log.Logger.Error(ex.ToString());
+    }
 }
