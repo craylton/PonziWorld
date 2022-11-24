@@ -68,7 +68,7 @@ internal class SplashViewModel : BindableSubscriberBase
         }
         catch (Exception ex)
         {
-            Log.Logger.Error("Failed to connect to database: " + ex.ToString());
+            Log.Error("Failed to connect to database: " + ex.ToString());
             CanAccessDatabase = false;
         }
 

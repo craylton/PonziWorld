@@ -23,11 +23,11 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
     {
         if (isInProgress)
         {
-            Log.Logger.Warning($"Could not start {SagaName} saga as it is already running");
+            Log.Warning($"Could not start {SagaName} saga as it is already running");
             return;
         }
 
-        Log.Logger.Information($"{SagaName} saga starting");
+        Log.Information($"{SagaName}: Starting");
         isInProgress = true;
         eventAggregator.GetEvent<TStartedEvent>().Publish();
         OnSagaStarted();
@@ -37,7 +37,7 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
 
     protected void CompleteSaga()
     {
-        Log.Logger.Information($"{SagaName} saga completing");
+        Log.Information($"{SagaName}: Completing");
         eventAggregator.GetEvent<TCompletedEvent>().Publish();
         ResetSaga();
         isInProgress = false;
@@ -53,7 +53,7 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
         where TCommand : PubSubEvent<TCommandPayload>, new()
         where TEvent : PubSubEvent<TEventPayload>, new()
     {
-        Log.Logger.Information($"{SagaName} saga sending {typeof(TCommand).Name} command");
+        Log.Debug($"{SagaName}: Sending {typeof(TCommand).Name}");
 
         SubscriptionToken subscriptionToken = eventAggregator.GetEvent<TEvent>()
             .Subscribe(eventPayload =>
@@ -62,7 +62,8 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
                     eventPayload),
                 true);
 
-        eventSubscriptions.TryAdd(typeof(TEvent), subscriptionToken);
+        if (!eventSubscriptions.TryAdd(typeof(TEvent), subscriptionToken))
+            Log.Warning($"{SagaName}: Already subscribed to {typeof(TEvent).Name}");
 
         eventAggregator.GetEvent<TCommand>().Publish(payload);
     }
@@ -72,12 +73,13 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
         TEventPayload payload)
         where TEvent : PubSubEvent<TEventPayload>, new()
     {
-        Log.Logger.Information($"{SagaName} saga received {typeof(TEvent).Name} event");
+        Log.Debug($"{SagaName}: Received {typeof(TEvent).Name}");
 
         eventAggregator.GetEvent<TEvent>()
             .Unsubscribe(eventSubscriptions[typeof(TEvent)]);
 
-        eventSubscriptions.TryRemove(typeof(TEvent), out _);
+        if (!eventSubscriptions.TryRemove(typeof(TEvent), out _))
+            Log.Warning($"{SagaName}: Something went wrong unsubscribing from {typeof(TEvent).Name}");
 
         action(payload);
     }

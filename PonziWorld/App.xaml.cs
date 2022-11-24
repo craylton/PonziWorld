@@ -32,8 +32,7 @@ public partial class App : PrismApplication
     protected override void Initialize()
     {
         // Set up global unhandled exceptions
-        AppDomain currentDomain = AppDomain.CurrentDomain;
-        currentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleGlobalException);
+        AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleGlobalException);
 
         // Make it use local currency instead of default $
         FrameworkElement.LanguageProperty.OverrideMetadata(
@@ -44,8 +43,12 @@ public partial class App : PrismApplication
 
         // Set up logger
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+            .MinimumLevel.Verbose()
+            .WriteTo.File(
+                "logs/basiclog.txt",
+                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information,
+                rollingInterval: RollingInterval.Day)
+            .WriteTo.File("logs/debuglog.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
         base.Initialize();
@@ -55,9 +58,9 @@ public partial class App : PrismApplication
     {
         base.OnInitialized();
 
-        Log.Logger.Information("=======================");
-        Log.Logger.Information("Application initialised");
-        Log.Logger.Information("=======================");
+        Log.Information("=======================");
+        Log.Information("Application initialised");
+        Log.Information("=======================");
 
         IEventAggregator eventAggregator = Container.Resolve<IEventAggregator>();
         eventAggregator.GetEvent<MainWindowInitialisedEvent>().Publish();
@@ -68,7 +71,7 @@ public partial class App : PrismApplication
 
     static void HandleGlobalException(object sender, UnhandledExceptionEventArgs args)
     {
-        Exception ex = (Exception)args.ExceptionObject;
-        Log.Logger.Error(ex.ToString());
+        Exception? exception = args.ExceptionObject as Exception;
+        Log.Error(exception?.ToString() ?? "null");
     }
 }
