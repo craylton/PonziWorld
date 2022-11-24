@@ -6,10 +6,10 @@ namespace PonziWorld.Investments.Investors;
 
 internal class ApplyNewInterestRateToInvestors
     : SagaProcess<
-        NewInterestRateAppliedToInvestorsEvent,
-        NewInterestRateAppliedToInvestorsEventPayload,
         ApplyNewInterestRateToInvestorsCommand,
-        ApplyNewInterestRateToInvestorsCommandPayload>
+        ApplyNewInterestRateToInvestorsCommandPayload,
+        NewInterestRateAppliedToInvestorsEvent,
+        NewInterestRateAppliedToInvestorsEventPayload>
 {
     public static ApplyNewInterestRateToInvestors Process => new();
     private ApplyNewInterestRateToInvestors() { }

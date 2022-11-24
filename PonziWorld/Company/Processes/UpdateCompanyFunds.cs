@@ -6,21 +6,14 @@ namespace PonziWorld.Company.Processes;
 
 internal class UpdateCompanyFunds
     : SagaProcess<
-        CompanyFundsUpdatedEvent,
-        CompanyFundsUpdatedEventPayload,
         UpdateCompanyFundsCommand,
-        UpdateCompanyFundsCommandPayload>
+        UpdateCompanyFundsCommandPayload,
+        CompanyFundsUpdatedEvent,
+        CompanyFundsUpdatedEventPayload>
 {
     public static UpdateCompanyFunds Process => new();
     private UpdateCompanyFunds() { }
 }
-
-internal class CompanyFundsUpdatedEvent
-    : PubSubEvent<CompanyFundsUpdatedEventPayload>
-{ }
-
-internal record CompanyFundsUpdatedEventPayload(
-    Company Company);
 
 internal class UpdateCompanyFundsCommand
     : PubSubEvent<UpdateCompanyFundsCommandPayload>
@@ -28,3 +21,10 @@ internal class UpdateCompanyFundsCommand
 
 internal record UpdateCompanyFundsCommandPayload(
     NewInvestmentsSummary NewInvestmentsSummary);
+
+internal class CompanyFundsUpdatedEvent
+    : PubSubEvent<CompanyFundsUpdatedEventPayload>
+{ }
+
+internal record CompanyFundsUpdatedEventPayload(
+    Company Company);

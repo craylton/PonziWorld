@@ -5,10 +5,10 @@ namespace PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
 
 internal class StoreClaimedInterestRate
     : SagaProcess<
-        ClaimedInterestRateStoredEvent,
-        ClaimedInterestRateStoredEventPayload,
         StoreClaimedInterestRateCommand,
-        StoreClaimedInterestRateCommandPayload>
+        StoreClaimedInterestRateCommandPayload,
+        ClaimedInterestRateStoredEvent,
+        ClaimedInterestRateStoredEventPayload>
 {
     public static StoreClaimedInterestRate Process => new();
     private StoreClaimedInterestRate() { }

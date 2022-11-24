@@ -46,12 +46,12 @@ internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
     protected virtual void ResetSaga()
     { }
 
-    protected void StartProcess<TEvent, TEventPayload, TCommand, TCommandPayload>(
-        SagaProcess<TEvent, TEventPayload, TCommand, TCommandPayload> _,
+    protected void StartProcess<TCommand, TCommandPayload, TEvent, TEventPayload>(
+        SagaProcess<TCommand, TCommandPayload, TEvent, TEventPayload> _,
         TCommandPayload payload,
         Action<TEventPayload> onCompletion)
-        where TEvent : PubSubEvent<TEventPayload>, new()
         where TCommand : PubSubEvent<TCommandPayload>, new()
+        where TEvent : PubSubEvent<TEventPayload>, new()
     {
         Log.Logger.Information($"{SagaName} saga sending {typeof(TCommand).Name} command");
 

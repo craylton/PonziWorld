@@ -8,21 +8,14 @@ namespace PonziWorld.DataRegion.TimeAdvancement.Processes;
 
 internal class GenerateNewMonthInvestments
     : SagaProcess<
-        NewMonthInvestmentsGeneratedEvent,
-        NewMonthInvestmentsGeneratedEventPayload,
         GenerateNewMonthInvestmentsCommand,
-        GenerateNewMonthInvestmentsCommandPayload>
+        GenerateNewMonthInvestmentsCommandPayload,
+        NewMonthInvestmentsGeneratedEvent,
+        NewMonthInvestmentsGeneratedEventPayload>
 {
     public static GenerateNewMonthInvestments Process => new();
     private GenerateNewMonthInvestments() { }
 }
-
-internal class NewMonthInvestmentsGeneratedEvent
-    : PubSubEvent<NewMonthInvestmentsGeneratedEventPayload>
-{ }
-
-internal record NewMonthInvestmentsGeneratedEventPayload(
-    NewInvestmentsSummary NewInvestmentsSummary);
 
 internal class GenerateNewMonthInvestmentsCommand
     : PubSubEvent<GenerateNewMonthInvestmentsCommandPayload>
@@ -31,3 +24,10 @@ internal class GenerateNewMonthInvestmentsCommand
 internal record GenerateNewMonthInvestmentsCommandPayload(
     Company.Company Company,
     IEnumerable<Investor> Investors);
+
+internal class NewMonthInvestmentsGeneratedEvent
+    : PubSubEvent<NewMonthInvestmentsGeneratedEventPayload>
+{ }
+
+internal record NewMonthInvestmentsGeneratedEventPayload(
+    NewInvestmentsSummary NewInvestmentsSummary);

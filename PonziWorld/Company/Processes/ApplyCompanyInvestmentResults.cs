@@ -5,10 +5,10 @@ namespace PonziWorld.Company.Processes;
 
 internal class ApplyCompanyInvestmentResults
     : SagaProcess<
-        CompanyInvestmentResultsAppliedEvent,
-        CompanyInvestmentResultsAppliedEventPayload,
         ApplyCompanyInvestmentResultsCommand,
-        ApplyCompanyInvestmentResultsCommandPayload>
+        ApplyCompanyInvestmentResultsCommandPayload,
+        CompanyInvestmentResultsAppliedEvent,
+        CompanyInvestmentResultsAppliedEventPayload>
 {
     public static ApplyCompanyInvestmentResults Process => new();
     private ApplyCompanyInvestmentResults() { }

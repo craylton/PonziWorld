@@ -5,10 +5,10 @@ namespace PonziWorld.DataRegion.CompanyInvestmentsTab.Processes;
 
 internal class DetermineCompanyInvestmentResults
     : SagaProcess<
-        CompanyInvestmentResultsDeterminedEvent,
-        CompanyInvestmentResultsDeterminedEventPayload,
         DetermineCompanyInvestmentResultsCommand,
-        DetermineCompanyInvestmentResultsCommandPayload>
+        DetermineCompanyInvestmentResultsCommandPayload,
+        CompanyInvestmentResultsDeterminedEvent,
+        CompanyInvestmentResultsDeterminedEventPayload>
 {
     public static DetermineCompanyInvestmentResults Process => new();
     private DetermineCompanyInvestmentResults() { }

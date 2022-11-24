@@ -5,10 +5,10 @@ namespace PonziWorld.MainWindow.Processes;
 
 internal class AcquireClaimedInterest
     : SagaProcess<
-        ClaimedInterestAcquiredEvent,
-        ClaimedInterestAcquiredEventPayload,
         AcquireClaimedInterestCommand,
-        AcquireClaimedInterestCommandPayload>
+        AcquireClaimedInterestCommandPayload,
+        ClaimedInterestAcquiredEvent,
+        ClaimedInterestAcquiredEventPayload>
 {
     public static AcquireClaimedInterest Process => new();
     private AcquireClaimedInterest() { }

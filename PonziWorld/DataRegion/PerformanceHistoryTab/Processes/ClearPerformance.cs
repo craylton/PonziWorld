@@ -5,10 +5,10 @@ namespace PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
 
 internal class ClearPerformance
     : SagaProcess<
-        PerformanceClearedEvent,
-        PerformanceClearedEventPayload,
         ClearPerformanceCommand,
-        ClearPerformanceCommandPayload>
+        ClearPerformanceCommandPayload,
+        PerformanceClearedEvent,
+        PerformanceClearedEventPayload>
 {
     public static ClearPerformance Process => new();
     private ClearPerformance() { }

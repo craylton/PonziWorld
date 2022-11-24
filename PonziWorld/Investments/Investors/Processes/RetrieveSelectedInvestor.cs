@@ -5,10 +5,10 @@ namespace PonziWorld.Investments.Investors.Processes;
 
 internal class RetrieveSelectedInvestor
     : SagaProcess<
-        RetrieveSelectedInvestorEvent,
-        RetrieveSelectedInvestorEventPayload,
         RetrieveSelectedInvestorCommand,
-        RetrieveSelectedInvestorCommandPayload>
+        RetrieveSelectedInvestorCommandPayload,
+        RetrieveSelectedInvestorEvent,
+        RetrieveSelectedInvestorEventPayload>
 {
     public static RetrieveSelectedInvestor Process => new();
     private RetrieveSelectedInvestor() { }

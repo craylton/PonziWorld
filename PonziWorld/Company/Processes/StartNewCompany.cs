@@ -5,21 +5,14 @@ namespace PonziWorld.Company.Processes;
 
 internal class StartNewCompany
     : SagaProcess<
-        NewCompanyStartedEvent,
-        NewCompanyStartedEventPayload,
         StartNewCompanyCommand,
-        StartNewCompanyCommandPayload>
+        StartNewCompanyCommandPayload,
+        NewCompanyStartedEvent,
+        NewCompanyStartedEventPayload>
 {
     public static StartNewCompany Process => new();
     private StartNewCompany() { }
 }
-
-internal class NewCompanyStartedEvent
-    : PubSubEvent<NewCompanyStartedEventPayload>
-{ }
-
-internal record NewCompanyStartedEventPayload(
-    Company Company);
 
 internal class StartNewCompanyCommand
     : PubSubEvent<StartNewCompanyCommandPayload>
@@ -27,3 +20,10 @@ internal class StartNewCompanyCommand
 
 internal record StartNewCompanyCommandPayload(
     string NewCompanyName);
+
+internal class NewCompanyStartedEvent
+    : PubSubEvent<NewCompanyStartedEventPayload>
+{ }
+
+internal record NewCompanyStartedEventPayload(
+    Company Company);

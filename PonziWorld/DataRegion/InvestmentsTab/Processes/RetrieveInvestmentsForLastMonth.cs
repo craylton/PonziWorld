@@ -7,21 +7,14 @@ namespace PonziWorld.DataRegion.InvestmentsTab.Processes;
 
 internal class RetrieveInvestmentsForLastMonth
     : SagaProcess<
-        InvestmentsForLastMonthRetrievedEvent,
-        InvestmentsForLastMonthRetrievedEventPayload,
         RetrieveInvestmentsForLastMonthCommand,
-        RetrieveInvestmentsForLastMonthCommandPayload>
+        RetrieveInvestmentsForLastMonthCommandPayload,
+        InvestmentsForLastMonthRetrievedEvent,
+        InvestmentsForLastMonthRetrievedEventPayload>
 {
     public static RetrieveInvestmentsForLastMonth Process => new();
     private RetrieveInvestmentsForLastMonth() { }
 }
-
-internal class InvestmentsForLastMonthRetrievedEvent
-    : PubSubEvent<InvestmentsForLastMonthRetrievedEventPayload>
-{ }
-
-internal record InvestmentsForLastMonthRetrievedEventPayload(
-    IEnumerable<Investment> LastMonthInvestments);
 
 internal class RetrieveInvestmentsForLastMonthCommand
     : PubSubEvent<RetrieveInvestmentsForLastMonthCommandPayload>
@@ -29,3 +22,10 @@ internal class RetrieveInvestmentsForLastMonthCommand
 
 internal record RetrieveInvestmentsForLastMonthCommandPayload(
     int CurrentMonth);
+
+internal class InvestmentsForLastMonthRetrievedEvent
+    : PubSubEvent<InvestmentsForLastMonthRetrievedEventPayload>
+{ }
+
+internal record InvestmentsForLastMonthRetrievedEventPayload(
+    IEnumerable<Investment> LastMonthInvestments);

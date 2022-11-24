@@ -6,14 +6,20 @@ namespace PonziWorld.Investments.Investors.Processes;
 
 internal class RetrieveInvestors
     : SagaProcess<
-        InvestorsRetrievedEvent,
-        InvestorsRetrievedEventPayload,
         RetrieveInvestorsCommand,
-        RetrieveInvestorsCommandPayload>
+        RetrieveInvestorsCommandPayload,
+        InvestorsRetrievedEvent,
+        InvestorsRetrievedEventPayload>
 {
     public static RetrieveInvestors Process => new();
     private RetrieveInvestors() { }
 }
+
+internal class RetrieveInvestorsCommand
+    : PubSubEvent<RetrieveInvestorsCommandPayload>
+{ }
+
+internal record RetrieveInvestorsCommandPayload;
 
 internal class InvestorsRetrievedEvent
     : PubSubEvent<InvestorsRetrievedEventPayload>
@@ -21,9 +27,3 @@ internal class InvestorsRetrievedEvent
 
 internal record InvestorsRetrievedEventPayload(
     IEnumerable<Investor> Investors);
-
-internal class RetrieveInvestorsCommand
-    : PubSubEvent<RetrieveInvestorsCommandPayload>
-{ }
-
-internal record RetrieveInvestorsCommandPayload;

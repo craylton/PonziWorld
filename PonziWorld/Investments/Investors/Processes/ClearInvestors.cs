@@ -5,10 +5,10 @@ namespace PonziWorld.Investments.Investors.Processes;
 
 internal class ClearInvestors
     : SagaProcess<
-        InvestorsClearedEvent,
-        InvestorsClearedEventPayload,
         ClearInvestorsCommand,
-        ClearInvestorsCommandPayload>
+        ClearInvestorsCommandPayload,
+        InvestorsClearedEvent,
+        InvestorsClearedEventPayload>
 {
     public static ClearInvestors Process => new();
     private ClearInvestors() { }

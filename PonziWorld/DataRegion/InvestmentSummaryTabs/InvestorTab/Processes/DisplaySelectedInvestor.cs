@@ -8,10 +8,10 @@ namespace PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorTab.Processes;
 
 internal class DisplayInvestor
     : SagaProcess<
-        InvestorDisplayedEvent,
-        InvestorDisplayedEventPayload,
         DisplayInvestorCommand,
-        DisplayInvestorCommandPayload>
+        DisplayInvestorCommandPayload,
+        InvestorDisplayedEvent,
+        InvestorDisplayedEventPayload>
 {
     public static DisplayInvestor Process => new();
     private DisplayInvestor() { }

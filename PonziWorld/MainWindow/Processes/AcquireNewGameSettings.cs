@@ -5,14 +5,20 @@ namespace PonziWorld.MainWindow.Processes;
 
 internal class AcquireNewGameSettings
     : SagaProcess<
-        NewGameSettingsAcquiredEvent,
-        NewGameSettingsAcquiredEventPayload,
         AcquireNewGameSettingsCommand,
-        AcquireNewGameSettingsCommandPayload>
+        AcquireNewGameSettingsCommandPayload,
+        NewGameSettingsAcquiredEvent,
+        NewGameSettingsAcquiredEventPayload>
 {
     public static AcquireNewGameSettings Process => new();
     private AcquireNewGameSettings() { }
 }
+
+internal class AcquireNewGameSettingsCommand
+    : PubSubEvent<AcquireNewGameSettingsCommandPayload>
+{ }
+
+internal record AcquireNewGameSettingsCommandPayload;
 
 internal class NewGameSettingsAcquiredEvent
     : PubSubEvent<NewGameSettingsAcquiredEventPayload>
@@ -21,9 +27,3 @@ internal class NewGameSettingsAcquiredEvent
 internal record NewGameSettingsAcquiredEventPayload(
     string CompanyName,
     bool IsCancelled);
-
-internal class AcquireNewGameSettingsCommand
-    : PubSubEvent<AcquireNewGameSettingsCommandPayload>
-{ }
-
-internal record AcquireNewGameSettingsCommandPayload;

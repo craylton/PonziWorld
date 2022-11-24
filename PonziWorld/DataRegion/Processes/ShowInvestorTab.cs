@@ -6,10 +6,10 @@ namespace PonziWorld.DataRegion.Processes;
 
 internal class DisplayInvestorTab
     : SagaProcess<
-        InvestorTabDisplayedEvent,
-        InvestorTabDisplayedEventPayload,
         DisplayInvestorTabCommand,
-        DisplayInvestorTabCommandPayload>
+        DisplayInvestorTabCommandPayload,
+        InvestorTabDisplayedEvent,
+        InvestorTabDisplayedEventPayload>
 {
     public static DisplayInvestorTab Process => new();
     private DisplayInvestorTab() { }

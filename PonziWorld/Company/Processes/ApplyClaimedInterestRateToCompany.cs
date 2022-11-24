@@ -5,10 +5,10 @@ namespace PonziWorld.Company.Processes;
 
 internal class ApplyClaimedInterestRateToCompany
     : SagaProcess<
-        ClaimedInterestRateAppliedToCompanyEvent,
-        ClaimedInterestRateAppliedToCompanyEventPayload,
         ApplyClaimedInterestRateToCompanyCommand,
-        ApplyClaimedInterestRateToCompanyCommandPayload>
+        ApplyClaimedInterestRateToCompanyCommandPayload,
+        ClaimedInterestRateAppliedToCompanyEvent,
+        ClaimedInterestRateAppliedToCompanyEventPayload>
 {
     public static ApplyClaimedInterestRateToCompany Process => new();
     private ApplyClaimedInterestRateToCompany() { }

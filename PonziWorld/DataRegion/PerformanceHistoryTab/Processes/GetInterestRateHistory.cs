@@ -6,10 +6,10 @@ namespace PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
 
 internal class RetrieveInterestRateHistory
     : SagaProcess<
-        InterestRateHistoryRetrieved,
-        InterestRateHistoryRetrievedPayload,
         RetrieveInterestRateHistoryCommand,
-        RetrieveInterestRateHistoryCommandPayload>
+        RetrieveInterestRateHistoryCommandPayload,
+        InterestRateHistoryRetrieved,
+        InterestRateHistoryRetrievedPayload>
 {
     public static RetrieveInterestRateHistory Process => new();
     private RetrieveInterestRateHistory() { }

@@ -1,7 +1,5 @@
 ﻿Combine Depositors and Withdrawers tabs into a single Investors tab
 Formalise naming conventions and conventions in processes
 	(retrieve vs get etc, what should return a payload and what shouldn't)
-Swap commands and events in process definition
-Make sagas actually async
 Make an InterestRate class
 Find a way to split out the 'DataRegion' folder

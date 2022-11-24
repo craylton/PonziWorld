@@ -7,21 +7,14 @@ namespace PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab.Processes;
 
 internal class LoadWithdrawalsForNewMonth
     : SagaProcess<
-        WithdrawalsForNewMonthLoadedEvent,
-        WithdrawalsForNewMonthLoadedEventPayload,
         LoadWithdrawalsForNewMonthCommand,
-        LoadWithdrawalsForNewMonthCommandPayload>
+        LoadWithdrawalsForNewMonthCommandPayload,
+        WithdrawalsForNewMonthLoadedEvent,
+        WithdrawalsForNewMonthLoadedEventPayload>
 {
     public static LoadWithdrawalsForNewMonth Process => new();
     private LoadWithdrawalsForNewMonth() { }
 }
-
-internal class WithdrawalsForNewMonthLoadedEvent
-    : PubSubEvent<WithdrawalsForNewMonthLoadedEventPayload>
-{ }
-
-internal record WithdrawalsForNewMonthLoadedEventPayload(
-    IEnumerable<DetailedInvestment> LastMonthWithdrawals);
 
 internal class LoadWithdrawalsForNewMonthCommand
     : PubSubEvent<LoadWithdrawalsForNewMonthCommandPayload>
@@ -29,3 +22,10 @@ internal class LoadWithdrawalsForNewMonthCommand
 
 internal record LoadWithdrawalsForNewMonthCommandPayload(
     NewInvestmentsSummary NewInvestmentsSummary);
+
+internal class WithdrawalsForNewMonthLoadedEvent
+    : PubSubEvent<WithdrawalsForNewMonthLoadedEventPayload>
+{ }
+
+internal record WithdrawalsForNewMonthLoadedEventPayload(
+    IEnumerable<DetailedInvestment> LastMonthWithdrawals);
