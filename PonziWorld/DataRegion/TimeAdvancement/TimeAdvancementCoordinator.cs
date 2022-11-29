@@ -101,7 +101,7 @@ internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
             .Where(prospectiveInvestor => prospectiveInvestor.WantsToInvest(company))
             .Select(prospective => prospective.AsActiveInvestor(company));
 
-    private IEnumerable<Investor> GetNewInvestorsFromPool(
+    private static IEnumerable<Investor> GetNewInvestorsFromPool(
         Company.Company company,
         IEnumerable<Investor> allInvestors) =>
         allInvestors

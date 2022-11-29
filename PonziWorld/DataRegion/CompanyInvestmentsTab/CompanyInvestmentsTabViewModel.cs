@@ -9,9 +9,9 @@ internal class CompanyInvestmentsTabViewModel : BindableSubscriberBase
     public CompanyInvestmentsTabViewModel(
         IEventAggregator eventAggregator)
         : base(eventAggregator) =>
-        SubscribeToProcess(DetermineCompanyInvestmentResults.Process, CalculateMonthlyProfit);
+        SubscribeToProcess(RetrieveCompanyInvestmentResults.Process, CalculateMonthlyProfit);
 
-    private CompanyInvestmentResultsDeterminedEventPayload CalculateMonthlyProfit(
-        DetermineCompanyInvestmentResultsCommandPayload payload) =>
+    private CompanyInvestmentResultsRetrievedEventPayload CalculateMonthlyProfit(
+        RetrieveCompanyInvestmentResultsCommandPayload payload) =>
         new(payload.Company.ActualFunds * 0.005);
 }

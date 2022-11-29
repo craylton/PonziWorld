@@ -25,7 +25,7 @@ internal class CompanyViewModel : BindableSubscriberBase
 
         SubscribeToProcess(StartNewCompany.Process, CreateCompanyAsync);
         SubscribeToProcess(LoadCompany.Process, LoadCompanyAsync);
-        SubscribeToProcess(UpdateCompanyFunds.Process, UpdateFundsAsync);
+        SubscribeToProcess(ApplyNewInvestmentsToCompany.Process, UpdateFundsAsync);
         SubscribeToProcess(ApplyCompanyInvestmentResults.Process, OnInvestmentProfitsReceived);
         SubscribeToProcess(ApplyClaimedInterestRateToCompany.Process, ApplyClaimedInterestRate);
     }
@@ -44,7 +44,7 @@ internal class CompanyViewModel : BindableSubscriberBase
         return new(Company);
     }
 
-    private async Task<CompanyFundsUpdatedEventPayload> UpdateFundsAsync(UpdateCompanyFundsCommandPayload payload)
+    private async Task<NewInvestmentsAppliedToCompanyEventPayload> UpdateFundsAsync(ApplyNewInvestmentsToCompanyCommandPayload payload)
     {
         double delta = payload.NewInvestmentsSummary.GetTotalInvestment();
         await repository.MoveToNextMonthAsync(delta);

@@ -35,14 +35,14 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     { }
 
     protected override void OnSagaStarted() =>
-        StartProcess(AcquireClaimedInterest.Process, new(), OnClaimedInterestAcquired);
+        StartProcess(RetrieveClaimedInterest.Process, new(), OnClaimedInterestAcquired);
 
-    private void OnClaimedInterestAcquired(ClaimedInterestAcquiredEventPayload incomingPayload)
+    private void OnClaimedInterestAcquired(ClaimedInterestRetrievedEventPayload incomingPayload)
     {
         claimedInterestRate = incomingPayload.ClaimedInterestRate;
 
         StartProcess(
-            ApplyNewInterestRateToInvestors.Process,
+            ApplyClaimedInterestRateToInvestors.Process,
             new(claimedInterestRate),
             OnNewInterestRateAppliedToInvestors);
 
@@ -52,9 +52,9 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
             OnClaimedInterestRateAppliedToCompany);
     }
 
-    private void OnNewInterestRateAppliedToInvestors(NewInterestRateAppliedToInvestorsEventPayload incomingPayload)
+    private void OnNewInterestRateAppliedToInvestors(ClaimedInterestRateAppliedToInvestorsEventPayload incomingPayload)
     {
-        allInvestors = incomingPayload.AllInvestors;
+        allInvestors = incomingPayload.UpdatedInvestors;
         hasRetrievedInvestors = true;
 
         if (IsReadyToGenerateInvestments())
@@ -63,10 +63,10 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
 
     private void OnClaimedInterestRateAppliedToCompany(ClaimedInterestRateAppliedToCompanyEventPayload incomingPayload)
     {
-        company = incomingPayload.Company;
+        company = incomingPayload.UpdatedCompany;
 
         StartProcess(
-            DetermineCompanyInvestmentResults.Process,
+            RetrieveCompanyInvestmentResults.Process,
             new(company),
             OnCompanyInvestmentResultsDetermined);
 
@@ -77,7 +77,7 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     }
 
     private void OnCompanyInvestmentResultsDetermined(
-        CompanyInvestmentResultsDeterminedEventPayload incomingPayload) =>
+        CompanyInvestmentResultsRetrievedEventPayload incomingPayload) =>
         StartProcess(
             ApplyCompanyInvestmentResults.Process,
             new(incomingPayload.ProfitFromInvestments),
@@ -95,9 +95,9 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
         hasAppliedCompanyInvestments && hasRetrievedInvestors;
 
     private void GenerateInvestments() =>
-        StartProcess(GenerateNewMonthInvestments.Process, new(company, allInvestors), OnNewMonthInvestmentsGenerated);
+        StartProcess(RetrieveNewMonthInvestments.Process, new(company, allInvestors), OnNewMonthInvestmentsGenerated);
 
-    private void OnNewMonthInvestmentsGenerated(NewMonthInvestmentsGeneratedEventPayload incomingPayload)
+    private void OnNewMonthInvestmentsGenerated(NewMonthInvestmentsRetrievedEventPayload incomingPayload)
     {
         newInvestmentsSummary = incomingPayload.NewInvestmentsSummary;
         StartProcess(ApplyNewMonthInvestments.Process, new(newInvestmentsSummary), OnNewMonthInvestmentsApplied);
@@ -105,7 +105,7 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
 
     private void OnNewMonthInvestmentsApplied(NewMonthInvestmentsAppliedEventPayload incomingPayload)
     {
-        StartProcess(UpdateCompanyFunds.Process, new(newInvestmentsSummary), OnCompanyFundsUpdated);
+        StartProcess(ApplyNewInvestmentsToCompany.Process, new(newInvestmentsSummary), OnCompanyFundsUpdated);
         StartProcess(LoadDepositsForNewMonth.Process, new(newInvestmentsSummary), OnNewMonthDepositsLoaded);
         StartProcess(LoadWithdrawalsForNewMonth.Process, new(newInvestmentsSummary), OnNewMonthWithdrawalsLoaded);
         StartProcess(LoadInvestors.Process, new(), OnInvestorsLoaded);
@@ -119,7 +119,7 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
             CompleteSaga();
     }
 
-    private void OnCompanyFundsUpdated(CompanyFundsUpdatedEventPayload incomingPayload)
+    private void OnCompanyFundsUpdated(NewInvestmentsAppliedToCompanyEventPayload incomingPayload)
     {
         hasUpdatedCompanyFunds = true;
 

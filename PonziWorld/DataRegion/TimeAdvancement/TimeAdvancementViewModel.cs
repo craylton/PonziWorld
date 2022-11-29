@@ -37,18 +37,18 @@ internal class TimeAdvancementViewModel : BindableSubscriberBase
 
         NextMonthCommand = new(GoToNextMonth, CanGoToNextMonth);
 
-        SubscribeToProcess(GenerateNewMonthInvestments.Process, GetNewMonthInvestments);
+        SubscribeToProcess(RetrieveNewMonthInvestments.Process, GetNewMonthInvestments);
         SubscribeToProcess(ApplyNewMonthInvestments.Process, ApplyNewMonthInvestmentsAsync);
 
         eventAggregator.GetEvent<AdvanceToNextMonthStartedEvent>().Subscribe(() => CanAdvance = false);
         eventAggregator.GetEvent<AdvanceToNextMonthCompletedEvent>().Subscribe(() => CanAdvance = true);
     }
 
-    private NewMonthInvestmentsGeneratedEventPayload GetNewMonthInvestments(
-        GenerateNewMonthInvestmentsCommandPayload payload) =>
+    private NewMonthInvestmentsRetrievedEventPayload GetNewMonthInvestments(
+        RetrieveNewMonthInvestmentsCommandPayload payload) =>
         new(timeAdvancementCoordinator.GetNextMonthInvestments(
             payload.Company,
-            payload.Investors));
+            payload.CurrentInvestors));
 
     private async Task<NewMonthInvestmentsAppliedEventPayload> ApplyNewMonthInvestmentsAsync(
         ApplyNewMonthInvestmentsCommandPayload payload)

@@ -26,4 +26,4 @@ internal class ClaimedInterestRateAppliedToCompanyEvent
 { }
 
 internal record ClaimedInterestRateAppliedToCompanyEventPayload(
-    Company Company);
+    Company UpdatedCompany);

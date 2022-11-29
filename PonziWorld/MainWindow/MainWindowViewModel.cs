@@ -34,7 +34,7 @@ internal class MainWindowViewModel : BindableSubscriberBase
 
         SubscribeToProcess(AcquireNewGameSettings.Process, StartNewGameAsync);
         SubscribeToProcess(ExitMenu.Process, OnGameLoaded);
-        SubscribeToProcess(AcquireClaimedInterest.Process, ClaimInterestRate);
+        SubscribeToProcess(RetrieveClaimedInterest.Process, ClaimInterestRate);
 
         eventAggregator.GetEvent<LoadGameCompletedEvent>()
             .Subscribe(OnGameLoaded);
@@ -59,7 +59,7 @@ internal class MainWindowViewModel : BindableSubscriberBase
         return new();
     }
 
-    private ClaimedInterestAcquiredEventPayload ClaimInterestRate(AcquireClaimedInterestCommandPayload _) =>
+    private ClaimedInterestRetrievedEventPayload ClaimInterestRate(RetrieveClaimedInterestCommandPayload _) =>
         new(1d);
 
     private void OnGameLoaded() => IsGameLoaded = true;
