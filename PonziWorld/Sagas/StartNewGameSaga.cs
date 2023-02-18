@@ -1,8 +1,8 @@
 ﻿using PonziWorld.Company.Processes;
-using PonziWorld.DataRegion.InvestmentsTab.Processes;
-using PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
 using PonziWorld.Events;
 using PonziWorld.Investments.Investors.Processes;
+using PonziWorld.MainTabs.MonthlyInvestments.Processes;
+using PonziWorld.MainTabs.PerformanceHistory.Processes;
 using PonziWorld.MainWindow.Processes;
 using Prism.Events;
 

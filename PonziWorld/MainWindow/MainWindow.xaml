@@ -7,7 +7,7 @@
                       xmlns:local="clr-namespace:PonziWorld.MainWindow"
                       xmlns:investors="clr-namespace:PonziWorld.Investments.Investors"
                       xmlns:company="clr-namespace:PonziWorld.Company"
-                      xmlns:dataRegion="clr-namespace:PonziWorld.DataRegion"
+                      xmlns:mainTabs="clr-namespace:PonziWorld.MainTabs"
                       xmlns:splash="clr-namespace:PonziWorld.Splash"
                       xmlns:resources="clr-namespace:PonziWorld.Resources"
                       xmlns:Dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
@@ -48,7 +48,7 @@
             </Border>
 
             <investors:InvestorsView Grid.Column="0" Grid.Row="1" />
-            <dataRegion:DataRegionView Grid.Column="1" Grid.Row="1" />
+            <mainTabs:MainTabsView Grid.Column="1" Grid.Row="1" />
         </Grid>
     </Grid>
 </Controls:MetroWindow>

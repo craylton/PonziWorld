@@ -1,9 +1,7 @@
 ﻿using PonziWorld.Company.Processes;
-using PonziWorld.DataRegion.InvestmentsTab.Processes;
-using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab.Processes;
-using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab.Processes;
 using PonziWorld.Events;
 using PonziWorld.Investments.Investors.Processes;
+using PonziWorld.MainTabs.MonthlyInvestments.Processes;
 using Prism.Events;
 
 namespace PonziWorld.Sagas;
