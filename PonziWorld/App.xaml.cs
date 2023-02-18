@@ -1,10 +1,10 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using PonziWorld.Company;
-using PonziWorld.DataRegion.PerformanceHistoryTab;
-using PonziWorld.DataRegion.TimeAdvancement;
 using PonziWorld.Events;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
+using PonziWorld.MainTabs.PerformanceHistory;
+using PonziWorld.MainTabs.TimeAdvancement;
 using Prism.Events;
 using Prism.Ioc;
 using Prism.Unity;

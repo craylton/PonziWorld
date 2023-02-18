@@ -1,5 +1,4 @@
-﻿Combine Depositors and Withdrawers tabs into a single Investors tab
-Formalise naming conventions and conventions in processes
+﻿Formalise naming conventions and conventions in processes
 	(retrieve vs get etc, what should return a payload and what shouldn't)
 Make an InterestRate class
 Find a way to split out the 'DataRegion' folder

@@ -1,12 +1,11 @@
-﻿using PonziWorld.DataRegion.InvestmentSummaryTabs.InvestorTab.Processes;
-using PonziWorld.DataRegion.PerformanceHistoryTab;
-using PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
-using PonziWorld.DataRegion.Processes;
-using PonziWorld.Events;
+﻿using PonziWorld.Events;
 using PonziWorld.Investments.Investors;
 using PonziWorld.Investments.Investors.Processes;
+using PonziWorld.MainTabs.Investor.Processes;
+using PonziWorld.MainTabs.PerformanceHistory;
+using PonziWorld.MainTabs.PerformanceHistory.Processes;
+using PonziWorld.MainTabs.Processes;
 using Prism.Events;
-using System;
 using System.Collections.Generic;
 
 namespace PonziWorld.Sagas;
