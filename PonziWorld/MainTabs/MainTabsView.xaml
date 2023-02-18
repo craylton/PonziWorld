@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:PonziWorld.MainTabs"
-             xmlns:monthInvestmentsTab="clr-namespace:PonziWorld.MainTabs.MonthlyInvestments"
+             xmlns:monthlyInvestmentsTab="clr-namespace:PonziWorld.MainTabs.MonthlyInvestments"
              xmlns:timeAdvancement="clr-namespace:PonziWorld.MainTabs.TimeAdvancement"
              xmlns:companyInvestments="clr-namespace:PonziWorld.MainTabs.CompanyInvestments"
              xmlns:performanceHistory="clr-namespace:PonziWorld.MainTabs.PerformanceHistory"
@@ -36,7 +36,7 @@
                 <investor:InvestorView />
             </TabItem>
             <TabItem Header="Investments this month">
-                <monthInvestmentsTab:MonthInvestmentsView />
+                <monthlyInvestmentsTab:MonthlyInvestmentsView />
             </TabItem>
             <TabItem Header="Your Investments">
                 <companyInvestments:CompanyInvestmentsView />

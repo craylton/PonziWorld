@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.MainTabs.MonthlyInvestments;
 
-internal class MonthInvestmentsViewModel : BindableSubscriberBase
+internal class MonthlyInvestmentsViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly IInvestmentsRepository investmentsRepository;
@@ -29,7 +29,7 @@ internal class MonthInvestmentsViewModel : BindableSubscriberBase
         set => SetProperty(ref _withdrawals, value);
     }
 
-    public MonthInvestmentsViewModel(
+    public MonthlyInvestmentsViewModel(
         IInvestorsRepository investorsRepository,
         IInvestmentsRepository investmentsRepository,
         IEventAggregator eventAggregator)
