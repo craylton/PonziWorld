@@ -15,7 +15,6 @@ internal class MonthInvestmentsViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly IInvestmentsRepository investmentsRepository;
-
     private ObservableCollection<DetailedInvestment> _withdrawals = new();
     private ObservableCollection<DetailedInvestment> _deposits = new();
 
