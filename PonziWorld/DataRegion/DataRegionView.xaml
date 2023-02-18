@@ -6,7 +6,6 @@
              xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
              xmlns:local="clr-namespace:PonziWorld.DataRegion"
              xmlns:monthInvestmentsTab="clr-namespace:PonziWorld.DataRegion.InvestmentsTab"
-             xmlns:withdrawersTab="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab"
              xmlns:timeAdvancement="clr-namespace:PonziWorld.DataRegion.TimeAdvancement"
              xmlns:companyInvestments="clr-namespace:PonziWorld.DataRegion.CompanyInvestmentsTab"
              xmlns:performanceHistory="clr-namespace:PonziWorld.DataRegion.PerformanceHistoryTab"
@@ -38,9 +37,6 @@
             </TabItem>
             <TabItem Header="Investments this month">
                 <monthInvestmentsTab:MonthInvestmentsView />
-            </TabItem>
-            <TabItem Header="Withdrawals">
-                <withdrawersTab:WithdrawersTabView />
             </TabItem>
             <TabItem Header="Your Investments">
                 <companyInvestments:CompanyInvestmentsTabView />

@@ -1,6 +1,5 @@
 ﻿using PonziWorld.Company.Processes;
 using PonziWorld.DataRegion.InvestmentsTab.Processes;
-using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab.Processes;
 using PonziWorld.Events;
 using PonziWorld.Investments.Investors.Processes;
 using Prism.Events;

@@ -15,12 +15,20 @@ internal class MonthInvestmentsViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly IInvestmentsRepository investmentsRepository;
+
+    private ObservableCollection<DetailedInvestment> _withdrawals = new();
     private ObservableCollection<DetailedInvestment> _deposits = new();
 
     public ObservableCollection<DetailedInvestment> Deposits
     {
         get => _deposits;
         set => SetProperty(ref _deposits, value);
+    }
+
+    public ObservableCollection<DetailedInvestment> Withdrawals
+    {
+        get => _withdrawals;
+        set => SetProperty(ref _withdrawals, value);
     }
 
     public MonthInvestmentsViewModel(
@@ -37,6 +45,9 @@ internal class MonthInvestmentsViewModel : BindableSubscriberBase
 
         SubscribeToProcess(LoadDeposits.Process, LoadDepositsAsync);
         SubscribeToProcess(LoadDepositsForNewMonth.Process, LoadDepositsForNewMonthAsync);
+
+        SubscribeToProcess(LoadWithdrawals.Process, LoadWithdrawalsAsync);
+        SubscribeToProcess(LoadWithdrawalsForNewMonth.Process, LoadWithdrawalsForNewMonthAsync);
     }
 
     private async Task<InvestmentsForLastMonthRetrievedEventPayload> GetAllLastMonthInvestmentsAsync(
@@ -77,6 +88,46 @@ internal class MonthInvestmentsViewModel : BindableSubscriberBase
     {
         Deposits.Clear();
         Deposits.AddRange(deposits.OrderByDescending(deposit => deposit.InvestmentSize));
+    }
+
+    private async Task<WithdrawalsLoadedEventPayload> LoadWithdrawalsAsync(LoadWithdrawalsCommandPayload payload)
+    {
+        IEnumerable<Investment> lastMonthWithdrawals = payload.LastMonthInvestments
+            .Where(investment => investment.Amount < 0);
+
+        IEnumerable<DetailedInvestment> investments = await GetDetailedWithdrawalsAsync(lastMonthWithdrawals);
+        SetWithdrawalsList(investments);
+
+        return new(investments);
+    }
+
+    private async Task<WithdrawalsForNewMonthLoadedEventPayload> LoadWithdrawalsForNewMonthAsync(
+        LoadWithdrawalsForNewMonthCommandPayload payload)
+    {
+        IEnumerable<DetailedInvestment> withdrawals = await GetDetailedWithdrawalsAsync(
+            payload.NewInvestmentsSummary.Withdrawals);
+
+        SetWithdrawalsList(withdrawals);
+        return new(withdrawals);
+    }
+
+    private void SetWithdrawalsList(IEnumerable<DetailedInvestment> withdrawals)
+    {
+        Withdrawals.Clear();
+        Withdrawals.AddRange(withdrawals.OrderByDescending(withdrawal => withdrawal.InvestmentSize));
+    }
+
+    private async Task<IEnumerable<DetailedInvestment>> GetDetailedWithdrawalsAsync(IEnumerable<Investment> withdrawals)
+    {
+        List<DetailedInvestment> detailedInvestments = new();
+
+        foreach (Investment withdrawal in withdrawals)
+        {
+            Investor investor = await investorsRepository.GetInvestorByIdAsync(withdrawal.InvestorId);
+            detailedInvestments.Add(new DetailedInvestment(investor, withdrawal));
+        }
+
+        return detailedInvestments;
     }
 
     private async Task<IEnumerable<DetailedInvestment>> GetAllNewDepositsAsync(NewInvestmentsSummary investmentsSummary)
