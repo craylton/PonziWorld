@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
+namespace PonziWorld.DataRegion.InvestmentsTab;
 
 internal class AmountToVisibilityConverter : IValueConverter
 {

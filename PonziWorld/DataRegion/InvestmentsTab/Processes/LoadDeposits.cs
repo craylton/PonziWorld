@@ -1,9 +1,10 @@
-﻿using PonziWorld.Events;
+﻿using PonziWorld.DataRegion.InvestmentSummaryTabs;
+using PonziWorld.Events;
 using PonziWorld.Investments;
 using Prism.Events;
 using System.Collections.Generic;
 
-namespace PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab.Processes;
+namespace PonziWorld.DataRegion.InvestmentsTab.Processes;
 
 internal class LoadDeposits
     : SagaProcess<

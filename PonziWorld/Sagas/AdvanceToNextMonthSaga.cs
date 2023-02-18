@@ -1,6 +1,6 @@
 ﻿using PonziWorld.Company.Processes;
 using PonziWorld.DataRegion.CompanyInvestmentsTab.Processes;
-using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab.Processes;
+using PonziWorld.DataRegion.InvestmentsTab.Processes;
 using PonziWorld.DataRegion.InvestmentSummaryTabs.WithdrawersTab.Processes;
 using PonziWorld.DataRegion.PerformanceHistoryTab.Processes;
 using PonziWorld.DataRegion.TimeAdvancement.Processes;

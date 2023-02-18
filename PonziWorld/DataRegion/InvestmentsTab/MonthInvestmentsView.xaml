@@ -1,9 +1,9 @@
-﻿<UserControl x:Class="PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab.DepositorsTabView"
+﻿<UserControl x:Class="PonziWorld.DataRegion.InvestmentsTab.MonthInvestmentsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab"
+             xmlns:local="clr-namespace:PonziWorld.DataRegion.InvestmentsTab"
              xmlns:prism="http://prismlibrary.com/"
              prism:ViewModelLocator.AutoWireViewModel="True"
              mc:Ignorable="d"
@@ -48,12 +48,17 @@
         </DataTemplate>
     </UserControl.Resources>
 
-    <ItemsControl ItemsSource="{Binding Deposits}"
-                    ItemTemplate="{StaticResource depositTemplate}">
-        <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <WrapPanel IsItemsHost="True" />
-            </ItemsPanelTemplate>
-        </ItemsControl.ItemsPanel>
-    </ItemsControl>
+    <ScrollViewer>
+        <StackPanel>
+            <TextBlock Text="Deposits" FontSize="20" Margin="20" />
+            <ItemsControl ItemsSource="{Binding Deposits}"
+                          ItemTemplate="{StaticResource depositTemplate}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

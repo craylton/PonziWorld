@@ -1,6 +1,6 @@
 ﻿using PonziWorld.Core;
 using PonziWorld.DataRegion.InvestmentsTab.Processes;
-using PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab.Processes;
+using PonziWorld.DataRegion.InvestmentSummaryTabs;
 using PonziWorld.Investments;
 using PonziWorld.Investments.Investors;
 using Prism.Events;
@@ -9,9 +9,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace PonziWorld.DataRegion.InvestmentSummaryTabs.DepositorsTab;
+namespace PonziWorld.DataRegion.InvestmentsTab;
 
-internal class DepositorsTabViewModel : BindableSubscriberBase
+internal class MonthInvestmentsViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly IInvestmentsRepository investmentsRepository;
@@ -23,7 +23,7 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         set => SetProperty(ref _deposits, value);
     }
 
-    public DepositorsTabViewModel(
+    public MonthInvestmentsViewModel(
         IInvestorsRepository investorsRepository,
         IInvestmentsRepository investmentsRepository,
         IEventAggregator eventAggregator)
@@ -32,7 +32,6 @@ internal class DepositorsTabViewModel : BindableSubscriberBase
         this.investorsRepository = investorsRepository;
         this.investmentsRepository = investmentsRepository;
 
-        // TODO: move these somewhere more appropriate
         SubscribeToProcess(RetrieveInvestmentsForLastMonth.Process, GetAllLastMonthInvestmentsAsync);
         SubscribeToProcess(ClearInvestments.Process, DeleteAllInvestmentsAsync);
 
