@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls.Dialogs;
 using PonziWorld.Core;
 using PonziWorld.Events;
+using PonziWorld.MainTabs.TimeAdvancement;
 using PonziWorld.MainWindow.Processes;
 using PonziWorld.Sagas;
 using Prism.Events;
@@ -34,7 +35,7 @@ internal class MainWindowViewModel : BindableSubscriberBase
 
         SubscribeToProcess(AcquireNewGameSettings.Process, StartNewGameAsync);
         SubscribeToProcess(ExitMenu.Process, OnGameLoaded);
-        SubscribeToProcess(RetrieveClaimedInterest.Process, ClaimInterestRate);
+        SubscribeToProcess(RetrieveClaimedInterest.Process, ClaimInterestRateAsync);
 
         eventAggregator.GetEvent<LoadGameCompletedEvent>()
             .Subscribe(OnGameLoaded);
@@ -59,8 +60,23 @@ internal class MainWindowViewModel : BindableSubscriberBase
         return new();
     }
 
-    private ClaimedInterestRetrievedEventPayload ClaimInterestRate(RetrieveClaimedInterestCommandPayload _) =>
-        new(1d);
+    private async Task<ClaimedInterestRetrievedEventPayload> ClaimInterestRateAsync(
+        RetrieveClaimedInterestCommandPayload _)
+    {
+        AdvanceDialog dialog = new();
+        await dialogCoordinator.ShowMetroDialogAsync(this, dialog);
+
+        while (true)
+        {
+            if (dialog.IsSubmitted())
+                break;
+
+            await Task.Delay(100);
+        }
+
+        await dialogCoordinator.HideMetroDialogAsync(this, dialog);
+        return new(dialog.InterestRate());
+    }
 
     private void OnGameLoaded() => IsGameLoaded = true;
 }
