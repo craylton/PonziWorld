@@ -8,16 +8,13 @@ using Prism.Events;
 
 namespace PonziWorld.Sagas;
 
-internal class StartNewGameSaga : SagaBase<StartNewGameStartedEvent, StartNewGameCompletedEvent>
+internal class StartNewGameSaga(IEventAggregator eventAggregator)
+    : SagaBase<StartNewGameStartedEvent, StartNewGameCompletedEvent>(eventAggregator)
 {
     private bool areInvestorsCleared = false;
     private bool areInvestmentsCleared = false;
     private bool isNewCompanyCreated = false;
     private bool isPerformanceCleared = false;
-
-    public StartNewGameSaga(IEventAggregator eventAggregator)
-        : base(eventAggregator)
-    { }
 
     protected override void OnSagaStarted() =>
         StartProcess(AcquireNewGameSettings.Process, new(), OnNewGameSettingsObtained);

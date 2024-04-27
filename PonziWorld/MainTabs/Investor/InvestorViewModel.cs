@@ -16,7 +16,7 @@ namespace PonziWorld.MainTabs.Investor;
 internal class InvestorViewModel : BindableSubscriberBase
 {
     private readonly IInvestmentsRepository investmentsRepository;
-    private ObservableCollection<HistoricalTransaction> _transactions = new();
+    private ObservableCollection<HistoricalTransaction> _transactions = [];
     private ISeries[] _series = new ISeries[1];
 
     public ObservableCollection<HistoricalTransaction> Transactions
@@ -45,11 +45,11 @@ internal class InvestorViewModel : BindableSubscriberBase
     {
         Transactions.Clear();
         IEnumerable<Investment> investments = await investmentsRepository.GetInvestmentsByInvestorIdAsync(payload.Investor.Id);
-        List<HistoricalTransaction> transactions = new();
+        List<HistoricalTransaction> transactions = [];
         int firstInvestmentMonth = investments.Min(investment => investment.Month);
         int currentMonth = payload.InterestRateHistory.Count();
         double cumulativeTotal = 0;
-        List<ObservablePoint> dataPoints = new();
+        List<ObservablePoint> dataPoints = [];
 
         for (int month = firstInvestmentMonth; month < currentMonth; month++)
         {
@@ -78,8 +78,8 @@ internal class InvestorViewModel : BindableSubscriberBase
     }
 
     private void SetInvestmentDataSeries(List<ObservablePoint> dataPoints) =>
-        Series = new ISeries[]
-        {
+        Series =
+        [
             new LineSeries<ObservablePoint>
             {
                 Values = dataPoints,
@@ -87,7 +87,7 @@ internal class InvestorViewModel : BindableSubscriberBase
                 GeometrySize = 4,
                 LineSmoothness = 0.2,
             }
-        };
+        ];
 
     private static double GetInterestAmount(
         int month,

@@ -5,22 +5,16 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.Core;
 
-internal abstract class MongoDbRepositoryBase<TEntity>
+internal abstract class MongoDbRepositoryBase<TEntity>(string collectionName)
 {
-    private readonly ConnectionStringSettings settings;
+    private readonly ConnectionStringSettings settings = ConfigurationManager.ConnectionStrings["MainDatabase"];
 
     protected const string DatabaseName = "ponziworld";
 
-    protected string CollectionName { get; }
+    protected string CollectionName { get; } = collectionName;
 
     protected static FilterDefinition<TEntity> EmptyFilter =>
         FilterDefinition<TEntity>.Empty;
-
-    public MongoDbRepositoryBase(string collectionName)
-    {
-        settings = ConfigurationManager.ConnectionStrings["MainDatabase"];
-        CollectionName = collectionName;
-    }
 
     protected IMongoCollection<TEntity> GetDatabaseCollection()
     {

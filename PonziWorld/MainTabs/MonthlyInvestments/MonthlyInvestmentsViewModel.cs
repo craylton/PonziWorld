@@ -14,8 +14,8 @@ internal class MonthlyInvestmentsViewModel : BindableSubscriberBase
 {
     private readonly IInvestorsRepository investorsRepository;
     private readonly IInvestmentsRepository investmentsRepository;
-    private ObservableCollection<DetailedInvestment> _withdrawals = new();
-    private ObservableCollection<DetailedInvestment> _deposits = new();
+    private ObservableCollection<DetailedInvestment> _withdrawals = [];
+    private ObservableCollection<DetailedInvestment> _deposits = [];
 
     public ObservableCollection<DetailedInvestment> Deposits
     {
@@ -117,7 +117,7 @@ internal class MonthlyInvestmentsViewModel : BindableSubscriberBase
 
     private async Task<IEnumerable<DetailedInvestment>> GetDetailedWithdrawalsAsync(IEnumerable<Investment> withdrawals)
     {
-        List<DetailedInvestment> detailedInvestments = new();
+        List<DetailedInvestment> detailedInvestments = [];
 
         foreach (Investment withdrawal in withdrawals)
         {
@@ -141,7 +141,7 @@ internal class MonthlyInvestmentsViewModel : BindableSubscriberBase
 
     private async Task<IEnumerable<DetailedInvestment>> GetDetailedDepositsAsync(IEnumerable<Investment> deposits)
     {
-        List<DetailedInvestment> detailedDeposits = new();
+        List<DetailedInvestment> detailedDeposits = [];
 
         foreach (Investment deposit in deposits)
         {

@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.Investments.Investors;
 
-internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IInvestorsRepository
+internal class MongoDbInvestorsRepository()
+    : MongoDbRepositoryBase<Investor>("investors"), IInvestorsRepository
 {
-    public MongoDbInvestorsRepository() : base("investors")
-    {
-    }
-
     public async Task AddInvestorAsync(Investor investor) => await AddOneAsync(investor);
 
     public async Task<IEnumerable<Investor>> GetAllInvestorsAsync() => await GetAllAsync();
@@ -29,7 +26,7 @@ internal class MongoDbInvestorsRepository : MongoDbRepositoryBase<Investor>, IIn
         FindOptions<Investor, Investor> findOptions = new() { Sort = sortOrder };
 
         IAsyncCursor<Investor> cursor = await investorsCollection.FindAsync(filter, findOptions);
-        return  await cursor.ToListAsync();
+        return await cursor.ToListAsync();
     }
 
     public async Task<IEnumerable<Investor>> GetAllProspectiveInvestorsAsync()

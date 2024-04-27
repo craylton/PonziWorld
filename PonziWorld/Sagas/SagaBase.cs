@@ -6,18 +6,15 @@ using System.Collections.Concurrent;
 
 namespace PonziWorld.Sagas;
 
-internal abstract class SagaBase<TStartedEvent, TCompletedEvent>
+internal abstract class SagaBase<TStartedEvent, TCompletedEvent>(IEventAggregator eventAggregator)
     where TStartedEvent : PubSubEvent, new()
     where TCompletedEvent : PubSubEvent, new()
 {
-    private readonly IEventAggregator eventAggregator;
+    private readonly IEventAggregator eventAggregator = eventAggregator;
     private readonly ConcurrentDictionary<Type, SubscriptionToken> eventSubscriptions = new();
     private bool isInProgress = false;
 
     protected string SagaName => GetType().Name;
-
-    protected SagaBase(IEventAggregator eventAggregator) =>
-        this.eventAggregator = eventAggregator;
 
     public void Start()
     {

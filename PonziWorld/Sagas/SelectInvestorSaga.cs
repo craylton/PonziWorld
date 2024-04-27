@@ -10,7 +10,8 @@ using System.Collections.Generic;
 
 namespace PonziWorld.Sagas;
 
-internal class SelectInvestorSaga : SagaBase<SelectInvestorStartedEvent, SelectInvestorCompletedEvent>
+internal class SelectInvestorSaga(IEventAggregator eventAggregator)
+    : SagaBase<SelectInvestorStartedEvent, SelectInvestorCompletedEvent>(eventAggregator)
 {
     private bool hasSelectedInvestor = false;
     private bool hasInvestmentHistory = false;
@@ -18,11 +19,7 @@ internal class SelectInvestorSaga : SagaBase<SelectInvestorStartedEvent, SelectI
     private bool isCorrectInvestorDisplayed = false;
 
     private Investor? selectedInvestor;
-    private IEnumerable<MonthlyPerformance> performance = new List<MonthlyPerformance>();
-
-    public SelectInvestorSaga(IEventAggregator eventAggregator)
-        : base(eventAggregator)
-    { }
+    private IEnumerable<MonthlyPerformance> performance = [];
 
     protected override void OnSagaStarted()
     {
@@ -84,6 +81,6 @@ internal class SelectInvestorSaga : SagaBase<SelectInvestorStartedEvent, SelectI
     {
         hasSelectedInvestor = hasInvestmentHistory = isInvestorTabDisplayed = isCorrectInvestorDisplayed = false;
         selectedInvestor = null;
-        performance = new List<MonthlyPerformance>();
+        performance = [];
     }
 }

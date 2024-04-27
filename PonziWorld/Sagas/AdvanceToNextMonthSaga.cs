@@ -13,10 +13,11 @@ using System.Collections.Generic;
 
 namespace PonziWorld.Sagas;
 
-internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent, AdvanceToNextMonthCompletedEvent>
+internal class AdvanceToNextMonthSaga(IEventAggregator eventAggregator)
+    : SagaBase<AdvanceToNextMonthStartedEvent, AdvanceToNextMonthCompletedEvent>(eventAggregator)
 {
     private Company.Company company = Company.Company.Default;
-    private IEnumerable<Investor> allInvestors = new List<Investor>();
+    private IEnumerable<Investor> allInvestors = [];
     private NewInvestmentsSummary newInvestmentsSummary = NewInvestmentsSummary.Default;
     private double claimedInterestRate = default;
 
@@ -28,10 +29,6 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     private bool hasLoadedInvestors = false;
     private bool hasUpdatedCompanyFunds = false;
     private bool hasStoredPerformance = false;
-
-    public AdvanceToNextMonthSaga(IEventAggregator eventAggregator)
-        : base(eventAggregator)
-    { }
 
     protected override void OnSagaStarted() =>
         StartProcess(RetrieveClaimedInterest.Process, new(), OnClaimedInterestAcquired);
@@ -160,7 +157,7 @@ internal class AdvanceToNextMonthSaga : SagaBase<AdvanceToNextMonthStartedEvent,
     protected override void ResetSaga()
     {
         company = Company.Company.Default;
-        allInvestors = new List<Investor>();
+        allInvestors = [];
         newInvestmentsSummary = NewInvestmentsSummary.Default;
         claimedInterestRate = default;
 

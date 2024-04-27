@@ -8,21 +8,15 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.MainTabs.TimeAdvancement;
 
-internal class TimeAdvancementCoordinator : ITimeAdvancementCoordinator
+internal class TimeAdvancementCoordinator(
+    IInvestorsRepository investorsRepository,
+    ICompanyRepository companyRepository,
+    IInvestmentsRepository investmentsRepository)
+    : ITimeAdvancementCoordinator
 {
-    private readonly IInvestorsRepository investorsRepository;
-    private readonly ICompanyRepository companyRepository;
-    private readonly IInvestmentsRepository investmentsRepository;
-
-    public TimeAdvancementCoordinator(
-        IInvestorsRepository investorsRepository,
-        ICompanyRepository companyRepository,
-        IInvestmentsRepository investmentsRepository)
-    {
-        this.investorsRepository = investorsRepository;
-        this.companyRepository = companyRepository;
-        this.investmentsRepository = investmentsRepository;
-    }
+    private readonly IInvestorsRepository investorsRepository = investorsRepository;
+    private readonly ICompanyRepository companyRepository = companyRepository;
+    private readonly IInvestmentsRepository investmentsRepository = investmentsRepository;
 
     public NewInvestmentsSummary GetNextMonthInvestments(
         Company.Company company,

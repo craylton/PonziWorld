@@ -3,5 +3,4 @@
 namespace PonziWorld.Events;
 
 internal class MainWindowInitialisedEvent : PubSubEvent
-{
-}
+{ }

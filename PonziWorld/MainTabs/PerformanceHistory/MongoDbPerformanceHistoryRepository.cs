@@ -4,12 +4,9 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.MainTabs.PerformanceHistory;
 
-internal class MongoDbPerformanceHistoryRepository : MongoDbRepositoryBase<MonthlyPerformance>, IPerformanceHistoryRepository
+internal class MongoDbPerformanceHistoryRepository()
+    : MongoDbRepositoryBase<MonthlyPerformance>("companyPerformance"), IPerformanceHistoryRepository
 {
-    public MongoDbPerformanceHistoryRepository() : base("companyPerformance")
-    {
-    }
-
     public async Task StoreInterestRateAsync(MonthlyPerformance monthlyPerformance) =>
         await AddOneAsync(monthlyPerformance);
 

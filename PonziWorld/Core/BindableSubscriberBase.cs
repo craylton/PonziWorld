@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.Core;
 
-internal abstract class BindableSubscriberBase : BindableBase
+internal abstract class BindableSubscriberBase(IEventAggregator eventAggregator) : BindableBase
 {
-    private readonly IEventAggregator eventAggregator;
-
-    protected BindableSubscriberBase(IEventAggregator eventAggregator) =>
-        this.eventAggregator = eventAggregator;
+    private readonly IEventAggregator eventAggregator = eventAggregator;
 
     protected void SubscribeToProcess<TCommand, TCommandPayload, TEvent, TEventPayload>(
         SagaProcess<TCommand, TCommandPayload, TEvent, TEventPayload> _,

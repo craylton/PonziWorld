@@ -4,12 +4,9 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.Company;
 
-internal class MongoDbCompanyRepository : MongoDbRepositoryBase<Company>, ICompanyRepository
+internal class MongoDbCompanyRepository()
+    : MongoDbRepositoryBase<Company>("company"), ICompanyRepository
 {
-    public MongoDbCompanyRepository() : base("company")
-    {
-    }
-
     public async Task CreateNewCompanyAsync(Company company)
     {
         IMongoCollection<Company> companyCollection = GetDatabaseCollection();

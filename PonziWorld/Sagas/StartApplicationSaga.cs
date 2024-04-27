@@ -4,12 +4,9 @@ using Prism.Events;
 
 namespace PonziWorld.Sagas;
 
-internal class StartApplicationSaga : SagaBase<StartApplicationStartedEvent, StartApplicationCompletedEvent>
+internal class StartApplicationSaga(IEventAggregator eventAggregator)
+    : SagaBase<StartApplicationStartedEvent, StartApplicationCompletedEvent>(eventAggregator)
 {
-    public StartApplicationSaga(IEventAggregator eventAggregator)
-        : base(eventAggregator)
-    { }
-
     protected override void OnSagaStarted() =>
         StartProcess(TestDatabaseConnection.Process, new(), OnDatabaseTestComplete);
 

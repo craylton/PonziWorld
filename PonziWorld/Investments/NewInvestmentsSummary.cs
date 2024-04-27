@@ -11,11 +11,7 @@ internal record NewInvestmentsSummary(
     IEnumerable<Investment> Withdrawals,
     IEnumerable<ProspectiveInvestor> NewProspectiveInvestors)
 {
-    public static NewInvestmentsSummary Default =>
-        new(new List<Investor>(),
-            new List<Investment>(),
-            new List<Investment>(),
-            new List<ProspectiveInvestor>());
+    public static NewInvestmentsSummary Default => new([], [], [], []);
 
     public double GetTotalInvestment() =>
             NewInvestors.Sum(investor => investor.Investment) +
@@ -45,7 +41,7 @@ internal record NewInvestmentsSummary(
     private IEnumerable<Investment> GetCombinedInvestments()
     {
         IEnumerable<Investment> allInvestments = Withdrawals.Concat(Reinvestments);
-        List<Investment> combinedInvestments = new();
+        List<Investment> combinedInvestments = [];
 
         foreach (var investment in allInvestments)
         {

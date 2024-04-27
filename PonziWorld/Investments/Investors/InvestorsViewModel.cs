@@ -12,7 +12,7 @@ internal class InvestorsViewModel : BindableSubscriberBase
 {
     private readonly SelectInvestorSaga selectInvestorSaga;
     private readonly IInvestorsRepository repository;
-    private ObservableCollection<Investor> _investors = new();
+    private ObservableCollection<Investor> _investors = [];
     private Investor? _selectedInvestor;
 
     public ObservableCollection<Investor> Investors

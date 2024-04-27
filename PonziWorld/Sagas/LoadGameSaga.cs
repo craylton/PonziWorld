@@ -6,15 +6,12 @@ using Prism.Events;
 
 namespace PonziWorld.Sagas;
 
-internal class LoadGameSaga : SagaBase<LoadGameStartedEvent, LoadGameCompletedEvent>
+internal class LoadGameSaga(IEventAggregator eventAggregator)
+    : SagaBase<LoadGameStartedEvent, LoadGameCompletedEvent>(eventAggregator)
 {
     private bool hasLoadedInvestors = false;
     private bool hasLoadedDeposits = false;
     private bool hasLoadedWithdrawals = false;
-
-    public LoadGameSaga(IEventAggregator eventAggregator)
-        : base(eventAggregator)
-    { }
 
     protected override void OnSagaStarted()
     {

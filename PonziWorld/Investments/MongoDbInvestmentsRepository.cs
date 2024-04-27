@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace PonziWorld.Investments;
 
-internal class MongoDbInvestmentsRepository : MongoDbRepositoryBase<Investment>, IInvestmentsRepository
+internal class MongoDbInvestmentsRepository()
+    : MongoDbRepositoryBase<Investment>("investments"), IInvestmentsRepository
 {
-    public MongoDbInvestmentsRepository() : base("investments")
-    {
-    }
-
     public async Task AddInvestmentAsync(Investment investment) => await AddOneAsync(investment);
 
     public async Task<IEnumerable<Investment>> GetInvestmentsByMonthAsync(int month)

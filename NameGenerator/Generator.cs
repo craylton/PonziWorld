@@ -13,7 +13,7 @@ public static class Generator
 
     private static string GetRandomLineFromFile(string filename, string @default)
     {
-        string[] names = File.ReadAllLines(filename) ?? new[] { @default };
+        string[] names = File.ReadAllLines(filename) ?? [@default];
         return names[Random.Shared.Next(names.Length)];
     }
 }
